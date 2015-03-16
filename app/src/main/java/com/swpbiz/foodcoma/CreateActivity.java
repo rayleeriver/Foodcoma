@@ -7,19 +7,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class MainActivity extends ActionBarActivity {
+public class CreateActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_create);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_create, menu);
         return true;
     }
 
@@ -31,12 +31,11 @@ public class MainActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_create) {
-            Intent i = new Intent(MainActivity.this, CreateActivity.class);
+        if (id == R.id.action_send) {
+            Intent i = new Intent(CreateActivity.this, ViewActivity.class);
             startActivity(i);
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 }
