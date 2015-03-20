@@ -37,6 +37,12 @@ public class MainActivity extends ActionBarActivity {
             return true;
         }
 
+        if (id == R.id.action_contact) {
+            Intent i = new Intent(MainActivity.this, ContactsActivity.class);
+            startActivity(i);
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 }
