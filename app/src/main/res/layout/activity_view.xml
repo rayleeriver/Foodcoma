@@ -29,7 +29,7 @@
             android:gravity="center"
             android:textSize="20sp"
             android:textIsSelectable="true"
-            android:background="#6dc5dd"
+            android:background="@color/primary"
             android:padding="2dp"
             android:textColor="#ffffff"
             android:textStyle="bold" />
@@ -45,7 +45,7 @@
             android:layout_alignRight="@+id/tvTime"
             android:layout_alignEnd="@+id/tvTime"
             android:gravity="center"
-            android:background="#98d5e7"
+            android:background="@color/primary_light"
             android:textColor="#ffffff"
             android:textStyle="bold"
             android:padding="2dp"
