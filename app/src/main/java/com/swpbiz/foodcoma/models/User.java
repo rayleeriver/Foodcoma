@@ -1,5 +1,8 @@
 package com.swpbiz.foodcoma.models;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 
 public class User {
@@ -59,4 +62,18 @@ public class User {
 
     private HashMap<String, String> preferences;
 
+    public JSONObject getJsonObject() {
+        JSONObject data = new JSONObject();
+        try {
+            data.put("id", id);
+            data.put("phonenumber",phoneNumber);
+            data.put("name", name);
+            data.put("avatar", avatar);
+            data.put("location", location);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return data;
+    }
 }
