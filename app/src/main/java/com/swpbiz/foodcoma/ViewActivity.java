@@ -1,9 +1,13 @@
 package com.swpbiz.foodcoma;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.swpbiz.foodcoma.models.Invitation;
 
 
 public class ViewActivity extends ActionBarActivity {
@@ -12,6 +16,15 @@ public class ViewActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view);
+        Intent i = getIntent();
+        if (i != null) {
+            String data = i.getStringExtra("data");
+            if (data != null) {
+                Log.d("DEBUG", data);
+                Invitation inv = Invitation.getInvitationFromJsonObject(data);
+            }
+        }
+
     }
 
 
