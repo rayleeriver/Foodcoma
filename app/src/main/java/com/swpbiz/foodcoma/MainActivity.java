@@ -66,8 +66,11 @@ public class MainActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_create) {
+
             ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-            installation.put("phonenumber", phoneNumber);
+            if (phoneNumber != null) {
+                installation.put("phonenumber", phoneNumber);
+            }
             // Save the current Installation to Parse.
             installation.saveInBackground();
 
