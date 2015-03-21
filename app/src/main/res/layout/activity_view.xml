@@ -171,7 +171,7 @@
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/ivMap"
+        android:layout_below="@+id/fragmentMap"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:weightSum="1"
@@ -287,17 +287,42 @@
 
     </LinearLayout>
 
-    <ImageView
-        android:layout_width="fill_parent"
+    <fragment
+        android:id="@+id/fragmentMap"
+        class="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:id="@+id/ivMap"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/llrsvp"
         android:layout_marginBottom="10dp"
-        android:src="@mipmap/img_map"
-        android:cropToPadding="false"
-        android:adjustViewBounds="false"
-        android:scaleType="centerCrop"
-        android:background="#e9e5dd" />
+        />
+
+    <!--<fragment-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="200dp"-->
+        <!--android:id="@+id/fragmentMap"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_below="@+id/llrsvp"-->
+        <!--android:layout_marginBottom="10dp"-->
+        <!--android:src="@mipmap/img_map"-->
+        <!--android:cropToPadding="false"-->
+        <!--android:adjustViewBounds="false"-->
+        <!--class="com.google.android.gms.maps.SupportMapFragment"-->
+        <!--/>-->
+    <!--<FrameLayout-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="200dp"-->
+        <!--android:id="@+id/frag"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_below="@+id/llrsvp"-->
+        <!--android:layout_marginBottom="10dp"-->
+        <!--android:src="@mipmap/img_map"-->
+        <!--android:cropToPadding="false"-->
+        <!--android:adjustViewBounds="false"-->
+        <!--android:scaleType="centerCrop"-->
+        <!--android:background="#e9e5dd" />-->
+
 </RelativeLayout>
