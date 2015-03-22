@@ -1,5 +1,6 @@
 package com.swpbiz.foodcoma;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.provider.ContactsContract;
 import android.support.v4.app.LoaderManager;
@@ -17,11 +18,14 @@ import android.widget.Button;
 import android.widget.Checkable;
 import android.widget.ListView;
 
+import java.util.Set;
+
 
 public class ContactsActivity extends ActionBarActivity {
 
-    SimpleCursorAdapter adapter;
+    MyCursorAdapter adapter;
     public static final int CONTACT_LOADER_ID = 78; // From docs: A unique identifier for this loader.
+    Button btnDone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +36,17 @@ public class ContactsActivity extends ActionBarActivity {
         // Initialize the loader with a special ID and the defined callbacks from above
         getSupportLoaderManager().initLoader(CONTACT_LOADER_ID,
                 new Bundle(), contactsLoader);
+
+        btnDone = (Button) findViewById(R.id.btnDone);
+        btnDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(ContactsActivity.this, MainActivity.class);
+                Set<String> namesSelected = adapter.getNamesSelected();
+                i.putExtra("names", namesSelected.toArray(new String[namesSelected.size()]));
+                startActivity(i);
+            }
+        });
     }
 
     private LoaderManager.LoaderCallbacks<Cursor> contactsLoader =
@@ -41,7 +56,7 @@ public class ContactsActivity extends ActionBarActivity {
                     // Define the columns to retrieve
                     String[] projectionFields =  new String[] { ContactsContract.Contacts._ID,
                             ContactsContract.Contacts.DISPLAY_NAME,
-                            ContactsContract.Contacts.PHOTO_URI };
+                            ContactsContract.Contacts.PHOTO_URI};
                     // Construct the loader
                     CursorLoader cursorLoader = new CursorLoader(ContactsActivity.this,
                             ContactsContract.Contacts.CONTENT_URI, // URI
@@ -81,51 +96,10 @@ public class ContactsActivity extends ActionBarActivity {
 
     // Create simple cursor adapter to connect the cursor dataset we load with a ListView
     private void setupCursorAdapter() {
-        final Button done_Button = (Button) findViewById(R.id.btnDone);
+        adapter = new MyCursorAdapter(this, null);
 
-        // Column data from cursor to bind views from
-        String[] uiBindFrom = { ContactsContract.Contacts.DISPLAY_NAME,
-                ContactsContract.Contacts.PHOTO_URI };
-        // View IDs which will have the respective column data inserted
-        int[] uiBindTo = { R.id.tvName, R.id.ivImage };
-        // Create the simple cursor adapter to use for our list
-        // specifying the template to inflate (item_contact),
-        adapter = new SimpleCursorAdapter(
-                this, R.layout.item_contact,
-                null, uiBindFrom, uiBindTo,
-                0);
-
-        ListView lvContacts = (ListView)findViewById(R.id.lvContacts);
+        ListView lvContacts = (ListView) findViewById(R.id.lvContacts);
         lvContacts.setAdapter(adapter);
-
-
-        /*lvContacts.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-
-        done_Button.setOnClickListener(new View.OnClickListener() {
-            public void onClick (View v){
-
-                SparseBooleanArray selectedPositions = lvContacts.getCheckedItemPositions();
-
-                for (int i=0; i<selectedPositions.size(); i++) {
-                    if (selectedPositions.get(selectedPositions.keyAt(i)) == true) {
-                        Log.i("DEBUG","Selected items: " + selectedPositions.get(i));
-                    }
-                }
-
-                *//*Log.i("DEBUG", ":Done Button Selected:");
-                SparseBooleanArray checkedPositions = lvContacts.getCheckedItemPositions();
-                Log.i("DEBUG","Number of Checked Positions: " + checkedPositions.size());
-                if (checkedPositions != null)
-                {
-                    int count = lvContacts.getCount();
-                    for ( int i=0;i<count;i++)
-                    {
-                        Log.i("DEBUG","Selected items: " + checkedPositions.get(i));
-                    }
-                }*//*
-
-            }
-        });*/
 
     }
 

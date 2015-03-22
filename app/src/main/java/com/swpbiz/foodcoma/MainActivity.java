@@ -7,7 +7,9 @@ import android.content.IntentFilter;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
+import android.telephony.TelephonyManager;
 import android.telephony.gsm.SmsManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,6 +20,7 @@ import com.parse.ParseInstallation;
 import com.parse.ParsePush;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.parse.codec.binary.StringUtils;
 
 import java.util.List;
 
@@ -63,6 +66,11 @@ public class MainActivity extends ActionBarActivity {
                 }
             }
         });
+
+        if (getIntent().getExtras() != null) {
+            String[] names = getIntent().getExtras().getStringArray("names");
+            Toast.makeText(this, "Names selected: " + TextUtils.join(", ", names), Toast.LENGTH_SHORT).show();
+        }
 
       }
 
