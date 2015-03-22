@@ -159,7 +159,7 @@ public class ViewActivity extends ActionBarActivity implements
 
     private String getDateFromEpoch(long time) {
         Date date = new Date(time);
-        DateFormat format = new SimpleDateFormat("MMM D");
+        DateFormat format = new SimpleDateFormat("MMM d");
         // format.setTimeZone(TimeZone.getTimeZone("Australia/Sydney"));
         String formatted = format.format(date);
 

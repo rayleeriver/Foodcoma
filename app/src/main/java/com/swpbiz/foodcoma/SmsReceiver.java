@@ -7,6 +7,7 @@ import android.telephony.SmsMessage;
 import android.widget.Toast;
 
 import com.swpbiz.foodcoma.activities.MainActivity;
+import com.swpbiz.foodcoma.activities.SetNumberActivity;
 
 /**
  * Created by abgandhi on 3/20/15.
@@ -31,8 +32,9 @@ public class SmsReceiver extends BroadcastReceiver {
             }
             Toast.makeText(context, "Phone Number " + address + "verified", Toast.LENGTH_LONG).show();
             //this will update the UI with message
-            MainActivity inst = MainActivity.instance();
+            SetNumberActivity inst = SetNumberActivity.instance();
             inst.savePhoneNumber(address);
+            inst.closeActivity();
         }
     }
 
