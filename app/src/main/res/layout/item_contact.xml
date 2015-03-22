@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <ImageView
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:id="@+id/ivImage"
-        android:src="@android:drawable/ic_menu_help" />
+        android:src="@android:drawable/ic_menu_help"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:paddingRight="20dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -15,15 +18,24 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Large Text"
         android:id="@+id/tvName"
-        android:paddingTop="15dp" />
+        android:paddingTop="10dp"
+        android:layout_toRightOf="@+id/ivImage" />
 
     <TextView
         android:id="@+id/tvPhoneNumber"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:text="800-555-1212"
+        android:paddingTop="5dp"
+        android:layout_toRightOf="@+id/ivImage"
+        android:layout_below="@+id/tvName"
+        android:textStyle="italic" />
 
     <CheckBox
         android:id="@+id/cbSelected"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-</LinearLayout>
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="false"
+        android:padding="25dp"
+        android:layout_alignParentRight="true" />
+</RelativeLayout>
