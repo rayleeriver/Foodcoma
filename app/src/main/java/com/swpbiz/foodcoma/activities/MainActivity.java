@@ -1,14 +1,8 @@
-package com.swpbiz.foodcoma;
+package com.swpbiz.foodcoma.activities;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.telephony.SmsMessage;
-import android.telephony.TelephonyManager;
-import android.telephony.gsm.SmsManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -18,9 +12,9 @@ import android.widget.Toast;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.parse.ParsePush;
-import com.parse.ParseUser;
 import com.parse.SaveCallback;
-import com.parse.codec.binary.StringUtils;
+import com.swpbiz.foodcoma.FoodcomaApplication;
+import com.swpbiz.foodcoma.R;
 
 import java.util.List;
 

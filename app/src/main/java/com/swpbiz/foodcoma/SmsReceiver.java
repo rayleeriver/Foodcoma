@@ -1,11 +1,12 @@
 package com.swpbiz.foodcoma;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.telephony.SmsMessage;
 import android.widget.Toast;
+
+import com.swpbiz.foodcoma.activities.MainActivity;
 
 /**
  * Created by abgandhi on 3/20/15.

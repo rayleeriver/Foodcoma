@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.parse.ParsePushBroadcastReceiver;
+import com.swpbiz.foodcoma.activities.ViewActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;

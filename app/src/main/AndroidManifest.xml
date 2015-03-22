@@ -41,18 +41,18 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".CreateActivity"
+            android:name=".activities.CreateActivity"
             android:label="@string/title_activity_create" >
         </activity>
         <activity
-            android:name=".ViewActivity"
+            android:name=".activities.ViewActivity"
             android:label="@string/title_activity_view" >
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -60,7 +60,7 @@
 
         </activity>
         <activity
-            android:name=".SetNumberActivity"
+            android:name=".activities.SetNumberActivity"
             android:label="@string/title_activity_set_number" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -70,7 +70,7 @@
         </activity>
 
         <activity
-            android:name=".ContactsActivity"
+            android:name=".activities.ContactsActivity"
             android:label="@string/title_activity_contacts" >
         </activity>
 

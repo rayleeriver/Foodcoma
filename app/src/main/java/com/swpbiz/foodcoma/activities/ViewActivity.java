@@ -1,4 +1,4 @@
-package com.swpbiz.foodcoma;
+package com.swpbiz.foodcoma.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -29,6 +29,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.parse.ParseInstallation;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
+import com.swpbiz.foodcoma.R;
 import com.swpbiz.foodcoma.models.Invitation;
 import com.swpbiz.foodcoma.models.User;
 

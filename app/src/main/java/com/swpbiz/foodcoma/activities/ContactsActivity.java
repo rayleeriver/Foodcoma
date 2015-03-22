@@ -1,4 +1,4 @@
-package com.swpbiz.foodcoma;
+package com.swpbiz.foodcoma.activities;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -6,17 +6,16 @@ import android.provider.ContactsContract;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Checkable;
 import android.widget.ListView;
+
+import com.swpbiz.foodcoma.adapters.MyCursorAdapter;
+import com.swpbiz.foodcoma.R;
 
 import java.util.Set;
 

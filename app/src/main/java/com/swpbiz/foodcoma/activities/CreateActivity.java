@@ -1,4 +1,4 @@
-package com.swpbiz.foodcoma;
+package com.swpbiz.foodcoma.activities;
 
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.sleepbot.datetimepicker.time.RadialPickerLayout;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
+import com.swpbiz.foodcoma.R;
 import com.swpbiz.foodcoma.models.Invitation;
 
 import java.text.ParseException;

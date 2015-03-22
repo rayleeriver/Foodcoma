@@ -1,4 +1,4 @@
-package com.swpbiz.foodcoma;
+package com.swpbiz.foodcoma.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+import com.swpbiz.foodcoma.R;
 
 import java.util.HashSet;
 import java.util.Set;
