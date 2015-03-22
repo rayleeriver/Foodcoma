@@ -6,6 +6,7 @@ import android.content.IntentSender;
 import android.location.Location;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,11 +16,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -47,6 +52,7 @@ public class ViewActivity extends ActionBarActivity implements
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
 
+    private static final int REQUEST_PLACE_PICKER = 12123;
     private SupportMapFragment mapFragment;
     private GoogleMap map;
     private GoogleApiClient googleApiClient;
@@ -99,6 +105,24 @@ public class ViewActivity extends ActionBarActivity implements
 
     }
 
+
+    public void onPickButtonClick(View v) {
+        // Construct an intent for the place picker
+        try {
+            PlacePicker.IntentBuilder intentBuilder =
+                    new PlacePicker.IntentBuilder();
+            Intent intent = intentBuilder.build(this);
+            // Start the intent by requesting a result,
+            // identified by a request code.
+            startActivityForResult(intent, REQUEST_PLACE_PICKER);
+
+        } catch (GooglePlayServicesRepairableException e) {
+            // ...
+        } catch (GooglePlayServicesNotAvailableException e) {
+            // ...
+        }
+    }
+
     private void setupViews() {
         tvDate = (TextView) findViewById(R.id.tvDate);
         tvTime = (TextView) findViewById(R.id.tvTime);
@@ -106,6 +130,13 @@ public class ViewActivity extends ActionBarActivity implements
         tvCreator = (TextView) findViewById(R.id.tvCreator);
         rlAccept = (RelativeLayout) findViewById(R.id.rlAccept);
         rlReject = (RelativeLayout) findViewById(R.id.rlReject);
+
+        tvEventName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onPickButtonClick(v);
+            }
+        });
 
 
         // When the user clicks 'Accept' (I'm going)
@@ -234,6 +265,28 @@ public class ViewActivity extends ActionBarActivity implements
                     case Activity.RESULT_OK:
                         googleApiClient.connect();
                 }
+                break;
+            case REQUEST_PLACE_PICKER:
+                if (resultCode == Activity.RESULT_OK) {
+
+                    // The user has selected a place. Extract the name and address.
+                    final Place place = PlacePicker.getPlace(data, this);
+
+                    final CharSequence name = place.getName();
+                    final CharSequence address = place.getAddress();
+                    String attributions = PlacePicker.getAttributions(data);
+                    if (attributions == null) {
+                        attributions = "";
+                    }
+
+//            mViewName.setText(name);
+//            mViewAddress.setText(address);
+//            mViewAttributions.setText(Html.fromHtml(attributions));
+
+                } else {
+                    super.onActivityResult(requestCode, resultCode, data);
+                }
+
         }
     }
 
