@@ -85,6 +85,7 @@ public class ViewActivity extends ActionBarActivity implements
         
         Intent i = getIntent();
         if (i != null) {
+            Log.d("DEBUG", "Get the intent");
             String data = i.getStringExtra("data");
             if (data != null) {
                 Log.d("DEBUG", "Data is showing");
