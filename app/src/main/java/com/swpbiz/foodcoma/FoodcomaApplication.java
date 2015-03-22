@@ -14,6 +14,8 @@ import com.parse.ParseUser;
 public class FoodcomaApplication extends Application {
     private String APP_ID = "pF8mnLsZyo0WHQ87JiTCRk6BKHJw5S5XIixKSWRf";
     private String CLIENT_KEY = "A22nT1dRN0DFfoOlPCu8Sj7THo3QKCTArixwFa5I";
+    private String MY_PHONE_NUMBER;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -35,5 +37,13 @@ public class FoodcomaApplication extends Application {
         ParseACL.setDefaultACL(defaultACL, true);
 
 
+    }
+
+    public String getPhoneNumber() {
+        return MY_PHONE_NUMBER;
+    }
+
+    public void setPhoneNumber(String MY_PHONE_NUMBER) {
+        this.MY_PHONE_NUMBER = MY_PHONE_NUMBER;
     }
 }

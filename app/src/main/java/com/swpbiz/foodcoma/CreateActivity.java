@@ -7,9 +7,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.sleepbot.datetimepicker.time.RadialPickerLayout;
@@ -24,15 +22,13 @@ import java.util.Date;
 import com.parse.ParseInstallation;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
-import com.swpbiz.foodcoma.models.Invitation;
+import com.swpbiz.foodcoma.models.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 
 import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
 
 
 public class CreateActivity extends ActionBarActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
@@ -46,6 +42,7 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
     private String dateValue;
     private String timeValue;
     private Calendar calendar;
+    private String phonenumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,8 +88,9 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
 
             ParseQuery pushQuery = ParseInstallation.getQuery();
             ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-            String phonenumber = (String)installation.get("phonenumber");
-            pushQuery.whereEqualTo("phonenumber", phonenumber);
+            phonenumber = (String)installation.get("phonenumber");
+            // pushQuery.whereEqualTo("phonenumber", "16504850366");
+            pushQuery.whereEqualTo("phonenumber", phonenumber); // Receiver list (Currently set it to the owner for testing purpose)
             ParsePush push2 = new ParsePush();
 
             JSONObject data =  new JSONObject();
@@ -128,11 +126,28 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
         String location = tvLocation.getText().toString();
         String date = tvCreateDate.getText().toString();
         String time = tvCreateTime.getText().toString();
-        // Get friend list here
 
         Invitation invitation = new Invitation();
+        User owner = new User();
+        owner.setPhoneNumber(phonenumber);
+        owner.setName(phonenumber);
+        invitation.setOwner(owner);
         invitation.setMapUrl(location);
-        invitation.setTimeOfEvent(0); // set date/time later
+        invitation.setTimeOfEvent(getEpochTime()); // set date/time later
+
+        // List of people who will be invited
+        HashMap<String, User> invitedPeople = new HashMap<>();
+
+        // Create a dummy user
+        User dummyUser = new User();
+        dummyUser.setName("A");
+        dummyUser.setPhoneNumber(phonenumber); // Set it to YOUR phone number for testing purpose
+//        dummyUser.save();
+
+        invitedPeople.put(dummyUser.getPhoneNumber(), dummyUser);
+
+        invitation.setUsers(invitedPeople);
+//        invitation.save();
 
         return invitation;
     }

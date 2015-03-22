@@ -40,9 +40,29 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        FoodcomaApplication app = (FoodcomaApplication) getApplicationContext();
+        phoneNumber = app.getPhoneNumber();
 
-        SmsManager sm = SmsManager.getDefault();
-        sm.sendTextMessage("+1412-818-2411", null, "Hi", null, null);
+        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+        if (phoneNumber != null) {
+            installation.put("phonenumber", phoneNumber);
+            Log.d("DEBUG", phoneNumber + "");
+        }
+        // Save the current Installation to Parse.
+        installation.saveInBackground();
+
+        ParsePush.subscribeInBackground("", new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    List<String> subscribedChannels = ParseInstallation.getCurrentInstallation().getList("channels");
+                    Log.d("DEBUG", "Channel List: " + subscribedChannels.toString());
+                    Log.d("com.parse.push", "successfully subscribed to the broadcast channel.");
+                } else {
+                    Log.e("com.parse.push", "failed to subscribe for push", e);
+                }
+            }
+        });
 
       }
 
@@ -66,26 +86,6 @@ public class MainActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_create) {
-
-            ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-            if (phoneNumber != null) {
-                installation.put("phonenumber", phoneNumber);
-            }
-            // Save the current Installation to Parse.
-            installation.saveInBackground();
-
-            ParsePush.subscribeInBackground("", new SaveCallback() {
-                @Override
-                public void done(ParseException e) {
-                    if (e == null) {
-                        List<String> subscribedChannels = ParseInstallation.getCurrentInstallation().getList("channels");
-                        Log.d("DEBUG", "Channel List: " + subscribedChannels.toString());
-                        Log.d("com.parse.push", "successfully subscribed to the broadcast channel.");
-                    } else {
-                        Log.e("com.parse.push", "failed to subscribe for push", e);
-                    }
-                }
-            });
 
             Intent i = new Intent(MainActivity.this, CreateActivity.class);
             startActivity(i);

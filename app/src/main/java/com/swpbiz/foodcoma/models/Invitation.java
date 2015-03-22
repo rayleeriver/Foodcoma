@@ -1,20 +1,40 @@
 package com.swpbiz.foodcoma.models;
 
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Table;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+// @Table(name = "invitation")
 public class Invitation {
-    private String id;
-    private HashMap<User, Rsvp> users;
+
+    // @Column(name = "invitationId", unique = true)
+    private String invitationId;
+    // @Column(name = "users")
+    private HashMap<String, User> users;
+
+    // @Column(name = "owner")
+    private User owner;
+    // @Column(name = "mapUrl")
     private String mapUrl;
+    // @Column(name = "timeOfEvent")
     private long timeOfEvent;
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
 
     public String getMapUrl() {
         return mapUrl;
@@ -24,19 +44,19 @@ public class Invitation {
         this.mapUrl = mapUrl;
     }
 
-    public String getId() {
-        return id;
+    public String getInvitationId() {
+        return invitationId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setInvitationId(String id) {
+        this.invitationId = id;
     }
 
-    public HashMap<User, Rsvp> getUsers() {
+    public HashMap<String, User> getUsers() {
         return users;
     }
 
-    public void setUsers(HashMap<User, Rsvp> users) {
+    public void setUsers(HashMap<String, User> users) {
         this.users = users;
     }
 
@@ -54,8 +74,9 @@ public class Invitation {
 
         try {
             data.put("mapurl", mapUrl);
-            data.put("id",id);
+            data.put("invitationId",invitationId);
             data.put("timeofevent",timeOfEvent);
+            data.put("owner", owner.getJsonObject());
             usersJSONarray = new JSONArray();
             if (users != null && users.size() != 0) {
                 // Get a set of the entries
@@ -66,11 +87,11 @@ public class Invitation {
                 while (itr.hasNext()) {
                     Map.Entry me = (Map.Entry) itr.next();
                     User user;
+                    String phoneNumber;
                     JSONObject uobj = new JSONObject();
-                    user = (User) me.getKey();
+                    phoneNumber = (String) me.getKey();
+                    user = (User) me.getValue();
                     uobj = user.getJsonObject();
-                    Rsvp rsvp = (Rsvp) me.getValue();
-                    uobj.put("rsvp", rsvp);
                     usersJSONarray.put(uobj);
                 }
 
@@ -91,11 +112,17 @@ public class Invitation {
             JSONObject d = obj.getJSONObject("data");
             i.setTimeOfEvent(d.getLong("timeofevent"));
             i.setMapUrl(d.getString("mapurl"));
-//            i.setUsers();
+            JSONArray users = d.getJSONArray("users");
+            HashMap<String, User> usersHashMap = new HashMap<>();
+            for(int j = 0; j < users.length(); j++){
+                User user = User.getUserFromJsonObject(users.getJSONObject(j));
+                usersHashMap.put(user.getPhoneNumber(), user);
+            }
+            i.setUsers(usersHashMap);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
+        // i.save();
         return i;
     }
 

@@ -9,6 +9,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -23,7 +26,19 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.parse.ParseInstallation;
+import com.parse.ParsePush;
+import com.parse.ParseQuery;
 import com.swpbiz.foodcoma.models.Invitation;
+import com.swpbiz.foodcoma.models.User;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 
 
 public class ViewActivity extends ActionBarActivity implements
@@ -37,6 +52,15 @@ public class ViewActivity extends ActionBarActivity implements
     private LocationRequest locationRequest;
     private long UPDATE_INTERVAL = 60000;
     private long FASTEST_INTERVAL = 5000;
+    private TextView tvTime;
+    private TextView tvDate;
+    private TextView tvEventName;
+    private TextView tvCreator;
+    private RelativeLayout rlAccept;
+    private RelativeLayout rlReject;
+    private Invitation invitation;
+    private User user;
+
 
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
@@ -44,6 +68,8 @@ public class ViewActivity extends ActionBarActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view);
+
+        setupViews();
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentMap);
         if (mapFragment != null) {
@@ -61,13 +87,82 @@ public class ViewActivity extends ActionBarActivity implements
         if (i != null) {
             String data = i.getStringExtra("data");
             if (data != null) {
+                Log.d("DEBUG", "Data is showing");
                 Log.d("DEBUG", data);
-                Invitation inv = Invitation.getInvitationFromJsonObject(data);
+                invitation = Invitation.getInvitationFromJsonObject(data);
+                tvDate.setText(getDateFromEpoch(invitation.getTimeOfEvent()));
+                tvTime.setText(getTimeFromEpoch(invitation.getTimeOfEvent()));
             }
         }
 
     }
 
+    private void setupViews() {
+        tvDate = (TextView) findViewById(R.id.tvDate);
+        tvTime = (TextView) findViewById(R.id.tvTime);
+        tvEventName = (TextView) findViewById(R.id.tvEventName);
+        tvCreator = (TextView) findViewById(R.id.tvCreator);
+        rlAccept = (RelativeLayout) findViewById(R.id.rlAccept);
+        rlReject = (RelativeLayout) findViewById(R.id.rlReject);
+
+
+        // When the user clicks 'Accept' (I'm going)
+        rlAccept.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Send 'Accept' push noti to everyone
+                ParseQuery pushQuery = ParseInstallation.getQuery();
+                ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+                String phonenumber = (String)installation.get("phonenumber");
+                HashMap<String, User> users = invitation.getUsers();
+                User user = users.get(phonenumber);
+                user.setRsvp("ACCEPTED");
+
+                // pushQuery.whereEqualTo("phonenumber", phonenumber);
+
+                ParsePush push2 = new ParsePush();
+
+                JSONObject data =  new JSONObject();
+                try {
+                    data.put("title","Foodcoma");
+                    data.put("alert", phonenumber + " has accepted invitation");
+                    data.put("data", invitation.getJsonObject());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                push2.setQuery(pushQuery); // Set our Installation query
+                push2.setData(data);
+                push2.sendInBackground();
+            }
+        });
+
+        rlReject.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: send reject push noti
+            }
+        });
+
+    }
+
+    private String getTimeFromEpoch(long time) {
+        Date date = new Date(time);
+        DateFormat format = new SimpleDateFormat("HH:mmaa");
+        // format.setTimeZone(TimeZone.getTimeZone("Australia/Sydney"));
+        String formatted = format.format(date);
+
+        return formatted;
+    }
+
+    private String getDateFromEpoch(long time) {
+        Date date = new Date(time);
+        DateFormat format = new SimpleDateFormat("MMM D");
+        // format.setTimeZone(TimeZone.getTimeZone("Australia/Sydney"));
+        String formatted = format.format(date);
+
+        return formatted;
+    }
 
     protected void loadMap(GoogleMap googleMap) {
         map = googleMap;

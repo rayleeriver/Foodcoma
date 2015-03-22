@@ -1,9 +1,16 @@
 package com.swpbiz.foodcoma;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
+import android.telephony.gsm.SmsManager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 
 public class SetNumberActivity extends ActionBarActivity {
@@ -12,6 +19,30 @@ public class SetNumberActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_number);
+
+        Button btPhoneNumber = (Button) findViewById(R.id.btPhoneNumber);
+        final EditText etPhoneNumber = (EditText) findViewById(R.id.etPhoneNumber);
+        etPhoneNumber.setText(getNumber());
+
+
+        btPhoneNumber.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String ownerNumber = etPhoneNumber.getText().toString();
+                FoodcomaApplication app = (FoodcomaApplication) getApplicationContext();
+                app.setPhoneNumber(ownerNumber);
+                SmsManager sm = SmsManager.getDefault();
+                sm.sendTextMessage(ownerNumber, null, "Hi", null, null);
+                // TODO: save it to sharedPreference
+                Intent i = new Intent(SetNumberActivity.this, MainActivity.class);
+                startActivity(i);
+            }
+        });
+    }
+
+    private String getNumber() {
+        TelephonyManager tm = (TelephonyManager)getSystemService(TELEPHONY_SERVICE);
+        return tm.getLine1Number();
     }
 
 
