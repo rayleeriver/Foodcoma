@@ -1,0 +1,39 @@
+package com.swpbiz.foodcoma;
+
+import android.app.Application;
+
+import com.parse.Parse;
+import com.parse.ParseACL;
+import com.parse.ParseCrashReporting;
+import com.parse.ParseInstallation;
+import com.parse.ParseUser;
+
+/**
+ * Created by abgandhi on 3/17/15.
+ */
+public class FoodcomaApplication extends Application {
+    private String APP_ID = "pF8mnLsZyo0WHQ87JiTCRk6BKHJw5S5XIixKSWRf";
+    private String CLIENT_KEY = "A22nT1dRN0DFfoOlPCu8Sj7THo3QKCTArixwFa5I";
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        // Initialize Crash Reporting.
+        ParseCrashReporting.enable(this);
+
+        // Enable Local Datastore.
+        Parse.enableLocalDatastore(this);
+
+        // Add your initialization code here
+        Parse.initialize(this, APP_ID, CLIENT_KEY);
+
+
+        ParseUser.enableAutomaticUser();
+        ParseACL defaultACL = new ParseACL();
+        // Optionally enable public read access.
+        // defaultACL.setPublicReadAccess(true);
+        ParseACL.setDefaultACL(defaultACL, true);
+
+
+    }
+}

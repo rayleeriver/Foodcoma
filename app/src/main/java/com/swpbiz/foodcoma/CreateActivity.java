@@ -20,6 +20,16 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+
+import com.parse.ParseInstallation;
+import com.parse.ParsePush;
+import com.parse.ParseQuery;
+import com.swpbiz.foodcoma.models.Invitation;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
@@ -78,6 +88,26 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
             Invitation invitation = createInvitation();
             Log.d("DEBUG", "location " + invitation.getMapUrl());
             Log.d("DEBUG", "datetime " + invitation.getTimeOfEvent());
+
+            ParseQuery pushQuery = ParseInstallation.getQuery();
+            ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+            String phonenumber = (String)installation.get("phonenumber");
+            pushQuery.whereEqualTo("phonenumber", phonenumber);
+            ParsePush push2 = new ParsePush();
+
+            JSONObject data =  new JSONObject();
+            try {
+                data.put("title","Foodcoma");
+                data.put("alert","New Invitation");
+                data.put("data", invitation.getJsonObject());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            push2.setQuery(pushQuery); // Set our Installation query
+            push2.setData(data);
+            push2.sendInBackground();
+
             Intent i = new Intent(CreateActivity.this, ViewActivity.class);
             startActivity(i);
             return true;
