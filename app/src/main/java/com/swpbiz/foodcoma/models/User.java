@@ -24,6 +24,15 @@ public class User {
 //    @Column(name = "rsvp")
     private String rsvp;
 
+    public User() {
+        userId = "";
+        phoneNumber = "";
+        name = "";
+        avatar = "";
+        location = "";
+        rsvp = "";
+    }
+
     public String getUserId() {
         return userId;
     }
@@ -93,7 +102,7 @@ public class User {
         User user = new User();
         try {
             user.setName(data.getString("name"));
-            user.setUserId(data.getString("userId"));
+           user.setUserId(data.getString("userId"));
             user.setPhoneNumber(data.getString("phonenumber"));
             user.setAvatar(data.getString("avatar"));
             user.setLocation(data.getString("location"));
