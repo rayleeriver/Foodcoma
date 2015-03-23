@@ -28,6 +28,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 
 import com.parse.ParseInstallation;
@@ -41,6 +42,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -149,17 +151,6 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
             ParseQuery pushQuery = ParseInstallation.getQuery();
             ParseInstallation installation = ParseInstallation.getCurrentInstallation();
             phonenumber = (String)installation.get("phonenumber");
-            // pushQuery.whereEqualTo("phonenumber", "16504850366");
-
-            // Loop through the list of invited users
-            Iterator iterator = invitation.getUsers().entrySet().iterator();
-            while(iterator.hasNext()){
-                HashMap.Entry<String, User> pair = (HashMap.Entry<String, User>)iterator.next();
-                pushQuery.whereEqualTo("phonenumber", pair.getKey());
-                Log.d("DEBUG-Receiver", pair.getKey());
-            }
-
-            ParsePush push2 = new ParsePush();
 
             JSONObject data =  new JSONObject();
             try {
@@ -170,6 +161,9 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
                 e.printStackTrace();
             }
 
+            ArrayList<String> phoneNumbers = new ArrayList<String>(invitation.getUsers().keySet());
+            pushQuery.whereContainedIn("phonenumber", phoneNumbers);
+            ParsePush push2 = new ParsePush();
             push2.setQuery(pushQuery); // Set our Installation query
             push2.setData(data);
             push2.sendInBackground();
