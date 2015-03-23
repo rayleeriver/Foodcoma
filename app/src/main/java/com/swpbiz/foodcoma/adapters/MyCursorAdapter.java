@@ -11,10 +11,12 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.swpbiz.foodcoma.R;
+import com.swpbiz.foodcoma.models.User;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -22,7 +24,7 @@ import java.util.Set;
 
 public class MyCursorAdapter extends CursorAdapter {
 
-    Set<String> namesSelected = new HashSet<String>();
+    Set<User> namesSelected = new HashSet<User>();
 
     public MyCursorAdapter(Context context, Cursor c) {
         super(context, c, 0);
@@ -51,8 +53,9 @@ public class MyCursorAdapter extends CursorAdapter {
 
         Cursor phones = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
                 ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + contactId, null, null);
+        String phoneNumber = "N/A";
         if (phones.moveToFirst()) {
-            String phoneNumber = phones.getString(phones.getColumnIndex("data1"));
+            phoneNumber = phones.getString(phones.getColumnIndex("data1"));
             if (phoneNumber != null) {
                 TextView tv = (TextView) view.findViewById(R.id.tvPhoneNumber);
                 tv.setText(phoneNumber);
@@ -70,20 +73,30 @@ public class MyCursorAdapter extends CursorAdapter {
             Picasso.with(context).load(photoUri).into(iv);
         }
 
+        RelativeLayout rlContactItem = (RelativeLayout) view.findViewById(R.id.rlContactItem);
+        // TODO: Vee will take care of the UI
+
         CheckBox cb = (CheckBox) view.findViewById(R.id.cbSelected);
+        final String finalPhoneNumber = phoneNumber;
         cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    namesSelected.add(name);
+                    User aUser = new User();
+                    aUser.setName(name);
+                    aUser.setPhoneNumber(finalPhoneNumber);
+                    aUser.setUserId(finalPhoneNumber);
+                    aUser.setRsvp("MAYBE");
+                    namesSelected.add(aUser);
+
                 } else {
-                    namesSelected.remove(name);
+                    // namesSelected.remove(name);
                 }
             }
         });
     }
 
-    public Set<String> getNamesSelected() {
+    public Set<User> getNamesSelected() {
         return namesSelected;
     }
 
