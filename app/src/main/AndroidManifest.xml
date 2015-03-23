@@ -64,11 +64,6 @@
             android:label="@string/title_activity_set_number" >
         </activity>
 
-        <activity
-            android:name=".activities.ContactsActivity"
-            android:label="@string/title_activity_contacts" >
-        </activity>
-
         <service android:name="com.parse.PushService" />
         <receiver android:name="com.parse.ParseBroadcastReceiver">
             <intent-filter>
