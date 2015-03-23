@@ -75,9 +75,9 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
                     CursorLoader cursorLoader = new CursorLoader(CreateActivity.this,
                             ContactsContract.Contacts.CONTENT_URI, // URI
                             projectionFields,  // projection fields
-                            "HAS_PHONE_NUMBER != '0'", // the selection criteria
+                            ContactsContract.Contacts.HAS_PHONE_NUMBER + " != '0'", // the selection criteria
                             null, // the selection args
-                            null // the sort order
+                            ContactsContract.Contacts.DISPLAY_NAME + " ASC" // the sort order
                     );
                     // Return the loader for use
                     return cursorLoader;
