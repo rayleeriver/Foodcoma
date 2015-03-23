@@ -16,6 +16,7 @@ import com.parse.ParseInstallation;
 import com.parse.ParsePush;
 import com.parse.SaveCallback;
 import com.swpbiz.foodcoma.R;
+import com.swpbiz.foodcoma.services.AndroidLocationServices;
 
 import java.util.List;
 
@@ -44,7 +45,13 @@ public class MainActivity extends ActionBarActivity {
             String[] names = getIntent().getExtras().getStringArray("names");
             Toast.makeText(this, "Names selected: " + TextUtils.join(", ", names), Toast.LENGTH_SHORT).show();
         }
-      }
+
+//        Intent i = new Intent(MainActivity.this, LocationIntentService.class);
+//        startService(i);
+
+        Intent intent = new Intent(this, AndroidLocationServices.class);
+        startService(intent);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
