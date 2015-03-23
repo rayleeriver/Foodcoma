@@ -105,24 +105,6 @@ public class ViewActivity extends ActionBarActivity implements
 
     }
 
-
-    public void onPickButtonClick(View v) {
-        // Construct an intent for the place picker
-        try {
-            PlacePicker.IntentBuilder intentBuilder =
-                    new PlacePicker.IntentBuilder();
-            Intent intent = intentBuilder.build(this);
-            // Start the intent by requesting a result,
-            // identified by a request code.
-            startActivityForResult(intent, REQUEST_PLACE_PICKER);
-
-        } catch (GooglePlayServicesRepairableException e) {
-            // ...
-        } catch (GooglePlayServicesNotAvailableException e) {
-            // ...
-        }
-    }
-
     private void setupViews() {
         tvDate = (TextView) findViewById(R.id.tvDate);
         tvTime = (TextView) findViewById(R.id.tvTime);
@@ -130,14 +112,6 @@ public class ViewActivity extends ActionBarActivity implements
         tvCreator = (TextView) findViewById(R.id.tvCreator);
         rlAccept = (RelativeLayout) findViewById(R.id.rlAccept);
         rlReject = (RelativeLayout) findViewById(R.id.rlReject);
-
-        tvEventName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onPickButtonClick(v);
-            }
-        });
-
 
         // When the user clicks 'Accept' (I'm going)
         rlAccept.setOnClickListener(new View.OnClickListener() {
@@ -265,28 +239,6 @@ public class ViewActivity extends ActionBarActivity implements
                     case Activity.RESULT_OK:
                         googleApiClient.connect();
                 }
-                break;
-            case REQUEST_PLACE_PICKER:
-                if (resultCode == Activity.RESULT_OK) {
-
-                    // The user has selected a place. Extract the name and address.
-                    final Place place = PlacePicker.getPlace(data, this);
-
-                    final CharSequence name = place.getName();
-                    final CharSequence address = place.getAddress();
-                    String attributions = PlacePicker.getAttributions(data);
-                    if (attributions == null) {
-                        attributions = "";
-                    }
-
-//            mViewName.setText(name);
-//            mViewAddress.setText(address);
-//            mViewAttributions.setText(Html.fromHtml(attributions));
-
-                } else {
-                    super.onActivityResult(requestCode, resultCode, data);
-                }
-
         }
     }
 
