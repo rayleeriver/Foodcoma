@@ -28,13 +28,17 @@ public class LocationUpdatedAsyncTask extends AsyncTask {
         ParseQuery pushQuery = ParseInstallation.getQuery();
         ParseInstallation installation = ParseInstallation.getCurrentInstallation();
         phonenumber = (String)installation.get("phonenumber");
-//        pushQuery.whereEqualTo("phonenumber", phonenumber); // Receiver list (Currently set it to the owner for testing purpose)
+
+        if (phonenumber == null) {
+            return null;
+        }
+
         ParsePush push = new ParsePush();
 
         JSONObject data =  new JSONObject();
         try {
             data.put("title","location update for " + phonenumber);
-            data.put("alert","New Invitation");
+            data.put("alert","Location update for " + phonenumber);
 
             JSONObject latlng = new JSONObject();
             latlng.put("lat", location.getLatitude());
@@ -54,7 +58,8 @@ public class LocationUpdatedAsyncTask extends AsyncTask {
 
     @Override
     protected void onPostExecute(Object o) {
-        Toast.makeText(context, "Location changed to: " + location.toString(), Toast.LENGTH_SHORT).show();
-
+        if (location != null) {
+            Toast.makeText(context, "Location changed to: " + location.toString(), Toast.LENGTH_SHORT).show();
+        }
     }
 }
