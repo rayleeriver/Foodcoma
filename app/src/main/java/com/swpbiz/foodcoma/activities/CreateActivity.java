@@ -26,6 +26,7 @@ import com.swpbiz.foodcoma.models.Invitation;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -39,6 +40,8 @@ import org.json.JSONObject;
 
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -147,7 +150,15 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
             ParseInstallation installation = ParseInstallation.getCurrentInstallation();
             phonenumber = (String)installation.get("phonenumber");
             // pushQuery.whereEqualTo("phonenumber", "16504850366");
-            pushQuery.whereEqualTo("phonenumber", phonenumber); // Receiver list (Currently set it to the owner for testing purpose)
+
+            // Loop through the list of invited users
+            Iterator iterator = invitation.getUsers().entrySet().iterator();
+            while(iterator.hasNext()){
+                HashMap.Entry<String, User> pair = (HashMap.Entry<String, User>)iterator.next();
+                pushQuery.whereEqualTo("phonenumber", pair.getKey());
+                Log.d("DEBUG-Receiver", pair.getKey());
+            }
+
             ParsePush push2 = new ParsePush();
 
             JSONObject data =  new JSONObject();
@@ -193,14 +204,7 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
         String date = tvCreateDate.getText().toString();
         String time = tvCreateTime.getText().toString();
 
-        Set<User> namesSelected = adapter.getNamesSelected();
-        User friends[] = namesSelected.toArray(new User[namesSelected.size()]);
-        for(int i = 0; i < friends.length; i++) {
-            Log.d("DEBUG-FRIENDS", friends[i].getName() + " " + friends[i].getPhoneNumber());
-        }
-
         Invitation invitation = new Invitation();
-
 
         SharedPreferences sharedPref = getSharedPreferences("foodcoma", Context.MODE_PRIVATE);
         phonenumber = sharedPref.getString(getString(R.string.my_phone_number), null);
@@ -211,22 +215,22 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
         invitation.setOwner(owner);
         invitation.setMapUrl(location);
         invitation.setTimeOfEvent(getEpochTime()); // set date/time later
-
-        // List of people who will be invited
-        HashMap<String, User> invitedPeople = new HashMap<>();
-
-        // Create a dummy user
-        User dummyUser = new User();
-        dummyUser.setName("A");
-        dummyUser.setPhoneNumber(phonenumber); // Set it to YOUR phone number for testing purpose
-//        dummyUser.save();
-
-        invitedPeople.put(dummyUser.getPhoneNumber(), dummyUser);
-
-        invitation.setUsers(invitedPeople);
+        invitation.setUsers(getFriendsSelected());
 //        invitation.save();
 
         return invitation;
+    }
+
+    private HashMap<String, User> getFriendsSelected() {
+        // List of people who will be invited
+        Set<User> friendsSelected = adapter.getNamesSelected();
+        User friends[] = friendsSelected.toArray(new User[friendsSelected.size()]);
+        HashMap<String, User> invitedFriends = new HashMap<>();
+        for(int i = 0; i < friends.length; i++) {
+            invitedFriends.put(friends[i].getPhoneNumber(), friends[i]);
+            Log.d("DEBUG-FRIENDS", friends[i].getName() + " " + friends[i].getPhoneNumber());
+        }
+        return invitedFriends;
     }
 
     private void setDateTimePickerListener() {
