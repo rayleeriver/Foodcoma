@@ -49,16 +49,15 @@ import java.util.HashMap;
 
 public class ViewActivity extends ActionBarActivity implements
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+        GoogleApiClient.OnConnectionFailedListener {
 
     private static final int REQUEST_PLACE_PICKER = 12123;
     private SupportMapFragment mapFragment;
     private GoogleMap map;
     private GoogleApiClient googleApiClient;
-    private LocationRequest locationRequest;
-    private long UPDATE_INTERVAL = 60000;
-    private long FASTEST_INTERVAL = 5000;
+//    private LocationRequest locationRequest;
+//    private long UPDATE_INTERVAL = 60000;
+//    private long FASTEST_INTERVAL = 5000;
     private TextView tvTime;
     private TextView tvDate;
     private TextView tvEventName;
@@ -261,29 +260,29 @@ public class ViewActivity extends ActionBarActivity implements
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
             CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
             map.animateCamera(cameraUpdate);
-            startLocationUpdates();
+//            startLocationUpdates();
         } else {
             Toast.makeText(this, "Error - current location is null, enable GPS!", Toast.LENGTH_SHORT).show();
         }
     }
 
-    protected void startLocationUpdates() {
-        locationRequest = new LocationRequest();
-        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        locationRequest.setInterval(UPDATE_INTERVAL);
-        locationRequest.setFastestInterval(FASTEST_INTERVAL);
-        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient,
-                locationRequest, this);
-    }
+//    protected void startLocationUpdates() {
+//        locationRequest = new LocationRequest();
+//        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+//        locationRequest.setInterval(UPDATE_INTERVAL);
+//        locationRequest.setFastestInterval(FASTEST_INTERVAL);
+//        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient,
+//                locationRequest, this);
+//    }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        String msg = "Update location: " +
-                Double.toString(location.getLatitude()) + ", " +
-                Double.toString(location.getLongitude());
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-    }
-
+//    @Override
+//    public void onLocationChanged(Location location) {
+//        String msg = "Update location: " +
+//                Double.toString(location.getLatitude()) + ", " +
+//                Double.toString(location.getLongitude());
+//        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+//    }
+//
     @Override
     public void onConnectionSuspended(int i) {
         if (i == CAUSE_SERVICE_DISCONNECTED)
