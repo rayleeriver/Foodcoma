@@ -1,6 +1,8 @@
 package com.swpbiz.foodcoma.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -129,6 +131,11 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
         String time = tvCreateTime.getText().toString();
 
         Invitation invitation = new Invitation();
+
+
+        SharedPreferences sharedPref = getSharedPreferences("foodcoma", Context.MODE_PRIVATE);
+        phonenumber = sharedPref.getString(getString(R.string.my_phone_number), null);
+
         User owner = new User();
         owner.setPhoneNumber(phonenumber);
         owner.setName(phonenumber);

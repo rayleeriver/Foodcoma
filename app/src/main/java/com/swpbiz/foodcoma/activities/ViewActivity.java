@@ -125,7 +125,7 @@ public class ViewActivity extends ActionBarActivity implements
                 User user = users.get(phonenumber);
                 user.setRsvp("ACCEPTED");
 
-                // pushQuery.whereEqualTo("phonenumber", phonenumber);
+                pushQuery.whereEqualTo("phonenumber", phonenumber);
 
                 ParsePush push2 = new ParsePush();
 

@@ -28,6 +28,12 @@ public class Invitation {
     // @Column(name = "timeOfEvent")
     private long timeOfEvent;
 
+    public Invitation(){
+        invitationId = "";
+        mapUrl = "";
+        timeOfEvent = 0;
+    }
+
     public User getOwner() {
         return owner;
     }
@@ -112,6 +118,7 @@ public class Invitation {
             JSONObject d = obj.getJSONObject("data");
             i.setTimeOfEvent(d.getLong("timeofevent"));
             i.setMapUrl(d.getString("mapurl"));
+            i.setOwner(User.getUserFromJsonObject(d.getJSONObject("owner")));
             JSONArray users = d.getJSONArray("users");
             HashMap<String, User> usersHashMap = new HashMap<>();
             for(int j = 0; j < users.length(); j++){
