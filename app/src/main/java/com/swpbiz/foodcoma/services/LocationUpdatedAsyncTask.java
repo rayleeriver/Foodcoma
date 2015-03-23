@@ -49,6 +49,7 @@ public class LocationUpdatedAsyncTask extends AsyncTask {
             e.printStackTrace();
         }
 
+        pushQuery.whereNotEqualTo("phonenumber", phonenumber);
         push.setQuery(pushQuery); // Set our Installation query
         push.setData(data);
         push.sendInBackground();
