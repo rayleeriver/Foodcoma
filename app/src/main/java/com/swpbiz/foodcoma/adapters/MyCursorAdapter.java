@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.provider.ContactsContract;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import com.squareup.picasso.Picasso;
 import com.swpbiz.foodcoma.R;
 import com.swpbiz.foodcoma.models.User;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,9 +27,16 @@ import java.util.Set;
 public class MyCursorAdapter extends CursorAdapter {
 
     Set<User> namesSelected = new HashSet<User>();
+    // private ArrayList<Boolean> itemChecked = new ArrayList<Boolean>();
+    private SparseBooleanArray itemChecked = new SparseBooleanArray();
 
     public MyCursorAdapter(Context context, Cursor c) {
+
         super(context, c, 0);
+        Log.d("DEBUG-cursor", this.getCount() + " ");
+//        for (int i = 0; i < this.getCount(); i++) {
+//            itemChecked.add(i, false); // initializes all items value with false
+//        }
     }
 
     @Override
@@ -38,6 +47,7 @@ public class MyCursorAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         int contactId = cursor.getInt(0);
+        final int pos = cursor.getPosition();
 
         Cursor c = context.getContentResolver().query(
                 ContactsContract.Data.CONTENT_URI,
@@ -50,6 +60,7 @@ public class MyCursorAdapter extends CursorAdapter {
                         + ContactsContract.Contacts.Data.MIMETYPE + "='"
                         + ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE + "'",
                 new String[]{String.valueOf(contactId)}, null);
+
 
         Cursor phones = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
                 ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + contactId, null, null);
@@ -76,24 +87,33 @@ public class MyCursorAdapter extends CursorAdapter {
         RelativeLayout rlContactItem = (RelativeLayout) view.findViewById(R.id.rlContactItem);
         // TODO: Vee will take care of the UI
 
-        CheckBox cb = (CheckBox) view.findViewById(R.id.cbSelected);
+        final CheckBox cb = (CheckBox) view.findViewById(R.id.cbSelected);
         final String finalPhoneNumber = phoneNumber;
-        cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+        cb.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
+            public void onClick(View v) {
+                if (cb.isChecked()) {
                     User aUser = new User();
                     aUser.setName(name);
                     aUser.setPhoneNumber(finalPhoneNumber);
                     aUser.setUserId(finalPhoneNumber);
                     aUser.setRsvp("MAYBE");
                     namesSelected.add(aUser);
+                    Log.d("DEBUG-onChecked", name);
+                    itemChecked.put(pos, true);
 
                 } else {
                     // namesSelected.remove(name);
+                    itemChecked.put(pos, false);
                 }
+
             }
         });
+
+        Log.d("DEBUG-cb", cursor.getPosition() + " " + itemChecked.get(cursor.getPosition()));
+        cb.setChecked(itemChecked.get(cursor.getPosition()));
+
     }
 
     public Set<User> getNamesSelected() {

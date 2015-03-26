@@ -49,6 +49,10 @@ public class SetNumberActivity extends ActionBarActivity {
                 SmsManager sm = SmsManager.getDefault();
                 sm.sendTextMessage(ownerNumber, null, "Hi", null, null);
 
+                // Override
+                savePhoneNumber(ownerNumber);
+                closeActivity();
+
                 // Now you're waiting. SmsReceiver will be the one who closes this activity.
             }
         });
