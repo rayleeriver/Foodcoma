@@ -11,9 +11,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.parse.LogInCallback;
+import com.parse.ParseAnonymousUtils;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.parse.ParsePush;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.swpbiz.foodcoma.R;
 import com.swpbiz.foodcoma.services.AndroidLocationServices;
@@ -45,6 +48,20 @@ public class MainActivity extends ActionBarActivity {
             String[] names = getIntent().getExtras().getStringArray("names");
             Toast.makeText(this, "Names selected: " + TextUtils.join(", ", names), Toast.LENGTH_SHORT).show();
         }
+
+        ParseAnonymousUtils.logIn(new LogInCallback() {
+            @Override
+            public void done(ParseUser user, ParseException e) {
+                if (e != null) {
+                    Log.d("MyApp", "Anonymous login failed.");
+                } else {
+                    Log.d("MyApp", "Anonymous user logged in.");
+                }
+            }
+        });
+
+
+        ParseUser.getCurrentUser().saveInBackground();
 
 //        Intent i = new Intent(MainActivity.this, LocationIntentService.class);
 //        startService(i);

@@ -18,6 +18,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.fourmob.datetimepicker.date.DatePickerDialog;
+import com.parse.ParseObject;
 import com.sleepbot.datetimepicker.time.RadialPickerLayout;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
 import com.swpbiz.foodcoma.R;
@@ -148,9 +149,28 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
             Log.d("DEBUG", "location " + invitation.getMapUrl());
             Log.d("DEBUG", "datetime " + invitation.getTimeOfEvent());
 
+
             ParseQuery pushQuery = ParseInstallation.getQuery();
             ParseInstallation installation = ParseInstallation.getCurrentInstallation();
             phonenumber = (String)installation.get("phonenumber");
+
+            //      ParseUser parseuser = ParseUser.getCurrentUser();
+            //       parseuser.put("phonenumber",phonenumber);
+            //       parseuser.put("invitationid",invitation.getInvitationId());
+            //       parseuser.saveInBackground();
+
+            ParseObject parseinvitation = new ParseObject("Invitation");
+            parseinvitation.put("timeofevent", invitation.getTimeOfEvent());
+            if (parseinvitation.get("invitationid") == null || parseinvitation.get("invitationid").toString().isEmpty()) {
+                parseinvitation.put("invitationid", 0);
+
+            }
+            parseinvitation.put("mapurl", invitation.getMapUrl());
+            parseinvitation.increment("invitationid");
+
+            parseinvitation.saveInBackground();
+
+            invitation.setInvitationId(parseinvitation.getString("invitationid"));
 
             JSONObject data =  new JSONObject();
             try {
@@ -327,5 +347,10 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
         Log.d("DEBUG-EPOCH", epoch + "");
         return epoch;
 
+    }
+
+    public void findRestaurants(View view) {
+        Intent i = new Intent(CreateActivity.this, RestaurantActivity.class);
+        startActivity(i);
     }
 }
