@@ -154,22 +154,15 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
             ParseInstallation installation = ParseInstallation.getCurrentInstallation();
             phonenumber = (String)installation.get("phonenumber");
 
-            //      ParseUser parseuser = ParseUser.getCurrentUser();
-            //       parseuser.put("phonenumber",phonenumber);
-            //       parseuser.put("invitationid",invitation.getInvitationId());
-            //       parseuser.saveInBackground();
-
             ParseObject parseinvitation = new ParseObject("Invitation");
             parseinvitation.put("timeofevent", invitation.getTimeOfEvent());
             if (parseinvitation.get("invitationid") == null || parseinvitation.get("invitationid").toString().isEmpty()) {
-                parseinvitation.put("invitationid", 0);
-
+                parseinvitation.put("invitationid", 1);
             }
             parseinvitation.put("mapurl", invitation.getMapUrl());
-            parseinvitation.increment("invitationid");
-
+            ArrayList<String> userPhonenumberList = new ArrayList<String>(invitation.getUsers().keySet());
+            parseinvitation.put("users",userPhonenumberList);
             parseinvitation.saveInBackground();
-
             invitation.setInvitationId(parseinvitation.getString("invitationid"));
 
             JSONObject data =  new JSONObject();

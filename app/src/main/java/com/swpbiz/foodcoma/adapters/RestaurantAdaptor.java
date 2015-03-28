@@ -34,12 +34,14 @@ public class RestaurantAdaptor extends ArrayAdapter<Restaurant> {
         TextView tvresname = (TextView) convertView.findViewById(R.id.tvrestaurantname);
         TextView tvrating = (TextView) convertView.findViewById(R.id.tvrating);
         TextView tvpricelevel = (TextView) convertView.findViewById(R.id.tvpricelevel);
+        TextView tvaddress = (TextView) convertView.findViewById(R.id.tvaddress);
         ImageView ivicon = (ImageView) convertView.findViewById(R.id.Iviconurl);
         ImageView ivresphoto = (ImageView) convertView.findViewById(R.id.Ivrestauranrphoto);
 
         tvresname.setText(res.getName());
         tvrating.setText(res.getRating());
         tvpricelevel.setText(res.getPriceLevel());
+        tvaddress.setText(res.getResAddress());
 
         ivicon.setImageResource(0);
         Picasso.with(getContext()).load(res.getIconurl()).into(ivicon);

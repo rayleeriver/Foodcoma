@@ -18,6 +18,15 @@ public class Restaurant {
     String priceLevel;
     String rating;
     String photoReference;
+    String resAddress;
+
+    public String getResAddress() {
+        return resAddress;
+    }
+
+    public void setResAddress(String resAddress) {
+        this.resAddress = resAddress;
+    }
 
     public String getPhotoReference() {
         return photoReference;
@@ -104,8 +113,8 @@ public class Restaurant {
                 } else {
                     res.setPriceLevel("");
                 }
-                if ( jres.has("id") && jres.getString("id") != null) {
-                    res.setRestaurantId(jres.getString("id"));
+                if ( jres.has("place_id") && jres.getString("place_id") != null) {
+                    res.setRestaurantId(jres.getString("place_id"));
                 } else {
                     res.setRestaurantId("");
                 }

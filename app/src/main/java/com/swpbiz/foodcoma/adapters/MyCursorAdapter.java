@@ -88,6 +88,7 @@ public class MyCursorAdapter extends CursorAdapter {
         // TODO: Vee will take care of the UI
 
         final CheckBox cb = (CheckBox) view.findViewById(R.id.cbSelected);
+        phoneNumber = phoneNumber.replaceAll("[^0-9]", ""); // get Digits from string
         final String finalPhoneNumber = phoneNumber;
 
         cb.setOnClickListener(new View.OnClickListener() {

@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/tvrestaurantname"
         android:text=""
-        android:id="@+id/tvopenow" />
+        android:id="@+id/tvaddress" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -44,7 +44,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/tvrating"
-        android:layout_below="@+id/tvopenow"
+        android:layout_below="@+id/tvaddress"
         android:text=""
         android:id="@+id/tvpricelevel" />
 
