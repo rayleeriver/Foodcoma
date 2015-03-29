@@ -37,6 +37,7 @@ import com.parse.ParseQuery;
 import com.swpbiz.foodcoma.R;
 import com.swpbiz.foodcoma.models.Invitation;
 import com.swpbiz.foodcoma.models.User;
+import com.swpbiz.foodcoma.utils.MyDateTimeUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -95,10 +96,11 @@ public class ViewActivity extends ActionBarActivity implements
             String data = i.getStringExtra("data");
             if (data != null) {
                 Log.d("DEBUG", "Data is showing");
-                Log.d("DEBUG", data);
+                Log.d("DEBUG-view", data);
                 invitation = Invitation.getInvitationFromJsonObject(data);
-                tvDate.setText(getDateFromEpoch(invitation.getTimeOfEvent()));
-                tvTime.setText(getTimeFromEpoch(invitation.getTimeOfEvent()));
+                tvDate.setText(MyDateTimeUtil.getDateFromEpoch(invitation.getTimeOfEvent()));
+                tvTime.setText(MyDateTimeUtil.getTimeFromEpoch(invitation.getTimeOfEvent()));
+                tvCreator.setText(invitation.getOwner().getName());
             }
         }
 
@@ -150,24 +152,6 @@ public class ViewActivity extends ActionBarActivity implements
             }
         });
 
-    }
-
-    private String getTimeFromEpoch(long time) {
-        Date date = new Date(time);
-        DateFormat format = new SimpleDateFormat("HH:mmaa");
-        // format.setTimeZone(TimeZone.getTimeZone("Australia/Sydney"));
-        String formatted = format.format(date);
-
-        return formatted;
-    }
-
-    private String getDateFromEpoch(long time) {
-        Date date = new Date(time);
-        DateFormat format = new SimpleDateFormat("MMM d");
-        // format.setTimeZone(TimeZone.getTimeZone("Australia/Sydney"));
-        String formatted = format.format(date);
-
-        return formatted;
     }
 
     protected void loadMap(GoogleMap googleMap) {
