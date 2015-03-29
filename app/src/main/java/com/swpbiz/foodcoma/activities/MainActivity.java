@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -30,8 +31,12 @@ import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 import com.swpbiz.foodcoma.FoodcomaApplication;
 import com.swpbiz.foodcoma.R;
+import com.swpbiz.foodcoma.adapters.InvitationsArrayAdapter;
+import com.swpbiz.foodcoma.models.Invitation;
+import com.swpbiz.foodcoma.models.User;
 import com.swpbiz.foodcoma.services.AndroidLocationServices;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -42,7 +47,9 @@ public class MainActivity extends ActionBarActivity implements
     private GoogleApiClient googleApiClient;
     public String phoneNumber;
     static final int SET_NUMBER = 1;
+    ListView lvInvitations;
 
+    List<Invitation> invitations = new ArrayList<>();
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
     @Override
@@ -52,6 +59,11 @@ public class MainActivity extends ActionBarActivity implements
 
         phoneNumber = getPhoneNumber();
         Toast.makeText(this, "Your phone number: " + phoneNumber, Toast.LENGTH_SHORT).show();
+
+        lvInvitations = (ListView) findViewById(R.id.lvInvitations);
+        InvitationsArrayAdapter lvInvitationsAdapter = new InvitationsArrayAdapter(this, invitations);
+        lvInvitations.setAdapter(lvInvitationsAdapter);
+        populateTestInvitations(invitations);
 
         // Check whether the user has set the number before, if not, call the SetNumberActivity
         if(phoneNumber == null) {
@@ -73,11 +85,24 @@ public class MainActivity extends ActionBarActivity implements
 
         connectClient();
 
-//        Intent i = new Intent(MainActivity.this, LocationIntentService.class);
-//        startService(i);
-
         Intent intent = new Intent(this, AndroidLocationServices.class);
         startService(intent);
+    }
+
+    private void populateTestInvitations(List<Invitation> invitations) {
+        User testUser = new User();
+        testUser.setName("JenVeehinav");
+        testUser.setPhoneNumber("1234567890");
+
+        for (int i = 0; i < 20; i++) {
+            Invitation invitation = new Invitation();
+            invitation.setInvitationId(String.valueOf(i));
+            invitation.setAccept(i % 3 == 0);
+            invitation.setOwner(testUser);
+            invitation.setTimeOfEvent(System.currentTimeMillis() + (12 * i) * 60 * 60 * 1000);
+            invitation.setPlaceName("Place name " + i);
+            invitations.add(invitation);
+        }
     }
 
     @Override

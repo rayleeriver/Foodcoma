@@ -13,22 +13,18 @@ import java.util.Date;
 public class MyDateTimeUtil {
 
     public static final String MONTH_NAME[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+    static DateFormat hourMinuteFormat = new SimpleDateFormat("HH:mmaa");
+    static DateFormat monthDateFormat = new SimpleDateFormat("MMM d");
 
     public static String getTimeFromEpoch(long time) {
         Date date = new Date(time);
-        DateFormat format = new SimpleDateFormat("HH:mmaa");
-        // format.setTimeZone(TimeZone.getTimeZone("Australia/Sydney"));
-        String formatted = format.format(date);
-
+        String formatted = hourMinuteFormat.format(date);
         return formatted;
     }
 
     public static String getDateFromEpoch(long time) {
         Date date = new Date(time);
-        DateFormat format = new SimpleDateFormat("MMM d");
-        // format.setTimeZone(TimeZone.getTimeZone("Australia/Sydney"));
-        String formatted = format.format(date);
-
+        String formatted = monthDateFormat.format(date);
         return formatted;
     }
 

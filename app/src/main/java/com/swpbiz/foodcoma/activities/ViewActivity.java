@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Location;
+import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.Html;
@@ -96,15 +97,12 @@ public class ViewActivity extends ActionBarActivity implements
         Intent i = getIntent();
         if (i != null) {
             Log.d("DEBUG", "Get the intent");
-            String data = i.getStringExtra("data");
-            if (data != null) {
-                Log.d("DEBUG", "Data is showing");
-                Log.d("DEBUG-view", data);
-                invitation = Invitation.getInvitationFromJsonObject(data);
-                tvDate.setText(MyDateTimeUtil.getDateFromEpoch(invitation.getTimeOfEvent()));
-                tvTime.setText(MyDateTimeUtil.getTimeFromEpoch(invitation.getTimeOfEvent()));
-                tvCreator.setText(invitation.getOwner().getName());
-            }
+
+            invitation = getIntent().getParcelableExtra("invitation");
+            tvDate.setText(MyDateTimeUtil.getDateFromEpoch(invitation.getTimeOfEvent()));
+            tvTime.setText(MyDateTimeUtil.getTimeFromEpoch(invitation.getTimeOfEvent()));
+            tvEventName.setText(invitation.getPlaceName());
+            tvCreator.setText(invitation.getOwner().getName());
         }
 
     }

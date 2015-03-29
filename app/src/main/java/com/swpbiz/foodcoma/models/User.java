@@ -1,5 +1,8 @@
 package com.swpbiz.foodcoma.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
@@ -7,10 +10,11 @@ import com.activeandroid.annotation.Table;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 // @Table(name = "user")
-public class User {
+public class User implements Parcelable, Serializable {
 //    @Column(name = "userId", unique = true)
     private String userId;
 //    @Column(name = "phoneNumber")
@@ -37,6 +41,15 @@ public class User {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.rsvp = "MAYBE";
+    }
+
+    public User(Parcel source) {
+        userId = source.readString();
+        phoneNumber = source.readString();
+        name = source.readString();
+        avatar = source.readString();
+        location = source.readString();
+        rsvp = source.readString();
     }
 
     public String getUserId() {
@@ -125,4 +138,32 @@ public class User {
     public void setRsvp(String rsvp) {
         this.rsvp = rsvp;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(userId);
+        dest.writeString(phoneNumber);
+        dest.writeString(name);
+        dest.writeString(avatar);
+        dest.writeString(location);
+        dest.writeString(rsvp);
+    }
+
+    public static final Parcelable.Creator<User> CREATOR
+            = new Parcelable.Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel source) {
+            return new User(source);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[0];
+        }
+    };
 }
