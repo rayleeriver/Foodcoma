@@ -36,6 +36,7 @@ import com.parse.ParseInstallation;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.swpbiz.foodcoma.models.User;
+import com.swpbiz.foodcoma.utils.MyDateTimeUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,7 +53,6 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
 
     public static final String DATEPICKER_TAG = "datepicker";
     public static final String TIMEPICKER_TAG = "timepicker";
-    public static final String MONTH_NAME[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     private TextView tvCreateDate;
     private TextView tvCreateTime;
     private TextView tvLocation;
@@ -114,8 +114,8 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
 
         // init values
         calendar = Calendar.getInstance();
-        dateValue = convertToFullDateString(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
-        timeValue = convertToTimeString(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
+        dateValue = MyDateTimeUtil.convertToFullDateString(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+        timeValue = MyDateTimeUtil.convertToTimeString(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
 
         setupViews();
 
@@ -182,6 +182,7 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
             push2.sendInBackground();
 
             Intent i = new Intent(CreateActivity.this, ViewActivity.class);
+            // i.putExtra("data", invitation.getJsonObject());
             startActivity(i);
             return true;
         }
@@ -193,7 +194,7 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
         tvCreateDate = (TextView) findViewById(R.id.tvCreateDate);
         tvCreateTime = (TextView) findViewById(R.id.tvCreateTime);
 
-        tvCreateDate.setText(convertToShortDateString(calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)));
+        tvCreateDate.setText(MyDateTimeUtil.convertToShortDateString(calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)));
         tvCreateTime.setText(timeValue);
     }
 
@@ -221,7 +222,7 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
         owner.setName(phonenumber);
         invitation.setOwner(owner);
         invitation.setMapUrl(location);
-        invitation.setTimeOfEvent(getEpochTime()); // set date/time later
+        invitation.setTimeOfEvent(MyDateTimeUtil.getEpochTime(dateValue, timeValue)); // set date/time later
         invitation.setUsers(getFriendsSelected());
 //        invitation.save();
 
@@ -272,9 +273,9 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
     @Override
     public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
 
-        String result = convertToShortDateString(month, day);
-        dateValue = convertToFullDateString(year, month, day);
-        getEpochTime();
+        String result = MyDateTimeUtil.convertToShortDateString(month, day);
+        dateValue = MyDateTimeUtil.convertToFullDateString(year, month, day);
+        MyDateTimeUtil.getEpochTime(dateValue, timeValue);
 
         tvCreateDate.setText(result);
 
@@ -283,55 +284,11 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
     @Override
     public void onTimeSet(RadialPickerLayout radialPickerLayout, int hourOfDay, int minute) {
 
-        String result = convertToTimeString(hourOfDay, minute);
+        String result = MyDateTimeUtil.convertToTimeString(hourOfDay, minute);
         timeValue = result;
-        getEpochTime();
+        MyDateTimeUtil.getEpochTime(dateValue, timeValue);
 
         tvCreateTime.setText(result);
-
-    }
-
-    // Convert hourOfDay(24-hour) and minute to a format like >> 5:03PM
-    private String convertToTimeString(int hourOfDay, int minute) {
-
-        // AM or PM
-        String meridian = (hourOfDay >= 12) ? "PM" : "AM";
-
-        // Convert to 12-hour
-        int hour = hourOfDay;
-        if(hourOfDay > 12){
-            hour = hourOfDay - 12;
-        }
-        else if(hourOfDay == 0){
-            hour = 12;
-        }
-
-        // Make it a format like >> 5:03PM
-        String result = hour + ":" + String.format("%02d", minute) + meridian;
-
-        return result;
-    }
-
-    private String convertToFullDateString(int year, int month, int date) {
-        return year + "-" + String.format("%02d", month + 1) + "-" + String.format("%02d", date); // 2015-03-12
-    }
-
-    private String convertToShortDateString(int month, int date) {
-        return MONTH_NAME[month] + " " + date; // MAR 5
-    }
-
-    private long getEpochTime() {
-        // Format: 2015-03-19 9:03PM
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mmaa");
-        Date date = null;
-        try {
-            date = df.parse(dateValue + " " + timeValue);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        long epoch = date.getTime();
-        Log.d("DEBUG-EPOCH", epoch + "");
-        return epoch;
 
     }
 

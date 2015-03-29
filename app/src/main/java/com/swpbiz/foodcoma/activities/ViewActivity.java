@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,6 +38,7 @@ import com.parse.ParseInstallation;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.swpbiz.foodcoma.R;
+import com.swpbiz.foodcoma.adapters.FriendListAdapter;
 import com.swpbiz.foodcoma.models.Invitation;
 import com.swpbiz.foodcoma.models.User;
 import com.swpbiz.foodcoma.utils.MyDateTimeUtil;
@@ -68,6 +70,7 @@ public class ViewActivity extends ActionBarActivity implements
     private RelativeLayout rlAccept;
     private RelativeLayout rlReject;
     private Invitation invitation;
+    private ListView lvContacts;
     private User user;
 
 
@@ -119,6 +122,13 @@ public class ViewActivity extends ActionBarActivity implements
         tvCreator = (TextView) findViewById(R.id.tvCreator);
         rlAccept = (RelativeLayout) findViewById(R.id.rlAccept);
         rlReject = (RelativeLayout) findViewById(R.id.rlReject);
+        lvContacts = (ListView) findViewById(R.id.lvContacts);
+
+        Log.d("DEBUG-FRIENDS", invitation.getUsers().keySet().toString());
+        Log.d("DEBUG-FRIENDS", invitation.getUsersList().size() + "");
+        FriendListAdapter adapter = new FriendListAdapter(this, invitation.getUsersList());
+        lvContacts.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
 
         // When the user clicks 'Accept' (I'm going)
         rlAccept.setOnClickListener(new View.OnClickListener() {
