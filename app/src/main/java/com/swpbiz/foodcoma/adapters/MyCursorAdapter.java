@@ -9,34 +9,29 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.swpbiz.foodcoma.R;
 import com.swpbiz.foodcoma.models.User;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class MyCursorAdapter extends CursorAdapter {
 
-    Set<User> namesSelected = new HashSet<User>();
-    // private ArrayList<Boolean> itemChecked = new ArrayList<Boolean>();
+    Map<String, User> namesSelected = new HashMap<String, User>();
     private SparseBooleanArray itemChecked = new SparseBooleanArray();
+    private TextView tvPhoneNumber;
+    private TextView tvName;
+    private ImageView ivImage;
+    private CheckBox cbSelected;
 
     public MyCursorAdapter(Context context, Cursor c) {
-
         super(context, c, 0);
-        Log.d("DEBUG-cursor", this.getCount() + " ");
-//        for (int i = 0; i < this.getCount(); i++) {
-//            itemChecked.add(i, false); // initializes all items value with false
-//        }
     }
 
     @Override
@@ -44,79 +39,65 @@ public class MyCursorAdapter extends CursorAdapter {
         return LayoutInflater.from(context).inflate(R.layout.item_contact, parent, false);
     }
 
+    private void findViews(View view){
+        tvName = (TextView) view.findViewById(R.id.tvName);
+        tvPhoneNumber = (TextView) view.findViewById(R.id.tvPhoneNumber);
+        ivImage = (ImageView) view.findViewById(R.id.ivImage);
+        cbSelected = (CheckBox) view.findViewById(R.id.cbSelected);
+    }
+
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
+
+        findViews(view);
+
         int contactId = cursor.getInt(0);
         final int pos = cursor.getPosition();
 
-        Cursor c = context.getContentResolver().query(
-                ContactsContract.Data.CONTENT_URI,
-                new String[]{
-                        ContactsContract.Contacts.Data._ID,
-                        ContactsContract.CommonDataKinds.Phone.NUMBER,
-                        ContactsContract.CommonDataKinds.Phone.TYPE,
-                        ContactsContract.CommonDataKinds.Phone.LABEL},
-                ContactsContract.Data.CONTACT_ID + "=?" + " AND "
-                        + ContactsContract.Contacts.Data.MIMETYPE + "='"
-                        + ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE + "'",
-                new String[]{String.valueOf(contactId)}, null);
-
-
         Cursor phones = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
                 ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + contactId, null, null);
+
+        // Get value of name, phone number and picture
+        final String name = cursor.getString(1);
+        String photoUri = cursor.getString(2);
         String phoneNumber = "N/A";
         if (phones.moveToFirst()) {
             phoneNumber = phones.getString(phones.getColumnIndex("data1"));
-            if (phoneNumber != null) {
-                TextView tv = (TextView) view.findViewById(R.id.tvPhoneNumber);
-                tv.setText(phoneNumber);
-            }
         }
-
-        final String name = cursor.getString(1);
-
-        TextView tv = (TextView) view.findViewById(R.id.tvName);
-        tv.setText(name);
-
-        String photoUri = cursor.getString(2);
-        if (photoUri != null) {
-            ImageView iv = (ImageView) view.findViewById(R.id.ivImage);
-            Picasso.with(context).load(photoUri).into(iv);
-        }
-
-        RelativeLayout rlContactItem = (RelativeLayout) view.findViewById(R.id.rlContactItem);
-        // TODO: Vee will take care of the UI
-
-        final CheckBox cb = (CheckBox) view.findViewById(R.id.cbSelected);
         final String finalPhoneNumber = phoneNumber;
 
-        cb.setOnClickListener(new View.OnClickListener() {
+        // Set contact name, phone number and picture
+        tvName.setText(name);
+        tvPhoneNumber.setText(phoneNumber);
+        if (photoUri != null) Picasso.with(context).load(photoUri).into(ivImage);
+
+        cbSelected.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (cb.isChecked()) {
-                    User aUser = new User();
-                    aUser.setName(name);
-                    aUser.setPhoneNumber(finalPhoneNumber);
-                    aUser.setUserId(finalPhoneNumber);
-                    aUser.setRsvp("MAYBE");
-                    namesSelected.add(aUser);
-                    Log.d("DEBUG-onChecked", name);
+
+                if(!itemChecked.get(pos)) {
+                    User aUser = new User(name, finalPhoneNumber);
+                    namesSelected.put(finalPhoneNumber, aUser);
+
+                    // Log.d("DEBUG-onChecked", name);
                     itemChecked.put(pos, true);
+                    Log.d("DEBUG-add", name);
 
                 } else {
-                    // namesSelected.remove(name);
+                    namesSelected.remove(finalPhoneNumber);
                     itemChecked.put(pos, false);
+                    Log.d("DEBUG-remove", name);
                 }
 
             }
         });
 
-        Log.d("DEBUG-cb", cursor.getPosition() + " " + itemChecked.get(cursor.getPosition()));
-        cb.setChecked(itemChecked.get(cursor.getPosition()));
-
+        // Log.d("DEBUG-cb", pos + " " + itemChecked.get(pos));
+        cbSelected.setChecked(itemChecked.get(pos));
+        phones.close();
     }
 
-    public Set<User> getNamesSelected() {
+    public Map<String,User> getNamesSelected() {
         return namesSelected;
     }
 

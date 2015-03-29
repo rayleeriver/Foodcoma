@@ -215,16 +215,9 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
         return invitation;
     }
 
+    // List of people who will be invited <phoneNumber, User>
     private HashMap<String, User> getFriendsSelected() {
-        // List of people who will be invited
-        Set<User> friendsSelected = adapter.getNamesSelected();
-        User friends[] = friendsSelected.toArray(new User[friendsSelected.size()]);
-        HashMap<String, User> invitedFriends = new HashMap<>();
-        for(int i = 0; i < friends.length; i++) {
-            invitedFriends.put(friends[i].getPhoneNumber(), friends[i]);
-            Log.d("DEBUG-FRIENDS", friends[i].getName() + " " + friends[i].getPhoneNumber());
-        }
-        return invitedFriends;
+        return (HashMap) adapter.getNamesSelected();
     }
 
     private void setDateTimePickerListener() {

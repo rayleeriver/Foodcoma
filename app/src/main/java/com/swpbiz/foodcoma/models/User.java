@@ -33,6 +33,12 @@ public class User {
         rsvp = "";
     }
 
+    public User(String name, String phoneNumber){
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.rsvp = "MAYBE";
+    }
+
     public String getUserId() {
         return userId;
     }
