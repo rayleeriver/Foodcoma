@@ -8,6 +8,8 @@ import android.util.Log;
 
 import com.parse.ParsePushBroadcastReceiver;
 import com.swpbiz.foodcoma.activities.ViewActivity;
+import com.swpbiz.foodcoma.models.Invitation;
+import com.swpbiz.foodcoma.utils.MyDateTimeUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,7 +48,15 @@ public class FoodcomaNotificationReceiver extends ParsePushBroadcastReceiver {
             obj = new JSONObject(intent.getStringExtra("com.parse.Data"));
             Intent i = new Intent(context, ViewActivity.class);
             Log.d("DEBUG","data: " + obj.toString());
-            i.putExtra("data",obj.toString());
+
+            String data = i.getStringExtra("data");
+            if (data != null) {
+                Log.d("DEBUG", "Data is showing");
+                Log.d("DEBUG-view", data);
+                Invitation invitation = Invitation.getInvitationFromJsonObject(data);
+                i.putExtra("invitation",invitation);
+            }
+
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
             context.startActivity(i);
         } catch (JSONException e) {

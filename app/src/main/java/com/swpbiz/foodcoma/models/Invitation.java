@@ -1,5 +1,9 @@
 package com.swpbiz.foodcoma.models;
 
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
@@ -14,7 +18,7 @@ import java.util.Map;
 import java.util.Set;
 
 // @Table(name = "invitation")
-public class Invitation {
+public class Invitation implements Parcelable {
 
     // @Column(name = "invitationId", unique = true)
     private String invitationId;
@@ -24,11 +28,16 @@ public class Invitation {
     // @Column(name = "owner")
     private User owner;
     // @Column(name = "mapUrl")
+
+    private String placeName;
+
     private String mapUrl;
     // @Column(name = "timeOfEvent")
     private long timeOfEvent;
 
-    public Invitation(){
+    private boolean accept;
+
+    public Invitation() {
         invitationId = "";
         mapUrl = "";
         timeOfEvent = 0;
@@ -74,14 +83,30 @@ public class Invitation {
         this.timeOfEvent = timeOfEvent;
     }
 
+    public String getPlaceName() {
+        return placeName;
+    }
+
+    public void setPlaceName(String placeName) {
+        this.placeName = placeName;
+    }
+
+    public boolean isAccept() {
+        return accept;
+    }
+
+    public void setAccept(boolean accept) {
+        this.accept = accept;
+    }
+
     public JSONObject getJsonObject() {
         JSONObject data = new JSONObject();
         JSONArray usersJSONarray;
 
         try {
             data.put("mapurl", mapUrl);
-            data.put("invitationId",invitationId);
-            data.put("timeofevent",timeOfEvent);
+            data.put("invitationId", invitationId);
+            data.put("timeofevent", timeOfEvent);
             data.put("owner", owner.getJsonObject());
             usersJSONarray = new JSONArray();
             if (users != null && users.size() != 0) {
@@ -112,7 +137,7 @@ public class Invitation {
     }
 
     public static Invitation getInvitationFromJsonObject(String data) {
-            Invitation i = new Invitation();
+        Invitation i = new Invitation();
         try {
             JSONObject obj = new JSONObject(data);
             JSONObject d = obj.getJSONObject("data");
@@ -121,7 +146,7 @@ public class Invitation {
             i.setOwner(User.getUserFromJsonObject(d.getJSONObject("owner")));
             JSONArray users = d.getJSONArray("users");
             HashMap<String, User> usersHashMap = new HashMap<>();
-            for(int j = 0; j < users.length(); j++){
+            for (int j = 0; j < users.length(); j++) {
                 User user = User.getUserFromJsonObject(users.getJSONObject(j));
                 usersHashMap.put(user.getPhoneNumber(), user);
             }
@@ -134,4 +159,48 @@ public class Invitation {
     }
 
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(invitationId);
+        dest.writeParcelable(owner, PARCELABLE_WRITE_RETURN_VALUE);
+        dest.writeString(placeName);
+        dest.writeString(mapUrl);
+        dest.writeLong(timeOfEvent);
+
+        Bundle usersBundle = new Bundle();
+        usersBundle.putSerializable("users", users);
+        dest.writeBundle(usersBundle);
+
+        dest.writeByte((byte) (accept ? 1 : 0));
+    }
+
+    public static final Parcelable.Creator<Invitation> CREATOR
+            = new Parcelable.Creator<Invitation>() {
+
+        @Override
+        public Invitation createFromParcel(Parcel source) {
+            return new Invitation(source);
+        }
+
+        @Override
+        public Invitation[] newArray(int size) {
+            return new Invitation[0];
+        }
+
+    };
+
+    private Invitation(Parcel in) {
+        invitationId = in.readString();
+        owner = in.readParcelable(User.class.getClassLoader());
+        placeName = in.readString();
+        mapUrl = in.readString();
+        timeOfEvent = in.readLong();
+        users = (HashMap<String, User>) in.readBundle().getSerializable("users");
+        accept = in.readByte() != 0;
+    }
 }
