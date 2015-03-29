@@ -8,8 +8,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -60,6 +62,14 @@ public class Invitation {
 
     public HashMap<String, User> getUsers() {
         return users;
+    }
+
+    public List<User> getUsersList() {
+        List<User> userList = new ArrayList<User>();
+        for(Map.Entry<String,User> item : users.entrySet()){
+            userList.add(item.getValue());
+        }
+        return userList;
     }
 
     public void setUsers(HashMap<String, User> users) {
