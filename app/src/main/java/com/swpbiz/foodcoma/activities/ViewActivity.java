@@ -3,6 +3,7 @@ package com.swpbiz.foodcoma.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
@@ -100,6 +101,13 @@ public class ViewActivity extends ActionBarActivity implements
             tvTime.setText(MyDateTimeUtil.getTimeFromEpoch(invitation.getTimeOfEvent()));
             tvEventName.setText(invitation.getPlaceName());
             tvCreator.setText(invitation.getOwner().getName());
+
+            if (invitation.isAccept()) {
+                rlAccept.setBackgroundColor(getResources().getColor(R.color.primary_dark));
+            } else {
+                rlAccept.setBackgroundColor(Color.parseColor("#cccccc"));
+            }
+
         }
 
     }
