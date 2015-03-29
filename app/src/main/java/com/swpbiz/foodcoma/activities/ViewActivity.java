@@ -80,8 +80,6 @@ public class ViewActivity extends ActionBarActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view);
 
-        setupViews();
-
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentMap);
         if (mapFragment != null) {
             mapFragment.getMapAsync(new OnMapReadyCallback() {
@@ -99,6 +97,8 @@ public class ViewActivity extends ActionBarActivity implements
             Log.d("DEBUG", "Get the intent");
 
             invitation = getIntent().getParcelableExtra("invitation");
+            setupViews();
+
             tvDate.setText(MyDateTimeUtil.getDateFromEpoch(invitation.getTimeOfEvent()));
             tvTime.setText(MyDateTimeUtil.getTimeFromEpoch(invitation.getTimeOfEvent()));
             tvEventName.setText(invitation.getPlaceName());

@@ -37,7 +37,9 @@ import com.swpbiz.foodcoma.models.User;
 import com.swpbiz.foodcoma.services.AndroidLocationServices;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class MainActivity extends ActionBarActivity implements
@@ -93,12 +95,15 @@ public class MainActivity extends ActionBarActivity implements
         User testUser = new User();
         testUser.setName("JenVeehinav");
         testUser.setPhoneNumber("1234567890");
+        HashMap<String, User> friendsMap = new HashMap<String, User>();
+        friendsMap.put(testUser.getPhoneNumber(), testUser);
 
         for (int i = 0; i < 20; i++) {
             Invitation invitation = new Invitation();
             invitation.setInvitationId(String.valueOf(i));
             invitation.setAccept(i % 3 == 0);
             invitation.setOwner(testUser);
+            invitation.setUsers(friendsMap);
             invitation.setTimeOfEvent(System.currentTimeMillis() + (12 * i) * 60 * 60 * 1000);
             invitation.setPlaceName("Place name " + i);
             invitations.add(invitation);
