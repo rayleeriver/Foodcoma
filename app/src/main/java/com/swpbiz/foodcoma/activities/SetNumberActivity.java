@@ -59,6 +59,7 @@ public class SetNumberActivity extends ActionBarActivity {
     }
 
     public void savePhoneNumber(String phoneNumber) {
+        phoneNumber = phoneNumber.replaceAll("[^0-9]", ""); // get Digits from string
         SharedPreferences sharedPref = getSharedPreferences("foodcoma", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(getString(R.string.my_phone_number), phoneNumber);

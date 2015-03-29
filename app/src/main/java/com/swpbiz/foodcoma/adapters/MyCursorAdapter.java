@@ -64,6 +64,9 @@ public class MyCursorAdapter extends CursorAdapter {
         if (phones.moveToFirst()) {
             phoneNumber = phones.getString(phones.getColumnIndex("data1"));
         }
+
+        phoneNumber = phoneNumber.replaceAll("[^0-9]", ""); // get Digits from string
+
         final String finalPhoneNumber = phoneNumber;
 
         // Set contact name, phone number and picture
