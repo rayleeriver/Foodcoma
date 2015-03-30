@@ -98,7 +98,34 @@ public class ViewActivity extends ActionBarActivity implements
         if (i != null) {
             Log.d("DEBUG", "Get the intent");
 
+            // From MainActivity
             invitation = getIntent().getParcelableExtra("invitation");
+
+            // From Push Notifications
+            if(invitation == null){
+                String data = i.getStringExtra("data");
+                if(data != null) {
+                    invitation = Invitation.getInvitationFromJsonObject(data);
+                }
+                // Create dummy invitation
+                else{
+                    User testUser = new User();
+                    testUser.setName("My Dummy User");
+                    testUser.setPhoneNumber("1111111111");
+                    HashMap<String, User> friendsMap = new HashMap<String, User>();
+                    friendsMap.put(testUser.getPhoneNumber(), testUser);
+
+                    invitation = new Invitation();
+                    invitation.setInvitationId(String.valueOf(i));
+                    invitation.setAccept(true);
+                    invitation.setOwner(testUser);
+                    invitation.setUsers(friendsMap);
+                    invitation.setTimeOfEvent(System.currentTimeMillis() + (12 * 5) * 60 * 60 * 1000);
+                    invitation.setPlaceName("Place name " + i);
+
+                }
+            }
+
             setupViews();
 
             tvDate.setText(MyDateTimeUtil.getDateFromEpoch(invitation.getTimeOfEvent()));
@@ -125,7 +152,7 @@ public class ViewActivity extends ActionBarActivity implements
         rlReject = (RelativeLayout) findViewById(R.id.rlReject);
         lvContacts = (ListView) findViewById(R.id.lvContacts);
 
-        Log.d("DEBUG-FRIENDS", invitation.getUsers().keySet().toString());
+//        Log.d("DEBUG-FRIENDS", invitation.getUsers().keySet().toString());
         Log.d("DEBUG-FRIENDS", invitation.getUsersList().size() + "");
 
         FriendListAdapter adapter = new FriendListAdapter(this, invitation.getUsersList());
