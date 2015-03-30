@@ -181,10 +181,16 @@ public class Invitation implements Parcelable {
         dest.writeString(placeName);
         dest.writeString(mapUrl);
         dest.writeLong(timeOfEvent);
+//        dest.writeMap(users);
+        dest.writeInt(users.size());
+        for(Map.Entry<String, User> item : users.entrySet()) {
+            dest.writeString(item.getKey());
+            dest.writeParcelable(item.getValue(), PARCELABLE_WRITE_RETURN_VALUE);
+        }
 
-        Bundle usersBundle = new Bundle();
-        usersBundle.putSerializable("users", users);
-        dest.writeBundle(usersBundle);
+//        Bundle usersBundle = new Bundle();
+//        usersBundle.putSerializable("users", users);
+//        dest.writeBundle(usersBundle);
 
         dest.writeByte((byte) (accept ? 1 : 0));
     }
@@ -210,7 +216,17 @@ public class Invitation implements Parcelable {
         placeName = in.readString();
         mapUrl = in.readString();
         timeOfEvent = in.readLong();
-        users = (HashMap<String, User>) in.readBundle().getSerializable("users");
+//        users = (HashMap<String, User>) in.readBundle().getSerializable("users");
+//        users = in.readHashMap(String.class.getClassLoader());
+        int userSize = in.readInt();
+        if(userSize > 0){
+            users = new HashMap<String, User>();
+        }
+        for(int i = 0; i < userSize; i++) {
+            users.put(in.readString(), (User) in.readParcelable(User.class.getClassLoader()));
+        }
+
         accept = in.readByte() != 0;
+
     }
 }

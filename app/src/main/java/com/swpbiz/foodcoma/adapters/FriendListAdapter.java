@@ -27,10 +27,12 @@ public class FriendListAdapter extends ArrayAdapter<User> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
+        // Get user
         final User user = getItem(position);
 
+        // Find or inflate the template
         if(convertView == null){
-            LayoutInflater.from(getContext()).inflate(R.layout.item_contact, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_contact, parent, false);
         }
 
         // Find subview

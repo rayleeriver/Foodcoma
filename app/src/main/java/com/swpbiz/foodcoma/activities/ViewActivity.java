@@ -48,6 +48,7 @@ import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -126,9 +127,9 @@ public class ViewActivity extends ActionBarActivity implements
 
         Log.d("DEBUG-FRIENDS", invitation.getUsers().keySet().toString());
         Log.d("DEBUG-FRIENDS", invitation.getUsersList().size() + "");
+
         FriendListAdapter adapter = new FriendListAdapter(this, invitation.getUsersList());
         lvContacts.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
 
         // When the user clicks 'Accept' (I'm going)
         rlAccept.setOnClickListener(new View.OnClickListener() {

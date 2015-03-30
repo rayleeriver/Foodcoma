@@ -9,11 +9,4 @@
         android:title="New Invitation"
         app:showAsAction="always" />
 
-    <item
-        android:id="@+id/action_contact"
-        android:icon="@drawable/ic_contact"
-        android:orderInCategory="200"
-        android:title="Invite people"
-        app:showAsAction="always" />
-
 </menu>
