@@ -197,10 +197,8 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
             Intent i = new Intent(CreateActivity.this, ViewActivity.class);
 
             // i.putExtra("data", invitation.getJsonObject());
-
             i.putExtra("activityname","CreateActivity");
             i.putExtra("invitation",(Parcelable)invitation);
-
             startActivity(i);
             return true;
         }

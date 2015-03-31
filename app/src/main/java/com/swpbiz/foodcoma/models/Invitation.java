@@ -47,6 +47,9 @@ public class Invitation implements Parcelable {
 
     public Invitation() {
         invitationId = "";
+        placeName = "";
+        users = new HashMap<String, User>();
+        owner = new User();
         mapUrl = "";
         timeOfEvent = 0;
     }
@@ -81,8 +84,10 @@ public class Invitation implements Parcelable {
 
     public List<User> getUsersList() {
         List<User> userList = new ArrayList<User>();
-        for(Map.Entry<String,User> item : users.entrySet()){
-            userList.add(item.getValue());
+        if(users != null){
+            for(Map.Entry<String,User> item : users.entrySet()){
+                userList.add(item.getValue());
+            }
         }
         return userList;
     }

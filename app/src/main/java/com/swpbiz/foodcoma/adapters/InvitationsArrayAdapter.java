@@ -41,7 +41,7 @@ public class InvitationsArrayAdapter extends ArrayAdapter<Invitation> {
         ImageView ivAccepted = (ImageView) convertView.findViewById(R.id.ivAccepted);
 
         tvTime.setText(MyDateTimeUtil.getTimeFromEpoch(invitation.getTimeOfEvent()));
-        tvDate.setText(MyDateTimeUtil.getDateFromEpoch(invitation.getTimeOfEvent()));
+        tvDate.setText(MyDateTimeUtil.getDateFromEpoch(invitation.getTimeOfEvent()).toUpperCase());
         tvEventName.setText(invitation.getPlaceName());
         tvCreator.setText("By " + invitation.getOwner().getName());
         if (invitation.isAccept()) {
