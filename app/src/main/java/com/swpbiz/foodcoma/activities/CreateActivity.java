@@ -182,7 +182,8 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
             push2.sendInBackground();
 
             Intent i = new Intent(CreateActivity.this, ViewActivity.class);
-            // i.putExtra("data", invitation.getJsonObject());
+            Log.d("DEBUG-create-data", invitation.getJsonObject().toString());
+            i.putExtra("data", invitation.getJsonObject().toString());
             startActivity(i);
             return true;
         }

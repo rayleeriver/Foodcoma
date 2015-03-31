@@ -101,14 +101,16 @@ public class ViewActivity extends ActionBarActivity implements
             // From MainActivity
             invitation = getIntent().getParcelableExtra("invitation");
 
-            // From Push Notifications
+            // From Push Notifications & CreateActivity
             if(invitation == null){
                 String data = i.getStringExtra("data");
+                Log.d("DEBUG-data", data + " ");
                 if(data != null) {
                     invitation = Invitation.getInvitationFromJsonObject(data);
                 }
                 // Create dummy invitation
                 else{
+                    Log.d("DEBUG-ViewActivity", "using dummy user");
                     User testUser = new User();
                     testUser.setName("My Dummy User");
                     testUser.setPhoneNumber("1111111111");

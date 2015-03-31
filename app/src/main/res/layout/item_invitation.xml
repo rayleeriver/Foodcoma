@@ -1,95 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/rlEventItemContainer"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:layout_alignParentLeft="true"
     android:layout_alignParentStart="true"
     android:layout_alignParentTop="true"
-    android:background="#ffffff">
+    android:paddingLeft="10dp"
+    android:paddingTop="10dp"
+    android:paddingRight="10dp">
 
-    <TextView
-        android:id="@+id/tvTime"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:background="#cccccc"
-        android:gravity="center"
-        android:padding="2dp"
-        android:text="6:00PM"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="#ffffff"
-        android:textIsSelectable="true"
-        android:textSize="20sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/tvDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/tvTime"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignRight="@+id/tvTime"
-        android:layout_below="@+id/tvTime"
-        android:background="#dedede"
-        android:gravity="center"
-        android:padding="2dp"
-        android:text="NEXT SAT"
-        android:textColor="#ffffff"
-        android:textSize="12sp"
-        android:textStyle="bold" />
-
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/rlEventItemContainer"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="10dp"
-        android:layout_toRightOf="@+id/tvTime"
-        android:orientation="vertical">
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:background="#ffffff">
 
         <TextView
-            android:id="@+id/tvEventName"
-            android:layout_width="match_parent"
+            android:id="@+id/tvTime"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:gravity="center_vertical"
-            android:singleLine="true"
-            android:text="Paris Baguette"
-            android:textSize="16sp"
+            android:background="#cccccc"
+            android:gravity="center"
+            android:padding="2dp"
+            android:text="6:00PM"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ffffff"
+            android:textIsSelectable="true"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/tvCreator"
-            android:layout_width="match_parent"
+            android:id="@+id/tvDate"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/tvEventName"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignStart="@+id/tvEventName"
-            android:layout_below="@+id/tvEventName"
-            android:text="By Jennie"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#a4a9b3"
-            android:textSize="12sp" />
-    </LinearLayout>
+            android:layout_alignEnd="@+id/tvTime"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignRight="@+id/tvTime"
+            android:layout_below="@+id/tvTime"
+            android:background="#dedede"
+            android:gravity="center"
+            android:padding="2dp"
+            android:text="NEXT SAT"
+            android:textColor="#ffffff"
+            android:textSize="12sp"
+            android:textStyle="bold" />
 
-    <ImageView
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:id="@+id/ivAccepted"
-        android:layout_alignBottom="@+id/tvDate"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:src="@mipmap/ic_accept"
-        android:visibility="invisible"
-        />
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/tvTime"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvEventName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:text="Paris Baguette"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvCreator"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/tvEventName"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignStart="@+id/tvEventName"
+                android:layout_below="@+id/tvEventName"
+                android:text="By Jennie"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="#a4a9b3"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/ivAccepted"
+            android:layout_alignBottom="@+id/tvDate"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:src="@mipmap/ic_accept"
+            android:visibility="invisible"
+            />
+    </RelativeLayout>
 
 
 </RelativeLayout>
