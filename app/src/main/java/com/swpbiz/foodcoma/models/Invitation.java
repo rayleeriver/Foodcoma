@@ -12,7 +12,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
 import java.util.ArrayList;
+
+import java.io.Serializable;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -20,7 +24,9 @@ import java.util.Map;
 import java.util.Set;
 
 // @Table(name = "invitation")
+
 public class Invitation implements Parcelable {
+
 
     // @Column(name = "invitationId", unique = true)
     private String invitationId;
@@ -182,10 +188,10 @@ public class Invitation implements Parcelable {
         dest.writeString(mapUrl);
         dest.writeLong(timeOfEvent);
 
-        // Write the size of users HashMap
+  //      Write the size of users HashMap
         dest.writeInt(users.size());
 
-        // Write each key and value of users HashMap
+//        Write each key and value of users HashMap
         for(Map.Entry<String, User> item : users.entrySet()) {
             dest.writeString(item.getKey());
             dest.writeParcelable(item.getValue(), PARCELABLE_WRITE_RETURN_VALUE);

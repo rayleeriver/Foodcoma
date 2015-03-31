@@ -1,8 +1,11 @@
 package com.swpbiz.foodcoma.activities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
+import android.os.Parcelable;
 import android.provider.ContactsContract;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -10,6 +13,7 @@ import android.support.v4.content.Loader;
 import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,13 +22,20 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.fourmob.datetimepicker.date.DatePickerDialog;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.parse.ParseObject;
 import com.sleepbot.datetimepicker.time.RadialPickerLayout;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
+import com.swpbiz.foodcoma.FoodcomaApplication;
 import com.swpbiz.foodcoma.R;
 import com.swpbiz.foodcoma.adapters.MyCursorAdapter;
 import com.swpbiz.foodcoma.models.Invitation;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,6 +56,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -61,6 +73,7 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
     private Calendar calendar;
     private String phonenumber;
     MyCursorAdapter adapter;
+    final int REQUEST_PLACE_PICKER = 1;
     public static final int CONTACT_LOADER_ID = 78; // From docs: A unique identifier for this loader.
 
     private LoaderManager.LoaderCallbacks<Cursor> contactsLoader =
@@ -182,7 +195,12 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
             push2.sendInBackground();
 
             Intent i = new Intent(CreateActivity.this, ViewActivity.class);
+
             // i.putExtra("data", invitation.getJsonObject());
+
+            i.putExtra("activityname","CreateActivity");
+            i.putExtra("invitation",(Parcelable)invitation);
+
             startActivity(i);
             return true;
         }
@@ -295,5 +313,54 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
     public void findRestaurants(View view) {
         Intent i = new Intent(CreateActivity.this, RestaurantActivity.class);
         startActivity(i);
+    }
+
+     public void gotoGoogleMaps(View view) {
+         FoodcomaApplication mapp = (FoodcomaApplication)getApplicationContext();
+
+         // Share Via google maps
+         Uri uri = Uri.parse("geo:"+mapp.getMylatitude()+","+mapp.getMylongitude()+"?q=restaurant");
+         //Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+         intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+         startActivity(intent);
+
+         // Construct an intent for the place picker
+//         try {
+//             PlacePicker.IntentBuilder intentBuilder =
+//                     new PlacePicker.IntentBuilder();
+//             Intent intent = intentBuilder.build(this);
+//             Start the intent by requesting a result,
+//             identified by a request code.
+//             startActivityForResult(intent, REQUEST_PLACE_PICKER);
+//
+//         } catch (GooglePlayServicesRepairableException e) {
+//             ...
+//         } catch (GooglePlayServicesNotAvailableException e) {
+//             ...
+//         }
+     }
+
+    @Override
+    protected void onActivityResult(int requestCode,
+                                    int resultCode, Intent data) {
+
+        if (requestCode == REQUEST_PLACE_PICKER
+                && resultCode == Activity.RESULT_OK) {
+
+            // The user has selected a place. Extract the name and address.
+            final Place place = PlacePicker.getPlace(data, this);
+
+            final CharSequence name = place.getName();
+            final CharSequence address = place.getAddress();
+            String attributions = PlacePicker.getAttributions(data);
+            if (attributions == null) {
+                attributions = "";
+            }
+            Log.d("DEBUG", "name: " + name.toString() + "address: " + address.toString());
+
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 }

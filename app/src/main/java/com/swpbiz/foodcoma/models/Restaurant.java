@@ -79,9 +79,6 @@ public class Restaurant {
 
     Location restaurantLocation;
 
-
-
-
     public String getName() {
         return name;
     }

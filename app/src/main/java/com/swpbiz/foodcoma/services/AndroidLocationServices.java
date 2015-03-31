@@ -53,7 +53,7 @@ public class AndroidLocationServices extends Service {
                 .getSystemService(Context.LOCATION_SERVICE);
 
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                5000, 50, listener);
+                1000, 5, listener);
 
     }
 

@@ -14,7 +14,9 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 // @Table(name = "user")
-public class User implements Parcelable, Serializable {
+
+public class User implements  Parcelable {
+
 //    @Column(name = "userId", unique = true)
     private String userId;
 //    @Column(name = "phoneNumber")
@@ -40,6 +42,9 @@ public class User implements Parcelable, Serializable {
     public User(String name, String phoneNumber){
         this.name = name;
         this.phoneNumber = phoneNumber;
+        this.userId = "";
+        this.avatar ="";
+        this.location = "";
         this.rsvp = "MAYBE";
     }
 
@@ -121,7 +126,7 @@ public class User implements Parcelable, Serializable {
         User user = new User();
         try {
             user.setName(data.getString("name"));
-           user.setUserId(data.getString("userId"));
+         user.setUserId(data.getString("userId"));
             user.setPhoneNumber(data.getString("phonenumber"));
             user.setAvatar(data.getString("avatar"));
             user.setLocation(data.getString("location"));

@@ -31,8 +31,8 @@ public class FoodcomaApplication extends Application {
         // Add your initialization code here
         Parse.initialize(this, APP_ID, CLIENT_KEY);
 
-        ParseUser.enableAutomaticUser();
-        ParseUser.getCurrentUser().saveInBackground();
+    //    ParseUser.enableAutomaticUser();
+   //     ParseUser.getCurrentUser().saveInBackground();
         ParseACL defaultACL = new ParseACL();
         // Optionally enable public read access.
         defaultACL.setPublicReadAccess(true);

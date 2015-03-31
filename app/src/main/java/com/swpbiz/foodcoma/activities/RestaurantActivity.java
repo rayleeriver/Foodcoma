@@ -1,5 +1,6 @@
 package com.swpbiz.foodcoma.activities;
 
+import android.content.Context;
 import android.preference.PreferenceActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -34,7 +36,6 @@ public class RestaurantActivity extends ActionBarActivity {
     ListView lvrestaurants;
     EditText etsearch;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +45,13 @@ public class RestaurantActivity extends ActionBarActivity {
         lvrestaurants = (ListView) findViewById(R.id.Lvrestaurants);
         etsearch = (EditText) findViewById(R.id.etsearch);
         lvrestaurants.setAdapter(arestaurant);
+
+        getSupportActionBar().hide();
+        etsearch.clearFocus();
+        //InputMethodManager inputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+       // inputManager.hideSoftInputFromWindow(etsearch.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+
+
         FoodcomaApplication mapp = (FoodcomaApplication)getApplicationContext();
 
       //  String url = "https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurant&key="+API_KEY+"&types=food";
@@ -78,6 +86,7 @@ public class RestaurantActivity extends ActionBarActivity {
                     AsyncHttpClient clientplace = new AsyncHttpClient();
                     for (int i = 0; i < arrayRestaurants.size(); i++) {
                         String placeurl = "https://maps.googleapis.com/maps/api/place/details/json?placeid=" + arrayRestaurants.get(i).getRestaurantId() + "&key=" + API_KEY;
+                        Log.d("DEBUG",placeurl);
                         clientplace.get(placeurl, null, new JsonHttpResponseHandler() {
                             @Override
                             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -85,8 +94,9 @@ public class RestaurantActivity extends ActionBarActivity {
                                 if (response != null) {
                                     try {
                                         for (int i = 0; i < arrayRestaurants.size(); i++) {
-                                            if (arrayRestaurants.get(i).getRestaurantId() == response.getJSONObject("result").getString("place_id")) {
-                                                arrayRestaurants.get(i).setResAddress(response.getJSONObject("result").getString("formatted_address"));
+                                            if (arrayRestaurants.get(i).getRestaurantId().equals(response.getJSONObject("result").getString("place_id"))) {
+                                                String formattedAddress = response.getJSONObject("result").getString("formatted_address");
+                                                arrayRestaurants.get(i).setResAddress(formattedAddress);
                                             }
                                         }
 

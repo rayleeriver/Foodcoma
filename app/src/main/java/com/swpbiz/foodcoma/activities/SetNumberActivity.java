@@ -51,7 +51,7 @@ public class SetNumberActivity extends ActionBarActivity {
 
                 // Override
                 savePhoneNumber(ownerNumber);
-                closeActivity();
+        //        closeActivity();
 
                 // Now you're waiting. SmsReceiver will be the one who closes this activity.
             }

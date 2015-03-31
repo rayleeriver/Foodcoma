@@ -251,8 +251,10 @@ public class MainActivity extends ActionBarActivity implements
             mapp.setMylatitude(location.getLatitude());
             mapp.setMylongitude(location.getLongitude());
             ParseUser user = ParseUser.getCurrentUser();
-            user.put("userlocation",new ParseGeoPoint(mapp.getMylatitude(),mapp.getMylongitude()));
-            user.saveInBackground();
+            if (user != null) {
+                user.put("userlocation", new ParseGeoPoint(mapp.getMylatitude(), mapp.getMylongitude()));
+                user.saveInBackground();
+            }
             Toast.makeText(this, "GPS Location was found!!" + location.getLatitude()+ ","+ location.getLongitude(), Toast.LENGTH_SHORT).show();
 //            startLocationUpdates();
         } else {

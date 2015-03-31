@@ -14,6 +14,8 @@ import com.swpbiz.foodcoma.utils.MyDateTimeUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+
 public class FoodcomaNotificationReceiver extends ParsePushBroadcastReceiver {
 
     public FoodcomaNotificationReceiver(){
@@ -49,12 +51,13 @@ public class FoodcomaNotificationReceiver extends ParsePushBroadcastReceiver {
             Intent i = new Intent(context, ViewActivity.class);
             Log.d("DEBUG","data: " + obj.toString());
 
-            String data = i.getStringExtra("data");
+            String data = obj.getString("data");
             if (data != null) {
                 Log.d("DEBUG", "Data is showing");
                 Log.d("DEBUG-view", data);
-                Invitation invitation = Invitation.getInvitationFromJsonObject(data);
-                i.putExtra("invitation",invitation);
+//                Invitation invitation = Invitation.getInvitationFromJsonObject(data);
+//                i.putExtra("invitation",(Serializable)invitation);
+                i.putExtra("data",obj.toString());
             }
 
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);

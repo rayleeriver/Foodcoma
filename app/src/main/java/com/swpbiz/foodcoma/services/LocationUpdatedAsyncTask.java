@@ -3,14 +3,22 @@ package com.swpbiz.foodcoma.services;
 import android.content.Context;
 import android.location.Location;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.Toast;
 
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseInstallation;
+import com.parse.ParseObject;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 public class LocationUpdatedAsyncTask extends AsyncTask {
 
@@ -49,18 +57,24 @@ public class LocationUpdatedAsyncTask extends AsyncTask {
             e.printStackTrace();
         }
 
-        pushQuery.whereNotEqualTo("phonenumber", phonenumber);
-        push.setQuery(pushQuery); // Set our Installation query
-        push.setData(data);
-        push.sendInBackground();
+//        pushQuery.whereNotEqualTo("phonenumber", phonenumber);
+//        push.setQuery(pushQuery); // Set our Installation query
+//        push.setData(data);
+//        push.sendInBackground();
 
+        ParseUser user = ParseUser.getCurrentUser();
+        if (user != null) {
+            user.put("userlocation", new ParseGeoPoint(location.getLatitude(), location.getLongitude()));
+            user.saveInBackground();
+            Log.d("DEBUG", "location:" + location.toString());
+        }
         return location;
     }
 
     @Override
     protected void onPostExecute(Object o) {
         if (location != null) {
-            Toast.makeText(context, "Location changed to: " + location.toString(), Toast.LENGTH_SHORT).show();
+           // Toast.makeText(context, "Location changed to: " + location.toString(), Toast.LENGTH_SHORT).show();
         }
     }
 }

@@ -17,6 +17,7 @@ import com.swpbiz.foodcoma.activities.ViewActivity;
 import com.swpbiz.foodcoma.models.Invitation;
 import com.swpbiz.foodcoma.utils.MyDateTimeUtil;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
@@ -57,7 +58,7 @@ public class InvitationsArrayAdapter extends ArrayAdapter<Invitation> {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getContext(), ViewActivity.class);
-                i.putExtra("invitation", invitation);
+                i.putExtra("invitation", (Serializable)invitation);
                 getContext().startActivity(i);
             }
         });
