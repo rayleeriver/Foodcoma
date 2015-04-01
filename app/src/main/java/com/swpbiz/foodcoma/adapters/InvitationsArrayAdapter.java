@@ -3,6 +3,7 @@ package com.swpbiz.foodcoma.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Parcelable;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,7 +59,7 @@ public class InvitationsArrayAdapter extends ArrayAdapter<Invitation> {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getContext(), ViewActivity.class);
-                i.putExtra("invitation", (Serializable)invitation);
+                i.putExtra("invitation", (Parcelable) invitation);
                 getContext().startActivity(i);
             }
         });

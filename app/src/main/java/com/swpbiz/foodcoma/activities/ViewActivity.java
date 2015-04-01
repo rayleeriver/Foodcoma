@@ -144,15 +144,15 @@ public class ViewActivity extends ActionBarActivity implements
         Intent i = getIntent();
         if (i != null) {
             String activityName = i.getStringExtra("activityname");
-            if (activityName != null && activityName.equals("CreateActivity")) {
+//            if (activityName != null && activityName.equals("CreateActivity")) {
                 //            From MainActivity
                 invitation = getIntent().getParcelableExtra("invitation");
-            } else {
-                String data = i.getStringExtra("data");
-                invitation = Invitation.getInvitationFromJsonObject(data);
+//            } else {
+//                String data = i.getStringExtra("data");
+//                invitation = Invitation.getInvitationFromJsonObject(data);
 //            From Push Notifications
                 //invitation = (Invitation)i.getSerializableExtra("invitation");
-            }
+//            }
 
 //            Log.d("DEBUG", "Get the intent");
 
@@ -226,24 +226,27 @@ public class ViewActivity extends ActionBarActivity implements
                 String phonenumber = (String)installation.get("phonenumber");
                 HashMap<String, User> users = invitation.getUsers();
                 User user = users.get(phonenumber);
-                user.setRsvp("ACCEPTED");
 
-                pushQuery.whereEqualTo("phonenumber", phonenumber);
+                if (user != null) {
+                    user.setRsvp("ACCEPTED");
 
-                ParsePush push2 = new ParsePush();
+                    pushQuery.whereEqualTo("phonenumber", phonenumber);
 
-                JSONObject data =  new JSONObject();
-                try {
-                    data.put("title","Foodcoma");
-                    data.put("alert", phonenumber + " has accepted invitation");
-                    data.put("data", invitation.getJsonObject());
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    ParsePush push2 = new ParsePush();
+
+                    JSONObject data = new JSONObject();
+                    try {
+                        data.put("title", "Foodcoma");
+                        data.put("alert", phonenumber + " has accepted invitation");
+                        data.put("data", invitation.getJsonObject());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    push2.setQuery(pushQuery); // Set our Installation query
+                    push2.setData(data);
+                    push2.sendInBackground();
                 }
-
-                push2.setQuery(pushQuery); // Set our Installation query
-                push2.setData(data);
-                push2.sendInBackground();
             }
         });
 
