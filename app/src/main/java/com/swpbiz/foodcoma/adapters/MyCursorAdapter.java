@@ -72,7 +72,11 @@ public class MyCursorAdapter extends CursorAdapter {
         // Set contact name, phone number and picture
         tvName.setText(name);
         tvPhoneNumber.setText(phoneNumber);
-        if (photoUri != null) Picasso.with(context).load(photoUri).into(ivImage);
+        if (photoUri != null) {
+            Picasso.with(context).load(photoUri).into(ivImage);
+        } else {
+            ivImage.setImageResource(R.drawable.ic_contact);
+        }
 
         cbSelected.setOnClickListener(new View.OnClickListener() {
             @Override
