@@ -1,6 +1,8 @@
 package com.swpbiz.foodcoma.activities;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Parcelable;
 import android.preference.PreferenceActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -9,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -26,6 +29,7 @@ import org.apache.http.client.ResponseHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class RestaurantActivity extends ActionBarActivity {
@@ -46,11 +50,21 @@ public class RestaurantActivity extends ActionBarActivity {
         etsearch = (EditText) findViewById(R.id.etsearch);
         lvrestaurants.setAdapter(arestaurant);
 
+        lvrestaurants.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Restaurant res = arrayRestaurants.get(position);
+                Intent  returnIntent =  new Intent();
+                returnIntent.putExtra("restaurant",res);
+                setResult(RESULT_OK,returnIntent);
+                finish();
+            }
+        });
+
         getSupportActionBar().hide();
         etsearch.clearFocus();
         //InputMethodManager inputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
        // inputManager.hideSoftInputFromWindow(etsearch.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-
 
         FoodcomaApplication mapp = (FoodcomaApplication)getApplicationContext();
 

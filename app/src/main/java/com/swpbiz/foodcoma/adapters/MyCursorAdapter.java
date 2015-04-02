@@ -66,6 +66,9 @@ public class MyCursorAdapter extends CursorAdapter {
         }
 
         phoneNumber = phoneNumber.replaceAll("[^0-9]", ""); // get Digits from string
+        if (phoneNumber.length() > 10) {
+            phoneNumber = phoneNumber.substring(phoneNumber.length() - 10);
+        }
 
         final String finalPhoneNumber = phoneNumber;
 

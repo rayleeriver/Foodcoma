@@ -144,47 +144,14 @@ public class ViewActivity extends ActionBarActivity implements
         Intent i = getIntent();
         if (i != null) {
             String activityName = i.getStringExtra("activityname");
-//            if (activityName != null && activityName.equals("CreateActivity")) {
-                //            From MainActivity
+            if (activityName != null && activityName.equals("CreateActivity")) {
+                // From MainActivity
                 invitation = getIntent().getParcelableExtra("invitation");
-//            } else {
-//                String data = i.getStringExtra("data");
-//                invitation = Invitation.getInvitationFromJsonObject(data);
-//            From Push Notifications
-                //invitation = (Invitation)i.getSerializableExtra("invitation");
-//            }
-
-//            Log.d("DEBUG", "Get the intent");
-
-            // From MainActivity
-//            invitation = getIntent().getParcelableExtra("invitation");
-
-            // From Push Notifications & CreateActivity
-//            if(invitation == null){
-//                String data = i.getStringExtra("data");
-//                Log.d("DEBUG-data", data + " ");
-//                if(data != null) {
-//                    invitation = Invitation.getInvitationFromJsonObject(data);
-//                }
-                // Create dummy invitation
-//                else{
-//                    Log.d("DEBUG-ViewActivity", "using dummy user");
-//                    User testUser = new User();
-//                    testUser.setName("My Dummy User");
-//                    testUser.setPhoneNumber("1111111111");
-//                    HashMap<String, User> friendsMap = new HashMap<String, User>();
-//                    friendsMap.put(testUser.getPhoneNumber(), testUser);
-//
-//                    invitation = new Invitation();
-//                    invitation.setInvitationId(String.valueOf(i));
-//                    invitation.setAccept(true);
-//                    invitation.setOwner(testUser);
-//                    invitation.setUsers(friendsMap);
-//                    invitation.setTimeOfEvent(System.currentTimeMillis() + (12 * 5) * 60 * 60 * 1000);
-//                    invitation.setPlaceName("Place name " + i);
-//
-//                }
-
+            } else {
+                String data = i.getStringExtra("data");
+                // From Push Notifications
+                invitation = Invitation.getInvitationFromJsonObject(data);
+            }
 
             setupViews();
 
@@ -308,6 +275,13 @@ public class ViewActivity extends ActionBarActivity implements
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
+
+            map.clear();
+
+            LatLng resLoc = new LatLng(invitation.getRestaurant().getRestaurantLocation().getLatitude(), invitation.getRestaurant().getRestaurantLocation().getLongitude());
+            Marker marker = map.addMarker(new MarkerOptions().position(resLoc).title(invitation.getRestaurant().getName()));
+            marker.showInfoWindow();
+
             Set set = invitation.getUsers().entrySet();
 
             ArrayList<String> phonenumbers = new ArrayList<String>();
@@ -330,7 +304,7 @@ public class ViewActivity extends ActionBarActivity implements
                     String userphonenumber;
                     if (e == null) {
                         Log.d("DEBUG", "Retrieved " + parseUsers.size() + " phonenumber");
-                        map.clear();
+
                         for (int i = 0; i < parseUsers.size(); i++) {
                             userphonenumber = parseUsers.get(i).getString("phonenumber");
                             ParseGeoPoint uloc = parseUsers.get(i).getParseGeoPoint("userlocation");
@@ -366,9 +340,6 @@ public class ViewActivity extends ActionBarActivity implements
 
 
             });
-
-
-
         }
     };
 

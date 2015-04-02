@@ -55,8 +55,6 @@ public class FoodcomaNotificationReceiver extends ParsePushBroadcastReceiver {
             if (data != null) {
                 Log.d("DEBUG", "Data is showing");
                 Log.d("DEBUG-view", data);
-//                Invitation invitation = Invitation.getInvitationFromJsonObject(data);
-//                i.putExtra("invitation",(Serializable)invitation);
                 i.putExtra("data",obj.toString());
             }
 

@@ -46,6 +46,7 @@ import java.util.Date;
 import com.parse.ParseInstallation;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
+import com.swpbiz.foodcoma.models.Restaurant;
 import com.swpbiz.foodcoma.models.User;
 import com.swpbiz.foodcoma.utils.MyDateTimeUtil;
 
@@ -73,7 +74,9 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
     private Calendar calendar;
     private String phonenumber;
     MyCursorAdapter adapter;
+    Restaurant restaurant;
     final int REQUEST_PLACE_PICKER = 1;
+    static final int SET_RESTAURANT = 2;
     public static final int CONTACT_LOADER_ID = 78; // From docs: A unique identifier for this loader.
 
     private LoaderManager.LoaderCallbacks<Cursor> contactsLoader =
@@ -198,7 +201,7 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
 
             // i.putExtra("data", invitation.getJsonObject());
             i.putExtra("activityname","CreateActivity");
-            i.putExtra("invitation",(Parcelable)invitation);
+            i.putExtra("invitation", invitation);
             startActivity(i);
             return true;
         }
@@ -240,6 +243,11 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
         invitation.setMapUrl(location);
         invitation.setTimeOfEvent(MyDateTimeUtil.getEpochTime(dateValue, timeValue)); // set date/time later
         invitation.setUsers(getFriendsSelected());
+        if (restaurant == null) {
+            restaurant = new Restaurant();
+        }
+        invitation.setRestaurant(restaurant);
+
 //        invitation.save();
 
         return invitation;
@@ -310,8 +318,10 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
 
     public void findRestaurants(View view) {
         Intent i = new Intent(CreateActivity.this, RestaurantActivity.class);
-        startActivity(i);
+      //  startActivity(i);
+        startActivityForResult(i, SET_RESTAURANT);
     }
+
 
      public void gotoGoogleMaps(View view) {
          FoodcomaApplication mapp = (FoodcomaApplication)getApplicationContext();
@@ -357,6 +367,9 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
             }
             Log.d("DEBUG", "name: " + name.toString() + "address: " + address.toString());
 
+        } else if (requestCode == SET_RESTAURANT && resultCode == Activity.RESULT_OK) {
+            restaurant = data.getParcelableExtra("restaurant");
+            tvLocation.setText(restaurant.getName());
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }

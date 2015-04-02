@@ -37,6 +37,7 @@ public class Invitation implements Parcelable {
     private User owner;
     // @Column(name = "mapUrl")
 
+    private Restaurant restaurant;
     private String placeName;
 
     private String mapUrl;
@@ -52,6 +53,7 @@ public class Invitation implements Parcelable {
         owner = new User();
         mapUrl = "";
         timeOfEvent = 0;
+        restaurant = new Restaurant();
     }
 
     public User getOwner() {
@@ -120,6 +122,14 @@ public class Invitation implements Parcelable {
         this.accept = accept;
     }
 
+    public Restaurant getRestaurant() {
+        return restaurant;
+    }
+
+    public void setRestaurant(Restaurant restaurant) {
+        this.restaurant = restaurant;
+    }
+
     public JSONObject getJsonObject() {
         JSONObject data = new JSONObject();
         JSONArray usersJSONarray;
@@ -140,6 +150,7 @@ public class Invitation implements Parcelable {
                     Map.Entry me = (Map.Entry) itr.next();
                     User user;
                     String phoneNumber;
+
                     JSONObject uobj = new JSONObject();
                     phoneNumber = (String) me.getKey();
                     user = (User) me.getValue();
@@ -149,7 +160,10 @@ public class Invitation implements Parcelable {
 
                 data.put("users", usersJSONarray);
             }
-
+            if (restaurant == null) {
+                restaurant =  new Restaurant();
+            }
+            data.put("restaurant",restaurant.getJsonObject());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -172,6 +186,7 @@ public class Invitation implements Parcelable {
                 usersHashMap.put(user.getPhoneNumber(), user);
             }
             i.setUsers(usersHashMap);
+            i.setRestaurant(Restaurant.getResFromJsonObject( d.getJSONObject("restaurant")));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -193,6 +208,7 @@ public class Invitation implements Parcelable {
         dest.writeString(mapUrl);
         dest.writeLong(timeOfEvent);
 
+
   //      Write the size of users HashMap
         dest.writeInt(users.size());
 
@@ -201,6 +217,7 @@ public class Invitation implements Parcelable {
             dest.writeString(item.getKey());
             dest.writeParcelable(item.getValue(), PARCELABLE_WRITE_RETURN_VALUE);
         }
+        dest.writeParcelable(restaurant, PARCELABLE_WRITE_RETURN_VALUE);
 
         dest.writeByte((byte) (accept ? 1 : 0));
     }
@@ -239,6 +256,8 @@ public class Invitation implements Parcelable {
         for(int i = 0; i < userSize; i++) {
             users.put(in.readString(), (User) in.readParcelable(User.class.getClassLoader()));
         }
+
+        restaurant = in.readParcelable(Restaurant.class.getClassLoader());
 
         accept = in.readByte() != 0;
 
