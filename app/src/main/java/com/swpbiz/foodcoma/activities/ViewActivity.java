@@ -54,6 +54,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
@@ -219,7 +220,20 @@ public class ViewActivity extends ActionBarActivity implements
         rlReject.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: send reject push noti
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("Invitation");
+                query.getInBackground(invitation.getInvitationId(), new GetCallback<ParseObject>() {
+                    @Override
+                    public void done(ParseObject parseObject, com.parse.ParseException e) {
+                        if (parseObject != null)
+                            try {
+                                parseObject.delete();
+                                Intent intent = new Intent(ViewActivity.this, MainActivity.class);
+                                startActivity(intent);
+                            } catch (com.parse.ParseException e1) {
+                                e1.printStackTrace();
+                            }
+                    }
+                });
             }
         });
 
