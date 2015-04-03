@@ -4,8 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Parcelable;
+import android.provider.ContactsContract;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -154,12 +157,29 @@ public class MainActivity extends ActionBarActivity implements
                         invitation.setPlaceName(object.getString("mapurl"));
                         invitation.setTimeOfEvent(object.getLong("timeofevent"));
 
+                        String ownerPhoneNumber = object.getString("owner");
+                        User owner = new User();
+                        invitation.getOwner().setPhoneNumber(ownerPhoneNumber);
+
+                        if (ownerPhoneNumber.equals(phoneNumber)) {
+                            invitation.getOwner().setName("<< myself >>");
+                        } else {
+                            String[] projection = new String[]{
+                                    ContactsContract.PhoneLookup.DISPLAY_NAME,
+                                    ContactsContract.PhoneLookup._ID};
+                            Uri contactUri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(ownerPhoneNumber));
+                            Cursor cursor = getContentResolver().query(contactUri, projection, null, null, null);
+                            if (cursor.moveToFirst()) {
+                                String name = cursor.getString(cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME));
+                                invitation.getOwner().setName(name);
+                            }
+                        }
+
                         List<String> userPhonenumberList = object.getList("users");
                         final HashMap<String, User> usersMap = new HashMap<String, User>();
                         if (userPhonenumberList != null) {
                             for (final String userPhoneNumber : userPhonenumberList) {
                                 User user = new User();
-
                                 user.setPhoneNumber(userPhoneNumber);
                                 usersMap.put(userPhoneNumber, user);
                             }
