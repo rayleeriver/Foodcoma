@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -21,11 +22,16 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.parse.FindCallback;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseInstallation;
+import com.parse.ParseObject;
 import com.parse.ParsePush;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
@@ -39,36 +45,36 @@ import com.swpbiz.foodcoma.services.AndroidLocationServices;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class MainActivity extends ActionBarActivity implements
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,LocationListener {
+        GoogleApiClient.OnConnectionFailedListener, LocationListener {
+
+    private final static String TAG = MainActivity.class.getSimpleName();
     private GoogleMap map;
     private GoogleApiClient googleApiClient;
     public String phoneNumber;
     static final int SET_NUMBER = 1;
     ListView lvInvitations;
-
+    InvitationsArrayAdapter lvInvitationsAdapter;
     List<Invitation> invitations = new ArrayList<>();
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        setupInvitationsList();
+
         phoneNumber = getPhoneNumber();
         Toast.makeText(this, "Your phone number: " + phoneNumber, Toast.LENGTH_SHORT).show();
 
-        lvInvitations = (ListView) findViewById(R.id.lvInvitations);
-        InvitationsArrayAdapter lvInvitationsAdapter = new InvitationsArrayAdapter(this, invitations);
-        lvInvitations.setAdapter(lvInvitationsAdapter);
-        populateTestInvitations(invitations);
 
         // Check whether the user has set the number before, if not, call the SetNumberActivity
-        if(phoneNumber == null) {
+        if (phoneNumber == null) {
             Intent i = new Intent(MainActivity.this, SetNumberActivity.class);
             startActivityForResult(i, SET_NUMBER);
         } else {
@@ -91,23 +97,60 @@ public class MainActivity extends ActionBarActivity implements
         startService(intent);
     }
 
-    private void populateTestInvitations(List<Invitation> invitations) {
-        User testUser = new User();
-        testUser.setName("JenVeehinav");
-        testUser.setPhoneNumber("1234567890");
-        HashMap<String, User> friendsMap = new HashMap<String, User>();
-        friendsMap.put(testUser.getPhoneNumber(), testUser);
+    private void setupInvitationsList() {
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                populateMyInvitations(invitations);
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
 
-        for (int i = 0; i < 20; i++) {
-            Invitation invitation = new Invitation();
-            invitation.setInvitationId(String.valueOf(i));
-            invitation.setAccept(i % 3 == 0);
-            invitation.setOwner(testUser);
-            invitation.setUsers(friendsMap);
-            invitation.setTimeOfEvent(System.currentTimeMillis() + (12 * i) * 60 * 60 * 1000);
-            invitation.setPlaceName("Place name " + i);
-            invitations.add(invitation);
-        }
+        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
+        lvInvitations = (ListView) findViewById(R.id.lvInvitations);
+        lvInvitationsAdapter = new InvitationsArrayAdapter(this, invitations);
+        lvInvitations.setAdapter(lvInvitationsAdapter);
+    }
+
+    private void populateMyInvitations(final List<Invitation> invitations) {
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Invitation");
+        query.whereEqualTo("owner", phoneNumber);
+
+        query.findInBackground(new FindCallback<ParseObject>() {
+            public void done(List<ParseObject> objects, ParseException e) {
+                if (e == null) {
+                    invitations.clear();
+                    Log.d(TAG, "get my invitations count: " + objects.size());
+
+                    for (ParseObject object : objects) {
+                        Invitation invitation = new Invitation();
+                        invitation.setInvitationId(object.getObjectId());
+                        invitation.setPlaceName(object.getString("mapurl"));
+                        invitation.setTimeOfEvent(object.getLong("timeofevent"));
+
+                        List<String> userPhonenumberList = object.getList("users");
+                        final HashMap<String, User> usersMap = new HashMap<String, User>();
+                        if (userPhonenumberList != null) {
+                            for (final String userPhoneNumber : userPhonenumberList) {
+                                User user = new User();
+                                user.setPhoneNumber(userPhoneNumber);
+                                usersMap.put(userPhoneNumber, user);
+                            }
+                        }
+                        invitations.add(invitation);
+                        lvInvitationsAdapter.notifyDataSetChanged();
+                    }
+                } else {
+                    Log.e(TAG, e.getMessage());
+                }
+            }
+        });
     }
 
     @Override
@@ -155,18 +198,18 @@ public class MainActivity extends ActionBarActivity implements
         ParseUser user = new ParseUser();
         user.setUsername(phoneNumber); // Mandatory
         user.setPassword(phoneNumber); // Mandatory
-        user.setEmail(phoneNumber+ "@foodcoma.com"); // Mandatory
+        user.setEmail(phoneNumber + "@foodcoma.com"); // Mandatory
         user.put("phonenumber", phoneNumber);
-        FoodcomaApplication mapp = (FoodcomaApplication)getApplicationContext();
-        user.put("userlocation",new ParseGeoPoint(mapp.getMylatitude(),mapp.getMylongitude()));
+        FoodcomaApplication mapp = (FoodcomaApplication) getApplicationContext();
+        user.put("userlocation", new ParseGeoPoint(mapp.getMylatitude(), mapp.getMylongitude()));
 
         user.signUpInBackground(new SignUpCallback() {
             public void done(ParseException e) {
                 if (e == null) {
-                    Log.d("DEBUG","Sign up successful");
+                    Log.d("DEBUG", "Sign up successful");
                     subscribeWithParse();
                 } else {
-                    Log.d("DEBUG","Sign up failed");
+                    Log.d("DEBUG", "Sign up failed");
                 }
             }
         });
@@ -180,9 +223,9 @@ public class MainActivity extends ActionBarActivity implements
         ParseUser.logInInBackground(phoneNumber, phoneNumber, new LogInCallback() {
             public void done(ParseUser user, ParseException e) {
                 if (user != null) {
-                    Log.d("DEBUG","Sign In successful");
+                    Log.d("DEBUG", "Sign In successful");
                 } else {
-                    Log.d("DEBUG","Sign In failed");
+                    Log.d("DEBUG", "Sign In failed");
                 }
             }
         });
@@ -222,6 +265,12 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        populateMyInvitations(invitations);
+    }
+
+    @Override
     protected void onStop() {
         if (googleApiClient != null) {
             googleApiClient.disconnect();
@@ -247,7 +296,7 @@ public class MainActivity extends ActionBarActivity implements
 
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
-            FoodcomaApplication mapp = (FoodcomaApplication)getApplicationContext();
+            FoodcomaApplication mapp = (FoodcomaApplication) getApplicationContext();
             mapp.setMylatitude(location.getLatitude());
             mapp.setMylongitude(location.getLongitude());
             ParseUser user = ParseUser.getCurrentUser();
@@ -255,7 +304,7 @@ public class MainActivity extends ActionBarActivity implements
                 user.put("userlocation", new ParseGeoPoint(mapp.getMylatitude(), mapp.getMylongitude()));
                 user.saveInBackground();
             }
-            Toast.makeText(this, "GPS Location was found!!" + location.getLatitude()+ ","+ location.getLongitude(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "GPS Location was found!!" + location.getLatitude() + "," + location.getLongitude(), Toast.LENGTH_SHORT).show();
 //            startLocationUpdates();
         } else {
             Toast.makeText(this, "Error - current location is null, enable GPS!", Toast.LENGTH_SHORT).show();
@@ -276,11 +325,11 @@ public class MainActivity extends ActionBarActivity implements
         String msg = "Update location: " +
                 Double.toString(location.getLatitude()) + ", " +
                 Double.toString(location.getLongitude());
-        FoodcomaApplication mapp = (FoodcomaApplication)getApplicationContext();
+        FoodcomaApplication mapp = (FoodcomaApplication) getApplicationContext();
         mapp.setMylatitude(location.getLatitude());
         mapp.setMylongitude(location.getLongitude());
         ParseUser user = ParseUser.getCurrentUser();
-        user.put("userlocation",new ParseGeoPoint(mapp.getMylatitude(),mapp.getMylongitude()));
+        user.put("userlocation", new ParseGeoPoint(mapp.getMylatitude(), mapp.getMylongitude()));
         user.saveInBackground();
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }

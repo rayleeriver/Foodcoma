@@ -143,15 +143,15 @@ public class ViewActivity extends ActionBarActivity implements
         
         Intent i = getIntent();
         if (i != null) {
-            String activityName = i.getStringExtra("activityname");
-            if (activityName != null && activityName.equals("CreateActivity")) {
-                // From MainActivity
-                invitation = getIntent().getParcelableExtra("invitation");
-            } else {
-                String data = i.getStringExtra("data");
+            String data = i.getStringExtra("data");
+
+            if (data != null) {
                 // From Push Notifications
                 invitation = Invitation.getInvitationFromJsonObject(data);
+            } else {
+                invitation = getIntent().getParcelableExtra("invitation");
             }
+
 
             setupViews();
 
@@ -177,7 +177,6 @@ public class ViewActivity extends ActionBarActivity implements
         rlReject = (RelativeLayout) findViewById(R.id.rlReject);
         lvContacts = (ListView) findViewById(R.id.lvContacts);
 
-//        Log.d("DEBUG-FRIENDS", invitation.getUsers().keySet().toString());
         Log.d("DEBUG-FRIENDS", invitation.getUsersList().size() + "");
 
         FriendListAdapter adapter = new FriendListAdapter(this, invitation.getUsersList());

@@ -1,9 +1,8 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity"
-    android:orientation="vertical"
+<android.support.v4.widget.SwipeRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:layout_centerVertical="true">
+    android:id="@+id/swipeContainer">
 
     <ListView
         android:id="@+id/lvInvitations"
@@ -12,4 +11,5 @@
         android:divider="@null"
         android:dividerHeight="0dp">
         </ListView>
-</LinearLayout>
+
+</android.support.v4.widget.SwipeRefreshLayout>

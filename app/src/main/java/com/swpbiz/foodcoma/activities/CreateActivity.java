@@ -171,8 +171,10 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
             phonenumber = (String)installation.get("phonenumber");
 
             ParseObject parseinvitation = new ParseObject("Invitation");
+            parseinvitation.put("owner", invitation.getOwner().getPhoneNumber());
             parseinvitation.put("timeofevent", invitation.getTimeOfEvent());
-            if (parseinvitation.get("invitationid") == null || parseinvitation.get("invitationid").toString().isEmpty()) {
+            if (parseinvitation.get("invitationid") == null
+                    || parseinvitation.get("invitationid").toString().isEmpty()) {
                 parseinvitation.put("invitationid", 1);
             }
             parseinvitation.put("mapurl", invitation.getMapUrl());
@@ -199,8 +201,6 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
 
             Intent i = new Intent(CreateActivity.this, ViewActivity.class);
 
-            // i.putExtra("data", invitation.getJsonObject());
-            i.putExtra("activityname","CreateActivity");
             i.putExtra("invitation", invitation);
             startActivity(i);
             return true;
