@@ -217,25 +217,30 @@ public class ViewActivity extends ActionBarActivity implements
             }
         });
 
-        rlReject.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ParseQuery<ParseObject> query = ParseQuery.getQuery("Invitation");
-                query.getInBackground(invitation.getInvitationId(), new GetCallback<ParseObject>() {
-                    @Override
-                    public void done(ParseObject parseObject, com.parse.ParseException e) {
-                        if (parseObject != null)
-                            try {
-                                parseObject.delete();
-                                Intent intent = new Intent(ViewActivity.this, MainActivity.class);
-                                startActivity(intent);
-                            } catch (com.parse.ParseException e1) {
-                                e1.printStackTrace();
-                            }
-                    }
-                });
-            }
-        });
+        if (invitation.getOwner().getPhoneNumber().equals(phonenumber)) {
+            rlReject.setVisibility(View.VISIBLE);
+            rlReject.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ParseQuery<ParseObject> query = ParseQuery.getQuery("Invitation");
+                    query.getInBackground(invitation.getInvitationId(), new GetCallback<ParseObject>() {
+                        @Override
+                        public void done(ParseObject parseObject, com.parse.ParseException e) {
+                            if (parseObject != null)
+                                try {
+                                    parseObject.delete();
+                                    Intent intent = new Intent(ViewActivity.this, MainActivity.class);
+                                    startActivity(intent);
+                                } catch (com.parse.ParseException e1) {
+                                    e1.printStackTrace();
+                                }
+                        }
+                    });
+                }
+            });
+        } else {
+            rlReject.setVisibility(View.GONE);
+        }
 
     }
 
