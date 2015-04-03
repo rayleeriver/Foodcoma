@@ -129,15 +129,23 @@ public class MainActivity extends ActionBarActivity implements
         });
     }
 
-    private void populateMyInvitations(final List<Invitation> invitations) {
+    private void populateMyInvitations(final List<Invitation> myInvitations) {
 
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Invitation");
-        query.whereEqualTo("owner", phoneNumber);
+        ParseQuery<ParseObject> myInvitationsQuery = ParseQuery.getQuery("Invitation");
+        myInvitationsQuery.whereEqualTo("owner", phoneNumber);
 
-        query.findInBackground(new FindCallback<ParseObject>() {
+        ParseQuery<ParseObject> receivedInvitationsQuery = ParseQuery.getQuery("Invitation");
+        receivedInvitationsQuery.whereEqualTo("users", phoneNumber);
+
+        List<ParseQuery<ParseObject>> queries = new ArrayList<>();
+        queries.add(myInvitationsQuery);
+        queries.add(receivedInvitationsQuery);
+
+        ParseQuery<ParseObject> mainQuery = ParseQuery.or(queries);
+        mainQuery.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> objects, ParseException e) {
                 if (e == null) {
-                    invitations.clear();
+                    myInvitations.clear();
                     Log.d(TAG, "get my invitations count: " + objects.size());
 
                     for (ParseObject object : objects) {
@@ -151,12 +159,13 @@ public class MainActivity extends ActionBarActivity implements
                         if (userPhonenumberList != null) {
                             for (final String userPhoneNumber : userPhonenumberList) {
                                 User user = new User();
+
                                 user.setPhoneNumber(userPhoneNumber);
                                 usersMap.put(userPhoneNumber, user);
                             }
                         }
                         invitation.setUsers(usersMap);
-                        invitations.add(invitation);
+                        myInvitations.add(invitation);
                         lvInvitationsAdapter.notifyDataSetChanged();
                     }
                 } else {
