@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.os.Parcelable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -12,6 +13,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -115,6 +118,15 @@ public class MainActivity extends ActionBarActivity implements
         lvInvitations = (ListView) findViewById(R.id.lvInvitations);
         lvInvitationsAdapter = new InvitationsArrayAdapter(this, invitations);
         lvInvitations.setAdapter(lvInvitationsAdapter);
+
+        lvInvitations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent i = new Intent(MainActivity.this, ViewActivity.class);
+                i.putExtra("invitation", (Parcelable) invitations.get(position));
+                startActivity(i);
+            }
+        });
     }
 
     private void populateMyInvitations(final List<Invitation> invitations) {
@@ -143,6 +155,7 @@ public class MainActivity extends ActionBarActivity implements
                                 usersMap.put(userPhoneNumber, user);
                             }
                         }
+                        invitation.setUsers(usersMap);
                         invitations.add(invitation);
                         lvInvitationsAdapter.notifyDataSetChanged();
                     }

@@ -55,15 +55,6 @@ public class InvitationsArrayAdapter extends ArrayAdapter<Invitation> {
             ivAccepted.setVisibility(View.GONE);
         }
 
-        convertView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(getContext(), ViewActivity.class);
-                i.putExtra("invitation", (Parcelable) invitation);
-                getContext().startActivity(i);
-            }
-        });
-
         return convertView;
     }
 }

@@ -30,7 +30,6 @@
             android:text="6:00PM"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="#ffffff"
-            android:textIsSelectable="true"
             android:textSize="20sp"
             android:textStyle="bold" />
 
