@@ -163,7 +163,7 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
                     || parseinvitation.get("invitationid").toString().isEmpty()) {
                 parseinvitation.put("invitationid", 1);
             }
-            parseinvitation.put("placeName", invitation.getPlaceName());
+            parseinvitation.put("placeName", invitation.getRestaurant().getName());
 
             ParseGeoPoint placeLatLng = new ParseGeoPoint(invitation.getRestaurant().getRestaurantLocation().getLatitude(), invitation.getRestaurant().getRestaurantLocation().getLongitude());
             parseinvitation.put("placeLatLng", placeLatLng);
@@ -231,11 +231,11 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
         owner.setPhoneNumber(phonenumber);
         owner.setName(phonenumber);
         invitation.setOwner(owner);
-        invitation.setPlaceName(placeName);
         invitation.setTimeOfEvent(MyDateTimeUtil.getEpochTime(dateValue, timeValue)); // set date/time later
         invitation.setUsers(getFriendsSelected());
         if (restaurant == null) {
             restaurant = new Restaurant();
+            restaurant.setName(placeName);
         }
         invitation.setRestaurant(restaurant);
 

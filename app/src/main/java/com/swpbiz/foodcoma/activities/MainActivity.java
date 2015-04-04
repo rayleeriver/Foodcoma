@@ -45,6 +45,7 @@ import com.swpbiz.foodcoma.FoodcomaApplication;
 import com.swpbiz.foodcoma.R;
 import com.swpbiz.foodcoma.adapters.InvitationsArrayAdapter;
 import com.swpbiz.foodcoma.models.Invitation;
+import com.swpbiz.foodcoma.models.Restaurant;
 import com.swpbiz.foodcoma.models.User;
 import com.swpbiz.foodcoma.services.AndroidLocationServices;
 
@@ -154,7 +155,10 @@ public class MainActivity extends ActionBarActivity implements
                     for (ParseObject object : objects) {
                         Invitation invitation = new Invitation();
                         invitation.setInvitationId(object.getObjectId());
-                        invitation.setPlaceName(object.getString("placeName"));
+
+                        Restaurant restaurant = new Restaurant();
+                        restaurant.setName(object.getString("placeName"));
+                        invitation.setRestaurant(restaurant);
                         invitation.setTimeOfEvent(object.getLong("timeofevent"));
 
                         String ownerPhoneNumber = object.getString("owner");

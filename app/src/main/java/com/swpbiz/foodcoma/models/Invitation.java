@@ -36,12 +36,9 @@ public class Invitation implements Parcelable {
 
     // @Column(name = "owner")
     private User owner;
-    // @Column(name = "mapUrl")
 
     private Restaurant restaurant;
-    private String placeName;
 
-//    private String mapUrl;
     // @Column(name = "timeOfEvent")
     private long timeOfEvent;
 
@@ -49,10 +46,8 @@ public class Invitation implements Parcelable {
 
     public Invitation() {
         invitationId = "";
-        placeName = "";
         restaurant = new Restaurant();
         owner = new User();
-//        mapUrl = "";
         timeOfEvent = 0;
         users = new HashMap<String, User>();
     }
@@ -64,14 +59,6 @@ public class Invitation implements Parcelable {
     public void setOwner(User owner) {
         this.owner = owner;
     }
-
-//    public String getMapUrl() {
-//        return mapUrl;
-//    }
-//
-//    public void setMapUrl(String mapUrl) {
-//        this.mapUrl = mapUrl;
-//    }
 
     public String getInvitationId() {
         return invitationId;
@@ -107,14 +94,6 @@ public class Invitation implements Parcelable {
         this.timeOfEvent = timeOfEvent;
     }
 
-    public String getPlaceName() {
-        return placeName;
-    }
-
-    public void setPlaceName(String placeName) {
-        this.placeName = placeName;
-    }
-
     public boolean isAccept() {
         return accept;
     }
@@ -136,7 +115,6 @@ public class Invitation implements Parcelable {
         JSONArray usersJSONarray;
 
         try {
-//            data.put("mapurl", mapUrl);
             data.put("invitationId", invitationId);
             data.put("timeofevent", timeOfEvent);
             data.put("owner", owner.getJsonObject());
@@ -179,7 +157,6 @@ public class Invitation implements Parcelable {
             JSONObject obj = new JSONObject(data);
             JSONObject d = obj.getJSONObject("data");
             i.setTimeOfEvent(d.getLong("timeofevent"));
-//            i.setMapUrl(d.getString("mapurl"));
             i.setOwner(User.getUserFromJsonObject(d.getJSONObject("owner")));
             JSONArray users = d.getJSONArray("users");
             HashMap<String, User> usersHashMap = new HashMap<>();
@@ -207,8 +184,6 @@ public class Invitation implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(invitationId);
         dest.writeParcelable(owner, PARCELABLE_WRITE_RETURN_VALUE);
-        dest.writeString(placeName);
-//        dest.writeString(mapUrl);
         dest.writeLong(timeOfEvent);
 
 
@@ -244,8 +219,6 @@ public class Invitation implements Parcelable {
     private Invitation(Parcel in) {
         invitationId = in.readString();
         owner = in.readParcelable(User.class.getClassLoader());
-        placeName = in.readString();
-//        mapUrl = in.readString();
         timeOfEvent = in.readLong();
 
         // Get the size of users HashMap
