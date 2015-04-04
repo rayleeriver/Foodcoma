@@ -50,6 +50,7 @@ import com.swpbiz.foodcoma.models.User;
 import com.swpbiz.foodcoma.services.AndroidLocationServices;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -195,6 +196,8 @@ public class MainActivity extends ActionBarActivity implements
 //                        }
 
                         myInvitations.add(invitation);
+
+                        Collections.sort(myInvitations, new InvitationsComparator());
                         lvInvitationsAdapter.notifyDataSetChanged();
                     }
                 } else {
