@@ -89,7 +89,7 @@ import java.util.logging.LogRecord;
 
 public class ViewActivity extends ActionBarActivity implements
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,LocationListener {
+        GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private static final int REQUEST_PLACE_PICKER = 12123;
     private SupportMapFragment mapFragment;
@@ -127,8 +127,7 @@ public class ViewActivity extends ActionBarActivity implements
         phonenumber = sharedPref.getString(getString(R.string.my_phone_number), null);
 
         markers = new ArrayList<Marker>();
-        handler =  new android.os.Handler();
-
+        handler = new android.os.Handler();
 
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentMap);
@@ -142,7 +141,7 @@ public class ViewActivity extends ActionBarActivity implements
         } else {
             Toast.makeText(this, "Error -Map fragment was null!!!", Toast.LENGTH_SHORT).show();
         }
-        
+
         Intent i = getIntent();
         if (i != null) {
             String data = i.getStringExtra("data");
@@ -204,7 +203,7 @@ public class ViewActivity extends ActionBarActivity implements
                 // Send 'Accept' push noti to everyone
                 ParseQuery pushQuery = ParseInstallation.getQuery();
                 ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-                String phonenumber = (String)installation.get("phonenumber");
+                String phonenumber = (String) installation.get("phonenumber");
                 HashMap<String, User> users = invitation.getUsers();
                 User user = users.get(phonenumber);
 
@@ -311,8 +310,13 @@ public class ViewActivity extends ActionBarActivity implements
             map.clear();
 
             LatLng resLoc = new LatLng(invitation.getRestaurant().getRestaurantLocation().getLatitude(), invitation.getRestaurant().getRestaurantLocation().getLongitude());
-            Marker marker = map.addMarker(new MarkerOptions().position(resLoc).title(invitation.getRestaurant().getName()));
-            marker.showInfoWindow();
+            int placeMarkerColor = getResources().getColor(R.color.primary_dark);
+            float[] placeMarkerHue = new float[3];
+            Color.colorToHSV(placeMarkerColor, placeMarkerHue);
+            map.addMarker(new MarkerOptions()
+                    .position(resLoc)
+                    .title(invitation.getRestaurant().getName())
+                    .icon(BitmapDescriptorFactory.defaultMarker(placeMarkerHue[0]))).showInfoWindow();
 
             Set set = invitation.getUsers().entrySet();
 
@@ -323,7 +327,7 @@ public class ViewActivity extends ActionBarActivity implements
             // Display elements
             while (itr.hasNext()) {
                 Map.Entry me = (Map.Entry) itr.next();
-                phonenumbers.add(index, (String)me.getKey());
+                phonenumbers.add(index, (String) me.getKey());
                 index++;
             }
 
@@ -342,14 +346,14 @@ public class ViewActivity extends ActionBarActivity implements
                         for (int i = 0; i < parseUsers.size(); i++) {
                             userphonenumber = parseUsers.get(i).getString("phonenumber");
                             ParseGeoPoint uloc = parseUsers.get(i).getParseGeoPoint("userlocation");
-                            LatLng userloc = new LatLng(uloc.getLatitude(),uloc.getLongitude());
-                            Marker marker = map.addMarker(new MarkerOptions().position(userloc).title(userphonenumber));
+                            LatLng userloc = new LatLng(uloc.getLatitude(), uloc.getLongitude());
+                            map.addMarker(new MarkerOptions()
+                                    .position(userloc)
+                                    .title(userphonenumber));
                             latLngBoundsBuilder.include(userloc);
-                            marker.showInfoWindow();
                         }
 
                         map.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBoundsBuilder.build(), 80));
-
                     } else {
                         Log.d("score", "Error: " + e.getMessage());
                     }
@@ -375,7 +379,6 @@ public class ViewActivity extends ActionBarActivity implements
 //                }
 
 
-
             });
         }
     };
@@ -385,7 +388,7 @@ public class ViewActivity extends ActionBarActivity implements
     protected void onStart() {
         super.onStart();
         connectClient();
-        handler.postDelayed(runnable,1000);
+        handler.postDelayed(runnable, 1000);
     }
 
     @Override
@@ -398,7 +401,7 @@ public class ViewActivity extends ActionBarActivity implements
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch(requestCode)  {
+        switch (requestCode) {
             case CONNECTION_FAILURE_RESOLUTION_REQUEST:
                 switch (resultCode) {
                     case Activity.RESULT_OK:
@@ -422,14 +425,14 @@ public class ViewActivity extends ActionBarActivity implements
     public void onConnected(Bundle bundle) {
         Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
         if (location != null) {
-            Toast.makeText(this, "GPS Location was found!!", Toast.LENGTH_SHORT).show();
-            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+//            Toast.makeText(this, "GPS Location was found!!", Toast.LENGTH_SHORT).show();
+//            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 //            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
-            if (latLngBoundsBuilder!= null)
-                map.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBoundsBuilder.build(), 50));
-
-            LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
-            addMarker(loc, phonenumber);
+//            if (latLngBoundsBuilder != null)
+//                map.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBoundsBuilder.build(), 50));
+//
+//            LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
+//            addMarker(loc, phonenumber);
             startLocationUpdates();
         } else {
             Toast.makeText(this, "Error - current location is null, enable GPS!", Toast.LENGTH_SHORT).show();
@@ -449,9 +452,7 @@ public class ViewActivity extends ActionBarActivity implements
 //                getText().toString();
 
 
-
-
-        LatLng myloc = new LatLng(location.latitude,location.longitude);
+        LatLng myloc = new LatLng(location.latitude, location.longitude);
         map.clear();
         Marker marker = map.addMarker(new MarkerOptions().position(myloc).title(title).icon(defaultMarker));
         marker.showInfoWindow();

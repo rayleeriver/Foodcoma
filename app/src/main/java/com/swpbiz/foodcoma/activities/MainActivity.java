@@ -158,7 +158,13 @@ public class MainActivity extends ActionBarActivity implements
 
                         Restaurant restaurant = new Restaurant();
                         restaurant.setName(object.getString("placeName"));
+                        Location restaurantLocation = new Location("Restaurant");
+                        ParseGeoPoint placeLatLng = object.getParseGeoPoint("placeLatLng");
+                        restaurantLocation.setLatitude(placeLatLng.getLatitude());
+                        restaurantLocation.setLongitude(placeLatLng.getLongitude());
+                        restaurant.setRestaurantLocation(restaurantLocation);
                         invitation.setRestaurant(restaurant);
+
                         invitation.setTimeOfEvent(object.getLong("timeofevent"));
 
                         String ownerPhoneNumber = object.getString("owner");
