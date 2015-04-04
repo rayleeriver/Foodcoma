@@ -154,7 +154,7 @@ public class MainActivity extends ActionBarActivity implements
                     for (ParseObject object : objects) {
                         Invitation invitation = new Invitation();
                         invitation.setInvitationId(object.getObjectId());
-                        invitation.setPlaceName(object.getString("mapurl"));
+                        invitation.setPlaceName(object.getString("placeName"));
                         invitation.setTimeOfEvent(object.getLong("timeofevent"));
 
                         String ownerPhoneNumber = object.getString("owner");
@@ -185,6 +185,11 @@ public class MainActivity extends ActionBarActivity implements
                             }
                         }
                         invitation.setUsers(usersMap);
+
+//                        if (object.<String>getList("acceptedUsers") != null) {
+//                            invitation.getAcceptedUsersPhoneNumbers().addAll(object.<String>getList("acceptedUsers"));
+//                        }
+
                         myInvitations.add(invitation);
                         lvInvitationsAdapter.notifyDataSetChanged();
                     }

@@ -166,6 +166,19 @@ public class ViewActivity extends ActionBarActivity implements
             } else {
                 rlAccept.setBackgroundColor(Color.parseColor("#cccccc"));
             }
+
+            rlAccept.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (invitation.isAccept()) {
+                        invitation.setAccept(false);
+                        rlAccept.setBackgroundColor(Color.parseColor("#cccccc"));
+                    } else {
+                        invitation.setAccept(true);
+                        rlAccept.setBackgroundColor(getResources().getColor(R.color.primary_dark));
+                    }
+                }
+            });
         }
     }
 

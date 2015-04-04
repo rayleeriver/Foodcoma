@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Parcelable;
 import android.provider.ContactsContract;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -13,7 +12,6 @@ import android.support.v4.content.Loader;
 import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,11 +20,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.fourmob.datetimepicker.date.DatePickerDialog;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
-import com.google.android.gms.maps.model.LatLngBounds;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.sleepbot.datetimepicker.time.RadialPickerLayout;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
@@ -35,13 +31,8 @@ import com.swpbiz.foodcoma.R;
 import com.swpbiz.foodcoma.adapters.MyCursorAdapter;
 import com.swpbiz.foodcoma.models.Invitation;
 
-import java.io.Serializable;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
 
 import com.parse.ParseInstallation;
 import com.parse.ParsePush;
@@ -55,11 +46,6 @@ import org.json.JSONObject;
 
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 
 
 public class CreateActivity extends ActionBarActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
@@ -68,7 +54,7 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
     public static final String TIMEPICKER_TAG = "timepicker";
     private TextView tvCreateDate;
     private TextView tvCreateTime;
-    private TextView tvLocation;
+    private TextView tvPlaceName;
     private String dateValue;
     private String timeValue;
     private Calendar calendar;
@@ -162,7 +148,7 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_send) {
             Invitation invitation = createInvitation();
-            Log.d("DEBUG", "location " + invitation.getMapUrl());
+//            Log.d("DEBUG", "location " + invitation.getMapUrl());
             Log.d("DEBUG", "datetime " + invitation.getTimeOfEvent());
 
 
@@ -177,9 +163,14 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
                     || parseinvitation.get("invitationid").toString().isEmpty()) {
                 parseinvitation.put("invitationid", 1);
             }
-            parseinvitation.put("mapurl", invitation.getMapUrl());
+            parseinvitation.put("placeName", invitation.getPlaceName());
+
+            ParseGeoPoint placeLatLng = new ParseGeoPoint(invitation.getRestaurant().getRestaurantLocation().getLatitude(), invitation.getRestaurant().getRestaurantLocation().getLongitude());
+            parseinvitation.put("placeLatLng", placeLatLng);
+
             ArrayList<String> userPhonenumberList = new ArrayList<String>(invitation.getUsers().keySet());
             parseinvitation.put("users",userPhonenumberList);
+
             parseinvitation.saveInBackground();
             invitation.setInvitationId(parseinvitation.getString("invitationid"));
 
@@ -209,7 +200,7 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
     }
 
     private void setupViews() {
-        tvLocation = (TextView) findViewById(R.id.tvLocation);
+        tvPlaceName = (TextView) findViewById(R.id.tvPlaceName);
         tvCreateDate = (TextView) findViewById(R.id.tvCreateDate);
         tvCreateTime = (TextView) findViewById(R.id.tvCreateTime);
 
@@ -227,7 +218,7 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
     }
 
     private Invitation createInvitation() {
-        String location = tvLocation.getText().toString();
+        String placeName = tvPlaceName.getText().toString();
         String date = tvCreateDate.getText().toString();
         String time = tvCreateTime.getText().toString();
 
@@ -240,7 +231,7 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
         owner.setPhoneNumber(phonenumber);
         owner.setName(phonenumber);
         invitation.setOwner(owner);
-        invitation.setMapUrl(location);
+        invitation.setPlaceName(placeName);
         invitation.setTimeOfEvent(MyDateTimeUtil.getEpochTime(dateValue, timeValue)); // set date/time later
         invitation.setUsers(getFriendsSelected());
         if (restaurant == null) {
@@ -369,7 +360,7 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
 
         } else if (requestCode == SET_RESTAURANT && resultCode == Activity.RESULT_OK) {
             restaurant = data.getParcelableExtra("restaurant");
-            tvLocation.setText(restaurant.getName());
+            tvPlaceName.setText(restaurant.getName());
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
