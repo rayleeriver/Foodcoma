@@ -1,4 +1,4 @@
-package com.swpbiz.foodcoma.activities;
+package com.swpbiz.foodcoma.models;
 
 import com.swpbiz.foodcoma.models.Invitation;
 

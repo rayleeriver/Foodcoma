@@ -51,6 +51,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.FindCallback;
@@ -111,7 +112,7 @@ public class ViewActivity extends ActionBarActivity implements
     private String phonenumber;
     private android.os.Handler handler;
     private ArrayList<Marker> markers;
-
+    private LatLngBounds.Builder latLngBoundsBuilder;
 
 
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
@@ -336,13 +337,18 @@ public class ViewActivity extends ActionBarActivity implements
                     if (e == null) {
                         Log.d("DEBUG", "Retrieved " + parseUsers.size() + " phonenumber");
 
+                        latLngBoundsBuilder = new LatLngBounds.Builder();
+                        latLngBoundsBuilder.include(new LatLng(((FoodcomaApplication) getApplication()).getMylatitude(), ((FoodcomaApplication) getApplication()).getMylongitude()));
                         for (int i = 0; i < parseUsers.size(); i++) {
                             userphonenumber = parseUsers.get(i).getString("phonenumber");
                             ParseGeoPoint uloc = parseUsers.get(i).getParseGeoPoint("userlocation");
                             LatLng userloc = new LatLng(uloc.getLatitude(),uloc.getLongitude());
                             Marker marker = map.addMarker(new MarkerOptions().position(userloc).title(userphonenumber));
+                            latLngBoundsBuilder.include(userloc);
                             marker.showInfoWindow();
                         }
+
+                        map.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBoundsBuilder.build(), 80));
 
                     } else {
                         Log.d("score", "Error: " + e.getMessage());
@@ -418,8 +424,10 @@ public class ViewActivity extends ActionBarActivity implements
         if (location != null) {
             Toast.makeText(this, "GPS Location was found!!", Toast.LENGTH_SHORT).show();
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
-            map.animateCamera(cameraUpdate);
+//            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
+            if (latLngBoundsBuilder!= null)
+                map.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBoundsBuilder.build(), 50));
+
             LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
             addMarker(loc, phonenumber);
             startLocationUpdates();
