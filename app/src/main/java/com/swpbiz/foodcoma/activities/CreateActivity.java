@@ -46,6 +46,7 @@ import org.json.JSONObject;
 
 
 import java.util.HashMap;
+import java.util.List;
 
 
 public class CreateActivity extends ActionBarActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
@@ -171,7 +172,7 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
             ArrayList<String> userPhonenumberList = new ArrayList<String>(invitation.getUsers().keySet());
             parseinvitation.put("users",userPhonenumberList);
 
-            parseinvitation.put("acceptedUsers", new ArrayList<String>());
+            parseinvitation.put("acceptedUsers", new ArrayList<String>(invitation.getAcceptedUsers()));
 
             parseinvitation.saveInBackground();
             invitation.setInvitationId(parseinvitation.getString("invitationid"));
@@ -235,6 +236,9 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
         invitation.setOwner(owner);
         invitation.setTimeOfEvent(MyDateTimeUtil.getEpochTime(dateValue, timeValue)); // set date/time later
         invitation.setUsers(getFriendsSelected());
+
+        invitation.getAcceptedUsers().add(phonenumber);
+
         if (restaurant == null) {
             restaurant = new Restaurant();
             restaurant.setName(placeName);

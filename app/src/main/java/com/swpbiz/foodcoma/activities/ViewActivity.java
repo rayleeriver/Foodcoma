@@ -181,7 +181,7 @@ public class ViewActivity extends ActionBarActivity implements
         FriendListAdapter adapter = new FriendListAdapter(this, invitation.getUsersList());
         lvContacts.setAdapter(adapter);
 
-        if (invitation.isAccepted()) {
+        if (invitation.isAccepted(phonenumber)) {
             rlAccept.setBackgroundColor(getResources().getColor(R.color.primary_dark));
         } else {
             rlAccept.setBackgroundColor(Color.parseColor("#cccccc"));

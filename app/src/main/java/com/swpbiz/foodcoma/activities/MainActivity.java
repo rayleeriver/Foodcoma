@@ -121,7 +121,7 @@ public class MainActivity extends ActionBarActivity implements
                 android.R.color.holo_red_light);
 
         lvInvitations = (ListView) findViewById(R.id.lvInvitations);
-        lvInvitationsAdapter = new InvitationsArrayAdapter(this, invitations);
+        lvInvitationsAdapter = new InvitationsArrayAdapter(this, invitations, getPhoneNumber());
         lvInvitations.setAdapter(lvInvitationsAdapter);
 
         lvInvitations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
