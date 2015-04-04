@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/restaurant"
+    android:background="@drawable/background_pizza"
     tools:context="com.swpbiz.foodcoma.activities.RestaurantActivity"
     android:id="@+id/rlrestaurants"
     android:visibility="visible"
@@ -26,6 +26,8 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/etsearch"
+        android:divider="@null"
+        android:dividerHeight="0dp"
         android:alpha="1"/>
 
     <EditText
@@ -42,8 +44,8 @@
         android:focusableInTouchMode="false" />
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
         android:text=""
         android:id="@+id/Bsearch"
         android:layout_alignParentTop="true"

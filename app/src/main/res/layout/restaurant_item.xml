@@ -1,71 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-
-    >
-
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical" android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:alpha="1"
-        >
-
-        <ImageView
-            android:layout_width="50dp"
-         android:layout_height="50dp"
-         android:id="@+id/Iviconurl"
-         android:layout_alignParentTop="true"
-         android:layout_alignParentLeft="true"
-         android:layout_alignParentStart="true"
-            android:scaleType="fitXY" />
+    android:orientation="vertical">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
-        android:layout_toRightOf="@+id/Iviconurl"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/rlresinfo">
-
-    <TextView
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=""
-        android:id="@+id/tvrestaurantname"
-        android:textStyle="bold" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tvrestaurantname"
-        android:text=""
-        android:id="@+id/tvaddress"
-        android:textStyle="bold" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tvaddress"
-        android:text=""
-        android:id="@+id/tvrating"
-        android:textStyle="bold" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/tvrating"
-        android:layout_below="@+id/tvaddress"
-        android:text=""
-        android:id="@+id/tvpricelevel"
-        android:textStyle="bold" />
+        android:background="#eeffffff"
+        android:orientation="vertical"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="0dp"
+        android:padding="10dp">
 
         <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:id="@+id/Ivrestauranrphoto"
-            android:layout_below="@+id/tvpricelevel"
-            android:scaleType="fitXY" />
+            android:id="@+id/Iviconurl"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:scaleType="fitXY"
+            android:src="@drawable/abc_btn_radio_to_on_mtrl_000"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp" />
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/rlresinfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/Iviconurl"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvrestaurantname"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Name"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="#555555"
+                android:layout_marginRight="40dp" />
+
+            <TextView
+                android:id="@+id/tvaddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvrestaurantname"
+                android:text="Address" />
+
+            <TextView
+                android:id="@+id/tvrating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvaddress"
+                android:text="Rating" />
+
+            <TextView
+                android:id="@+id/tvpricelevel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="price"
+                android:textStyle="bold"
+                android:layout_above="@+id/tvaddress"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+
+            <ImageView
+                android:id="@+id/Ivrestauranrphoto"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:scaleType="fitXY"
+                android:src="@mipmap/restaurant"
+                android:layout_below="@+id/tvrating"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
         </RelativeLayout>
 
-        </RelativeLayout>
+    </RelativeLayout>
 </RelativeLayout>
