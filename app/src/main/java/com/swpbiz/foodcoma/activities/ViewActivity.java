@@ -76,8 +76,11 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -161,24 +164,6 @@ public class ViewActivity extends ActionBarActivity implements
             tvEventName.setText(invitation.getRestaurant().getName());
             tvCreator.setText(invitation.getOwner().getName());
 
-            if (invitation.isAccept()) {
-                rlAccept.setBackgroundColor(getResources().getColor(R.color.primary_dark));
-            } else {
-                rlAccept.setBackgroundColor(Color.parseColor("#cccccc"));
-            }
-
-            rlAccept.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (invitation.isAccept()) {
-                        invitation.setAccept(false);
-                        rlAccept.setBackgroundColor(Color.parseColor("#cccccc"));
-                    } else {
-                        invitation.setAccept(true);
-                        rlAccept.setBackgroundColor(getResources().getColor(R.color.primary_dark));
-                    }
-                }
-            });
         }
     }
 
@@ -196,37 +181,52 @@ public class ViewActivity extends ActionBarActivity implements
         FriendListAdapter adapter = new FriendListAdapter(this, invitation.getUsersList());
         lvContacts.setAdapter(adapter);
 
-        // When the user clicks 'Accept' (I'm going)
+        if (invitation.isAccepted(phonenumber)) {
+            rlAccept.setBackgroundColor(getResources().getColor(R.color.primary_dark));
+        } else {
+            rlAccept.setBackgroundColor(Color.parseColor("#cccccc"));
+        }
+
         rlAccept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Send 'Accept' push noti to everyone
-                ParseQuery pushQuery = ParseInstallation.getQuery();
-                ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-                String phonenumber = (String) installation.get("phonenumber");
-                HashMap<String, User> users = invitation.getUsers();
-                User user = users.get(phonenumber);
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("Invitation");
 
-                if (user != null) {
-                    user.setRsvp("ACCEPTED");
+                final List<String> activePhoneNumberList = new ArrayList<>();
+                activePhoneNumberList.add(phonenumber);
 
-                    pushQuery.whereEqualTo("phonenumber", phonenumber);
-
-                    ParsePush push2 = new ParsePush();
-
-                    JSONObject data = new JSONObject();
-                    try {
-                        data.put("title", "Foodcoma");
-                        data.put("alert", phonenumber + " has accepted invitation");
-                        data.put("data", invitation.getJsonObject());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    push2.setQuery(pushQuery); // Set our Installation query
-                    push2.setData(data);
-                    push2.sendInBackground();
+                if (invitation.isAccepted(phonenumber)) {
+                    invitation.removeAcceptedUser(phonenumber);
+                    query.getInBackground(invitation.getInvitationId(), new GetCallback<ParseObject>() {
+                        @Override
+                        public void done(ParseObject parseObject, com.parse.ParseException e) {
+                            if (parseObject != null)
+                                try {
+                                    parseObject.removeAll("acceptedUsers", activePhoneNumberList);
+                                    parseObject.save();
+                                } catch (com.parse.ParseException e1) {
+                                    e1.printStackTrace();
+                                }
+                        }
+                    });
+                    rlAccept.setBackgroundColor(Color.parseColor("#cccccc"));
+                } else {
+                    invitation.addAcceptedUser(phonenumber);
+                    query.getInBackground(invitation.getInvitationId(), new GetCallback<ParseObject>() {
+                        @Override
+                        public void done(ParseObject parseObject, com.parse.ParseException e) {
+                            if (parseObject != null)
+                                try {
+                                    parseObject.addAllUnique("acceptedUsers", activePhoneNumberList);
+                                    parseObject.save();
+                                } catch (com.parse.ParseException e1) {
+                                    e1.printStackTrace();
+                                }
+                        }
+                    });
+                    rlAccept.setBackgroundColor(getResources().getColor(R.color.primary_dark));
                 }
+
             }
         });
 
@@ -308,8 +308,10 @@ public class ViewActivity extends ActionBarActivity implements
         public void run() {
 
             map.clear();
+            latLngBoundsBuilder = new LatLngBounds.Builder();
 
             LatLng resLoc = new LatLng(invitation.getRestaurant().getRestaurantLocation().getLatitude(), invitation.getRestaurant().getRestaurantLocation().getLongitude());
+            latLngBoundsBuilder.include(resLoc);
             int placeMarkerColor = getResources().getColor(R.color.primary_dark);
             float[] placeMarkerHue = new float[3];
             Color.colorToHSV(placeMarkerColor, placeMarkerHue);
@@ -320,20 +322,9 @@ public class ViewActivity extends ActionBarActivity implements
 
             Set set = invitation.getUsers().entrySet();
 
-            ArrayList<String> phonenumbers = new ArrayList<String>();
-            // Get an iterator
-            Iterator itr = set.iterator();
-            int index = 0;
-            // Display elements
-            while (itr.hasNext()) {
-                Map.Entry me = (Map.Entry) itr.next();
-                phonenumbers.add(index, (String) me.getKey());
-                index++;
-            }
-
-        /* fetch object of all the users from parse for this Invitation to get their location */
+            /* fetch object of all the users from parse for this Invitation to get their location */
             ParseQuery<ParseUser> query = ParseUser.getQuery();
-            query.whereContainedIn("phonenumber", phonenumbers);
+            query.whereContainedIn("phonenumber", invitation.getAllPhoneNumbers());
             query.findInBackground(new FindCallback<ParseUser>() {
                 @Override
                 public void done(List<ParseUser> parseUsers, com.parse.ParseException e) {
@@ -341,7 +332,6 @@ public class ViewActivity extends ActionBarActivity implements
                     if (e == null) {
                         Log.d("DEBUG", "Retrieved " + parseUsers.size() + " phonenumber");
 
-                        latLngBoundsBuilder = new LatLngBounds.Builder();
                         latLngBoundsBuilder.include(new LatLng(((FoodcomaApplication) getApplication()).getMylatitude(), ((FoodcomaApplication) getApplication()).getMylongitude()));
                         for (int i = 0; i < parseUsers.size(); i++) {
                             userphonenumber = parseUsers.get(i).getString("phonenumber");
@@ -358,27 +348,6 @@ public class ViewActivity extends ActionBarActivity implements
                         Log.d("score", "Error: " + e.getMessage());
                     }
                 }
-
-//                @Override
-//                public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {
-//                    String userphonenumber;
-//                    if (e == null) {
-//                        Log.d("DEBUG", "Retrieved " + parseObjects.size() + " phonenumber");
-//                        map.clear();
-//                        for (int i = 0; i < parseObjects.size(); i++) {
-//                            userphonenumber = parseObjects.get(i).getString("phonenumber");
-//                            ParseGeoPoint uloc = parseObjects.get(i).getParseGeoPoint("userlocation");
-//                            LatLng userloc = new LatLng(uloc.getLatitude(),uloc.getLongitude());
-//                            Marker marker = map.addMarker(new MarkerOptions().position(userloc).title(userphonenumber));
-//                            marker.showInfoWindow();
-//                        }
-//
-//                    } else {
-//                        Log.d("score", "Error: " + e.getMessage());
-//                    }
-//                }
-
-
             });
         }
     };

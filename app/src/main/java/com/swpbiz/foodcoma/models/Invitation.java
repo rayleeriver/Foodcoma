@@ -28,11 +28,14 @@ import java.util.Set;
 
 public class Invitation implements Parcelable {
 
+    public static final String PARSE_ACCEPTED_USERS = "acceptedUsers";
 
     // @Column(name = "invitationId", unique = true)
     private String invitationId;
     // @Column(name = "users")
     private HashMap<String, User> users;
+
+    private Set<String> acceptedUsers = new HashSet<>();
 
     // @Column(name = "owner")
     private User owner;
@@ -41,8 +44,6 @@ public class Invitation implements Parcelable {
 
     // @Column(name = "timeOfEvent")
     private long timeOfEvent;
-
-    private boolean accept;
 
     public Invitation() {
         invitationId = "";
@@ -86,20 +87,20 @@ public class Invitation implements Parcelable {
         this.users = users;
     }
 
+    public Set<String> getAcceptedUsers() {
+        return acceptedUsers;
+    }
+
+    public void setAcceptedUsers(Set<String> acceptedUsers) {
+        this.acceptedUsers = acceptedUsers;
+    }
+
     public long getTimeOfEvent() {
         return timeOfEvent;
     }
 
     public void setTimeOfEvent(long timeOfEvent) {
         this.timeOfEvent = timeOfEvent;
-    }
-
-    public boolean isAccept() {
-        return accept;
-    }
-
-    public void setAccept(boolean accept) {
-        this.accept = accept;
     }
 
     public Restaurant getRestaurant() {
@@ -196,9 +197,8 @@ public class Invitation implements Parcelable {
             dest.writeParcelable(item.getValue(), PARCELABLE_WRITE_RETURN_VALUE);
         }
 
+        dest.writeStringList(new ArrayList<String>(acceptedUsers));
         dest.writeParcelable(restaurant, PARCELABLE_WRITE_RETURN_VALUE);
-
-        dest.writeByte((byte) (accept ? 1 : 0));
     }
 
     public static final Parcelable.Creator<Invitation> CREATOR
@@ -234,9 +234,41 @@ public class Invitation implements Parcelable {
             users.put(in.readString(), (User) in.readParcelable(User.class.getClassLoader()));
         }
 
+        List<String> acceptedUsersList = new ArrayList<>();
+        in.readStringList(acceptedUsersList);
+        acceptedUsers.addAll(acceptedUsersList);
+
         restaurant = in.readParcelable(Restaurant.class.getClassLoader());
-
-        accept = in.readByte() != 0;
-
     }
+
+    public List<String> getAllPhoneNumbers() {
+        ArrayList<String> allPhoneNumbers = new ArrayList<String>();
+
+        // don't forget to include the owner of the invitation
+        allPhoneNumbers.add(owner.getPhoneNumber());
+
+        if (getUsers() != null) {
+            allPhoneNumbers.addAll(getUsers().keySet());
+        }
+
+        return allPhoneNumbers;
+    }
+
+    public void addAcceptedUser(String phoneNumber) {
+        getAcceptedUsers().add(phoneNumber);
+    }
+
+    public void removeAcceptedUser(String phoneNumber) {
+        getAcceptedUsers().remove(phoneNumber);
+    }
+
+    public boolean isAccepted() {
+        return getAcceptedUsers() != null && getAcceptedUsers().size() > 0;
+    }
+
+    public boolean isAccepted(String phoneNumber) {
+        if (getAcceptedUsers() == null) return false;
+        return getAcceptedUsers().contains(phoneNumber);
+    }
+
 }

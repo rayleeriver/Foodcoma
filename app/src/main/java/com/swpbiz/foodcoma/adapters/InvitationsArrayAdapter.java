@@ -25,8 +25,11 @@ import java.util.Locale;
 
 public class InvitationsArrayAdapter extends ArrayAdapter<Invitation> {
 
-    public InvitationsArrayAdapter(Context context, List<Invitation> invitations) {
+    private String myPhoneNumber;
+
+    public InvitationsArrayAdapter(Context context, List<Invitation> invitations, String myPhoneNumber) {
         super(context, 0, invitations);
+        this.myPhoneNumber = myPhoneNumber;
     }
 
     @Override
@@ -45,7 +48,7 @@ public class InvitationsArrayAdapter extends ArrayAdapter<Invitation> {
         tvDate.setText(MyDateTimeUtil.getDateFromEpoch(invitation.getTimeOfEvent()).toUpperCase());
         tvEventName.setText(invitation.getRestaurant().getName());
         tvCreator.setText("By " + invitation.getOwner().getName());
-        if (invitation.isAccept()) {
+        if (invitation.isAccepted(myPhoneNumber)) {
             tvTime.setBackgroundColor(getContext().getResources().getColor(R.color.primary));
             tvDate.setBackgroundColor(getContext().getResources().getColor(R.color.primary_light));
             ivAccepted.setVisibility(View.VISIBLE);
