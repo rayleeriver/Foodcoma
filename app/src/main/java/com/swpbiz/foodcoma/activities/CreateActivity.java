@@ -171,6 +171,8 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
             ArrayList<String> userPhonenumberList = new ArrayList<String>(invitation.getUsers().keySet());
             parseinvitation.put("users",userPhonenumberList);
 
+            parseinvitation.put("acceptedUsers", new ArrayList<String>());
+
             parseinvitation.saveInBackground();
             invitation.setInvitationId(parseinvitation.getString("invitationid"));
 

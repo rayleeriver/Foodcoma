@@ -27,8 +27,6 @@ public class User implements  Parcelable {
     private String avatar;
 //    @Column(name = "location")
     private String location;
-//    @Column(name = "rsvp")
-    private String rsvp;
 
     public User() {
         userId = "";
@@ -36,7 +34,6 @@ public class User implements  Parcelable {
         name = "";
         avatar = "";
         location = "";
-        rsvp = "";
     }
 
     public User(String name, String phoneNumber){
@@ -45,7 +42,6 @@ public class User implements  Parcelable {
         this.userId = "";
         this.avatar ="";
         this.location = "";
-        this.rsvp = "MAYBE";
     }
 
     public User(Parcel source) {
@@ -54,7 +50,6 @@ public class User implements  Parcelable {
         name = source.readString();
         avatar = source.readString();
         location = source.readString();
-        rsvp = source.readString();
     }
 
     public String getUserId() {
@@ -136,14 +131,6 @@ public class User implements  Parcelable {
         return user;
     }
 
-    public String getRsvp() {
-        return rsvp;
-    }
-
-    public void setRsvp(String rsvp) {
-        this.rsvp = rsvp;
-    }
-
     @Override
     public int describeContents() {
         return 0;
@@ -156,7 +143,6 @@ public class User implements  Parcelable {
         dest.writeString(name);
         dest.writeString(avatar);
         dest.writeString(location);
-        dest.writeString(rsvp);
     }
 
     public static final Parcelable.Creator<User> CREATOR

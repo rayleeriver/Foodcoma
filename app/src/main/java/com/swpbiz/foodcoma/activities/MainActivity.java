@@ -51,6 +51,7 @@ import com.swpbiz.foodcoma.services.AndroidLocationServices;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -195,6 +196,9 @@ public class MainActivity extends ActionBarActivity implements
                             }
                         }
                         invitation.setUsers(usersMap);
+
+                        List<String> acceptedUsersList = object.getList(Invitation.PARSE_ACCEPTED_USERS);
+                        invitation.setAcceptedUsers(new HashSet<String>(acceptedUsersList));
 
 //                        if (object.<String>getList("acceptedUsers") != null) {
 //                            invitation.getAcceptedUsersPhoneNumbers().addAll(object.<String>getList("acceptedUsers"));
