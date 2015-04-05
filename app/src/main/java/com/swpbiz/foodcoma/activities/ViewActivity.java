@@ -125,14 +125,14 @@ public class ViewActivity extends ActionBarActivity implements
 
         Intent i = getIntent();
         if (i != null) {
-            String data = i.getStringExtra("data");
-
-            if (data != null) {
-                // From Push Notifications
-                invitation = Invitation.getInvitationFromJsonObject(data);
-            } else {
+//            String data = i.getStringExtra("data");
+//
+//            if (data != null) {
+//                // From Push Notifications
+//                invitation = Invitation.getInvitationFromJsonObject(data);
+//            } else {
                 invitation = getIntent().getParcelableExtra("invitation");
-            }
+//            }
 
 
             setupViews();

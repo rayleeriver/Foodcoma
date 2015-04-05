@@ -47,11 +47,12 @@ import com.swpbiz.foodcoma.R;
 import com.swpbiz.foodcoma.adapters.InvitationsArrayAdapter;
 import com.swpbiz.foodcoma.models.Invitation;
 import com.swpbiz.foodcoma.models.InvitationsComparator;
-import com.swpbiz.foodcoma.models.Restaurant;
 import com.swpbiz.foodcoma.models.User;
 import com.swpbiz.foodcoma.services.AndroidLocationServices;
 import com.swpbiz.foodcoma.services.ContactsLoaderIntentService;
 import com.swpbiz.foodcoma.services.ContactsLoaderIntentServiceBroadcastReceiver;
+
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -169,31 +170,21 @@ public class MainActivity extends ActionBarActivity implements
                     Log.d(TAG, "get my invitations count: " + objects.size());
 
                     for (ParseObject object : objects) {
-                        Invitation invitation = new Invitation();
-                        invitation.setInvitationId(object.getObjectId());
+                        Invitation invitation = null;
+                        try {
+                            invitation = Invitation.fromParseObject(object);
+                        } catch (JSONException e1) {
+                            e1.printStackTrace();
+                        }
 
-                        Restaurant restaurant = new Restaurant();
-                        restaurant.setName(object.getString("placeName"));
-                        Location restaurantLocation = new Location("Restaurant");
-                        ParseGeoPoint placeLatLng = object.getParseGeoPoint("placeLatLng");
-                        restaurantLocation.setLatitude(placeLatLng.getLatitude());
-                        restaurantLocation.setLongitude(placeLatLng.getLongitude());
-                        restaurant.setRestaurantLocation(restaurantLocation);
-                        invitation.setRestaurant(restaurant);
 
-                        invitation.setTimeOfEvent(object.getLong("timeofevent"));
-
-                        String ownerPhoneNumber = object.getString("owner");
-                        User owner = new User();
-                        invitation.getOwner().setPhoneNumber(ownerPhoneNumber);
-
-                        if (ownerPhoneNumber.equals(phoneNumber)) {
+                        if (invitation.getOwner().getPhoneNumber().equals(phoneNumber)) {
                             invitation.getOwner().setName("me");
                         } else {
                             String[] projection = new String[]{
                                     ContactsContract.PhoneLookup.DISPLAY_NAME,
                                     ContactsContract.PhoneLookup._ID};
-                            Uri contactUri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(ownerPhoneNumber));
+                            Uri contactUri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(invitation.getOwner().getPhoneNumber()));
                             Cursor cursor = getContentResolver().query(contactUri, projection, null, null, null);
                             if (cursor.moveToFirst()) {
                                 String name = cursor.getString(cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME));

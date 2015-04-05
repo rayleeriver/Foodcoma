@@ -1,7 +1,11 @@
 package com.swpbiz.foodcoma.models;
 
+import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.parse.ParseGeoPoint;
+import com.parse.ParseObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,7 +28,7 @@ public class Invitation implements Parcelable {
     // @Column(name = "invitationId", unique = true)
     private String invitationId;
     // @Column(name = "users")
-    private HashMap<String, User> users;
+    private HashMap<String, User> users = new HashMap<String, User>();
 
     private Set<String> acceptedUsers = new HashSet<>();
 
@@ -41,7 +45,6 @@ public class Invitation implements Parcelable {
         restaurant = new Restaurant();
         owner = new User();
         timeOfEvent = 0;
-        users = new HashMap<String, User>();
     }
 
     public User getOwner() {
@@ -136,7 +139,7 @@ public class Invitation implements Parcelable {
             if (restaurant == null) {
                 restaurant =  new Restaurant();
             }
-            data.put("restaurant",restaurant.getJsonObject());
+            data.put("restaurant", restaurant.getJsonObject());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -147,8 +150,8 @@ public class Invitation implements Parcelable {
     public static Invitation getInvitationFromJsonObject(String data) {
         Invitation i = new Invitation();
         try {
-            JSONObject obj = new JSONObject(data);
-            JSONObject d = obj.getJSONObject("data");
+            JSONObject d = new JSONObject(data);
+            i.setInvitationId(d.getString("invitationId"));
             i.setTimeOfEvent(d.getLong("timeofevent"));
             i.setOwner(User.getUserFromJsonObject(d.getJSONObject("owner")));
             JSONArray users = d.getJSONArray("users");
@@ -277,5 +280,41 @@ public class Invitation implements Parcelable {
         }
         return userList;
 
+    }
+
+    public static Invitation fromParseObject(ParseObject object) throws JSONException {
+        Invitation invitation = new Invitation();
+        invitation.setInvitationId(object.getObjectId());
+
+        Restaurant restaurant = new Restaurant();
+        restaurant.setName(object.getString("placeName"));
+        Location restaurantLocation = new Location("Restaurant");
+        ParseGeoPoint placeLatLng = object.getParseGeoPoint("placeLatLng");
+        restaurantLocation.setLatitude(placeLatLng.getLatitude());
+        restaurantLocation.setLongitude(placeLatLng.getLongitude());
+        restaurant.setRestaurantLocation(restaurantLocation);
+        invitation.setRestaurant(restaurant);
+
+        JSONArray usersJsonArray = object.getJSONArray("users");
+        if (usersJsonArray!= null) {
+            for (int i = 0; i < usersJsonArray.length(); i++) {
+                String userPhoneNumber = usersJsonArray.getString(i);
+                User user = new User();
+                user.setPhoneNumber(userPhoneNumber);
+                invitation.getUsers().put(userPhoneNumber, user);
+            }
+        }
+
+        JSONArray acceptedUsersJsonArray = object.getJSONArray("acceptedUsers");
+        if (acceptedUsersJsonArray!= null) {
+            for (int i = 0; i < acceptedUsersJsonArray.length(); i++) {
+                invitation.getAcceptedUsers().add(acceptedUsersJsonArray.getString(i));
+            }
+        }
+
+        invitation.setTimeOfEvent(object.getLong("timeofevent"));
+        invitation.getOwner().setPhoneNumber(object.getString("owner"));
+
+        return invitation;
     }
 }
