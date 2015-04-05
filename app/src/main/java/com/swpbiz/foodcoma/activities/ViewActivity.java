@@ -145,7 +145,7 @@ public class ViewActivity extends ActionBarActivity implements
             if (ownerName == null || ownerName.length() == 0) {
                 ownerName = invitation.getOwner().getPhoneNumber();
             }
-            tvCreator.setText(ownerName);
+            tvCreator.setText("By " + ownerName);
 
         }
     }
