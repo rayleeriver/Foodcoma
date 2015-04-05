@@ -48,7 +48,10 @@ public class FriendListAdapter extends ArrayAdapter<User> {
 
         String contactPhotoUri = user.getContactPhotoUri();
         if (contactPhotoUri == null || contactPhotoUri.length() == 0) {
-            contactPhotoUri = ((FoodcomaApplication) application).findContactByPhoneNumber(user.getPhoneNumber()).getContactPhotoUri();
+            User contactByPhoneNumber = ((FoodcomaApplication) application).findContactByPhoneNumber(user.getPhoneNumber());
+            if (contactByPhoneNumber != null) {
+                contactPhotoUri = contactByPhoneNumber.getContactPhotoUri();
+            }
         }
         if (contactPhotoUri != null && contactPhotoUri.length() > 0) {
             Picasso.with(getContext())
