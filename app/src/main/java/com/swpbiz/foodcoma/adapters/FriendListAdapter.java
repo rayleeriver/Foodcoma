@@ -51,6 +51,10 @@ public class FriendListAdapter extends ArrayAdapter<User> {
             User contactByPhoneNumber = ((FoodcomaApplication) application).findContactByPhoneNumber(user.getPhoneNumber());
             if (contactByPhoneNumber != null) {
                 contactPhotoUri = contactByPhoneNumber.getContactPhotoUri();
+                tvName.setText(contactByPhoneNumber.getName());
+            } else {
+                contactPhotoUri = null;
+                tvName.setText(user.getPhoneNumber());
             }
         }
         if (contactPhotoUri != null && contactPhotoUri.length() > 0) {
@@ -65,7 +69,6 @@ public class FriendListAdapter extends ArrayAdapter<User> {
         CheckBox cbSelected = (CheckBox) convertView.findViewById(R.id.cbSelected);
 
         // Populate Data
-        tvName.setText(user.getName());
         tvPhoneNumber.setText(user.getPhoneNumber());
 
         cbSelected.setVisibility(View.VISIBLE);
