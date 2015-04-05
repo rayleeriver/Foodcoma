@@ -61,7 +61,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 
 public class ViewActivity extends ActionBarActivity implements
@@ -365,9 +364,6 @@ public class ViewActivity extends ActionBarActivity implements
 
             Marker marker = map.addMarker(new MarkerOptions().position(resLoc).title(invitation.getRestaurant().getName()).icon(RestaurantMarker).flat(true));
             marker.showInfoWindow();
-
-
-            Set set = invitation.getUsers().entrySet();
 
             /* fetch object of all the users from parse for this Invitation to get their location */
             ParseQuery<ParseUser> query = ParseUser.getQuery();
