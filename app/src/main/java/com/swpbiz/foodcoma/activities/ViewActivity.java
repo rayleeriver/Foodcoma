@@ -162,7 +162,12 @@ public class ViewActivity extends ActionBarActivity implements
             tvDate.setText(MyDateTimeUtil.getDateFromEpoch(invitation.getTimeOfEvent()));
             tvTime.setText(MyDateTimeUtil.getTimeFromEpoch(invitation.getTimeOfEvent()));
             tvEventName.setText(invitation.getRestaurant().getName());
-            tvCreator.setText(invitation.getOwner().getName());
+
+            String ownerName = invitation.getOwner().getName();
+            if (ownerName == null || ownerName.length() == 0) {
+                ownerName = invitation.getOwner().getPhoneNumber();
+            }
+            tvCreator.setText(ownerName);
 
         }
     }
