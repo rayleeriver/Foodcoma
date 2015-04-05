@@ -83,6 +83,10 @@ public class MainActivity extends ActionBarActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setLogo(R.mipmap.ic_burger);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
+
         contactsLoaderIntentServiceReceiver = new ContactsLoaderIntentServiceBroadcastReceiver(getApplication());
 
         setupInvitationsList();
@@ -140,6 +144,7 @@ public class MainActivity extends ActionBarActivity implements
                 Intent i = new Intent(MainActivity.this, ViewActivity.class);
                 i.putExtra("invitation", (Parcelable) invitations.get(position));
                 startActivity(i);
+                overridePendingTransition(R.anim.right_in, R.anim.left_out);
             }
         });
     }
@@ -244,6 +249,7 @@ public class MainActivity extends ActionBarActivity implements
         if (id == R.id.action_create) {
             Intent i = new Intent(MainActivity.this, CreateActivity.class);
             startActivity(i);
+            overridePendingTransition(R.anim.right_in, R.anim.left_out);
             return true;
         }
 

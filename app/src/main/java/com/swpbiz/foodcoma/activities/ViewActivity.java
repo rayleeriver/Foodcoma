@@ -102,6 +102,7 @@ public class ViewActivity extends ActionBarActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view);
 
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         SharedPreferences sharedPref = getSharedPreferences("foodcoma", Context.MODE_PRIVATE);
         phonenumber = sharedPref.getString(getString(R.string.my_phone_number), null);
@@ -308,7 +309,11 @@ public class ViewActivity extends ActionBarActivity implements
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-
+        if(id == android.R.id.home) {
+            finish();
+            overridePendingTransition(R.anim.left_in, R.anim.right_out);
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }

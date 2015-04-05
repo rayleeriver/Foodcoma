@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -37,11 +38,21 @@ public class RestaurantAdaptor extends ArrayAdapter<Restaurant> {
         TextView tvpricelevel = (TextView) convertView.findViewById(R.id.tvpricelevel);
         TextView tvaddress = (TextView) convertView.findViewById(R.id.tvaddress);
         ImageView ivicon = (ImageView) convertView.findViewById(R.id.Iviconurl);
+        RatingBar rbStar = (RatingBar) convertView.findViewById(R.id.rbStar);
 
         tvresname.setText(res.getName());
-        tvrating.setText(res.getRating());
+        tvrating.setText("(" + res.getRating() + ")");
         tvpricelevel.setText(getDollars(res.getPriceLevel()));
         tvaddress.setText(res.getResAddress());
+
+        if(res.getRating().length() >= 1) {
+            rbStar.setRating(Float.parseFloat(res.getRating()));
+            rbStar.setVisibility(View.VISIBLE);
+            tvrating.setVisibility(View.VISIBLE);
+        } else {
+            rbStar.setVisibility(View.GONE);
+            tvrating.setVisibility(View.GONE);
+        }
 
         ivicon.setImageResource(0);
         Picasso.with(getContext()).load(res.getIconurl()).into(ivicon);

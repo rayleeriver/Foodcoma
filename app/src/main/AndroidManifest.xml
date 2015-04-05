@@ -51,10 +51,16 @@
         <activity
             android:name=".activities.CreateActivity"
             android:label="@string/title_activity_create" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.MainActivity" />
         </activity>
         <activity
             android:name=".activities.ViewActivity"
             android:label="@string/title_activity_view" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.MainActivity" />
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
@@ -114,7 +120,6 @@
 
         <activity
             android:name=".activities.RestaurantActivity"
-            android:parentActivityName=".activities.CreateActivity"
             android:label="@string/title_activity_restaurant" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

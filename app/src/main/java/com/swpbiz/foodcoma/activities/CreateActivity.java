@@ -1,5 +1,6 @@
 package com.swpbiz.foodcoma.activities;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -61,6 +62,8 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create);
+
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         // init values
         calendar = Calendar.getInstance();
@@ -142,6 +145,10 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
 
             i.putExtra("invitation", invitation);
             startActivity(i);
+            return true;
+        } else if(id == android.R.id.home) {
+            finish();
+            overridePendingTransition(R.anim.left_in, R.anim.right_out);
             return true;
         }
         return super.onOptionsItemSelected(item);

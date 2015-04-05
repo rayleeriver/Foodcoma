@@ -46,6 +46,7 @@ public class RestaurantActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurant);
+
         app = (FoodcomaApplication) getApplicationContext();
         client = new AsyncHttpClient();
 
@@ -64,7 +65,6 @@ public class RestaurantActivity extends ActionBarActivity {
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra("restaurant", res);
                 setResult(RESULT_OK, returnIntent);
-                onSaveInstanceState(new Bundle());
                 finish();
             }
         });
@@ -74,13 +74,7 @@ public class RestaurantActivity extends ActionBarActivity {
 
         setupEndlessScroll();
 
-        if(savedInstanceState != null) {
-            Log.d("DEBUG", "using savedInstanceState");
-            allRestaurants = savedInstanceState.getParcelableArrayList("allRestaurants");
-            nextToken = savedInstanceState.getString("nextToken");
-        } else {
-            fetchRestaurants(nearbyurl);
-        }
+        fetchRestaurants(nearbyurl);
 
     }
 
@@ -135,7 +129,7 @@ public class RestaurantActivity extends ActionBarActivity {
         MenuItem searchItem = menu.findItem(R.id.action_search);
 
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        searchView.setQueryHint(Html.fromHtml("<font color = #ffffff>sushi, coffee, bakery</font>"));
+        searchView.setQueryHint(Html.fromHtml("<font color='#ffffff'>sushi, coffee, bakery</font>"));
         searchView.setIconifiedByDefault(false);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -176,14 +170,6 @@ public class RestaurantActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList("allRestaurants", allRestaurants);
-        outState.putString("nextToken", nextToken);
-        Log.d("DEBUG", "onSaveInstanceState");
-        super.onSaveInstanceState(outState);
-    }
-
     private String getSearchUrl(String keyword) {
         return "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + app.getMylatitude() + "," + app.getMylongitude() + "&key=" + API_KEY + "&types=food&radius=5000&keyword=" + keyword;
     }
@@ -204,4 +190,5 @@ public class RestaurantActivity extends ActionBarActivity {
             loading.cancel();
         }
     }
+
 }
