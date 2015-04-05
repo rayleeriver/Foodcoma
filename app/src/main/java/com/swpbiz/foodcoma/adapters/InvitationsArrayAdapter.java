@@ -47,7 +47,11 @@ public class InvitationsArrayAdapter extends ArrayAdapter<Invitation> {
         tvTime.setText(MyDateTimeUtil.getTimeFromEpoch(invitation.getTimeOfEvent()));
         tvDate.setText(MyDateTimeUtil.getDateFromEpoch(invitation.getTimeOfEvent()).toUpperCase());
         tvEventName.setText(invitation.getRestaurant().getName());
-        tvCreator.setText("By " + invitation.getOwner().getName());
+        String ownerName = invitation.getOwner().getName();
+        if (ownerName == null || ownerName.length() == 0) {
+            ownerName = invitation.getOwner().getPhoneNumber();
+        }
+        tvCreator.setText("By " + ownerName);
         if (invitation.isAccepted(myPhoneNumber)) {
             tvTime.setBackgroundColor(getContext().getResources().getColor(R.color.primary));
             tvDate.setBackgroundColor(getContext().getResources().getColor(R.color.primary_light));
