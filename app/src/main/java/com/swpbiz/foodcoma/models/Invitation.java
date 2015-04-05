@@ -151,7 +151,10 @@ public class Invitation implements Parcelable {
         Invitation i = new Invitation();
         try {
             JSONObject d = new JSONObject(data);
-            i.setInvitationId(d.getString("invitationId"));
+            String invitationIdJson = d.optString("invitationId");
+            if (invitationIdJson != null && invitationIdJson.length() > 0) {
+                i.setInvitationId(d.optString("invitationId"));
+            }
             i.setTimeOfEvent(d.getLong("timeofevent"));
             i.setOwner(User.getUserFromJsonObject(d.getJSONObject("owner")));
             JSONArray users = d.getJSONArray("users");

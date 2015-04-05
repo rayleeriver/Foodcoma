@@ -1,6 +1,5 @@
 package com.swpbiz.foodcoma.activities;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -18,11 +17,13 @@ import android.widget.TextView;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
+import com.parse.SaveCallback;
 import com.sleepbot.datetimepicker.time.RadialPickerLayout;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
 import com.swpbiz.foodcoma.FoodcomaApplication;
@@ -96,16 +97,16 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_send) {
-            Invitation invitation = createInvitation();
+            final Invitation invitation = createInvitation();
 //            Log.d("DEBUG", "location " + invitation.getMapUrl());
             Log.d("DEBUG", "datetime " + invitation.getTimeOfEvent());
 
 
-            ParseQuery pushQuery = ParseInstallation.getQuery();
+            final ParseQuery pushQuery = ParseInstallation.getQuery();
             ParseInstallation installation = ParseInstallation.getCurrentInstallation();
             phonenumber = (String) installation.get("phonenumber");
 
-            ParseObject parseinvitation = new ParseObject("Invitation");
+            final ParseObject parseinvitation = new ParseObject("Invitation");
             parseinvitation.put("owner", invitation.getOwner().getPhoneNumber());
             parseinvitation.put("timeofevent", invitation.getTimeOfEvent());
             if (parseinvitation.get("invitationid") == null
@@ -122,26 +123,32 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
 
             parseinvitation.put("acceptedUsers", new ArrayList<String>(invitation.getAcceptedUsers()));
 
-            parseinvitation.saveInBackground();
-            invitation.setInvitationId(parseinvitation.getString("invitationid"));
+            parseinvitation.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
 
-            JSONObject data = new JSONObject();
-            try {
-                data.put("title", "Foodcoma");
-                data.put("alert", "New Invitation");
-                data.put("data", invitation.getJsonObject());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+                    invitation.setInvitationId(parseinvitation.getObjectId());
 
-            ArrayList<String> phoneNumbers = new ArrayList<String>(invitation.getUsers().keySet());
-            pushQuery.whereContainedIn("phonenumber", phoneNumbers);
-            ParsePush push2 = new ParsePush();
-            push2.setQuery(pushQuery); // Set our Installation query
-            push2.setData(data);
-            push2.sendInBackground();
+                    JSONObject data = new JSONObject();
+                    try {
+                        data.put("title", "Foodcoma");
+                        data.put("alert", "New Invitation");
+                        data.put("data", invitation.getJsonObject());
+                    } catch (JSONException ex) {
+                        ex.printStackTrace();
+                    }
 
-            Intent i = new Intent(CreateActivity.this, ViewActivity.class);
+                    ArrayList<String> phoneNumbers = new ArrayList<String>(invitation.getUsers().keySet());
+                    pushQuery.whereContainedIn("phonenumber", phoneNumbers);
+                    ParsePush push2 = new ParsePush();
+                    push2.setQuery(pushQuery); // Set our Installation query
+                    push2.setData(data);
+                    push2.sendInBackground();
+
+
+                }
+            });
+           Intent i = new Intent(CreateActivity.this, ViewActivity.class);
 
             i.putExtra("invitation", invitation);
             startActivity(i);
