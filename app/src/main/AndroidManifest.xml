@@ -114,7 +114,11 @@
 
         <activity
             android:name=".activities.RestaurantActivity"
+            android:parentActivityName=".activities.CreateActivity"
             android:label="@string/title_activity_restaurant" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.CreateActivity" />
         </activity>
     </application>
 
