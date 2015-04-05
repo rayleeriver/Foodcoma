@@ -51,7 +51,8 @@ public class Restaurant implements Parcelable {
     }
 
     public void setResAddress(String resAddress) {
-        this.resAddress = resAddress;
+        if(resAddress != null)
+            this.resAddress = resAddress;
     }
 
     public String getPhotoReference() {
@@ -59,7 +60,8 @@ public class Restaurant implements Parcelable {
     }
 
     public void setPhotoReference(String photoReference) {
-        this.photoReference = photoReference;
+        if(photoReference != null)
+            this.photoReference = photoReference;
     }
 
     public String getRestaurantId() {
@@ -67,7 +69,8 @@ public class Restaurant implements Parcelable {
     }
 
     public void setRestaurantId(String restaurantId) {
-        RestaurantId = restaurantId;
+        if(restaurantId != null)
+            RestaurantId = restaurantId;
     }
 
     public String getIconurl() {
@@ -75,7 +78,8 @@ public class Restaurant implements Parcelable {
     }
 
     public void setIconurl(String iconurl) {
-        this.iconurl = iconurl;
+        if(iconurl != null)
+            this.iconurl = iconurl;
     }
 
     public String getPriceLevel() {
@@ -83,7 +87,8 @@ public class Restaurant implements Parcelable {
     }
 
     public void setPriceLevel(String priceLevel) {
-        this.priceLevel = priceLevel;
+        if(priceLevel != null)
+            this.priceLevel = priceLevel;
     }
 
     public String getRating() {
@@ -91,7 +96,8 @@ public class Restaurant implements Parcelable {
     }
 
     public void setRating(String rating) {
-        this.rating = rating;
+        if(rating != null)
+            this.rating = rating;
     }
 
     public Location getRestaurantLocation() {
@@ -99,7 +105,8 @@ public class Restaurant implements Parcelable {
     }
 
     public void setRestaurantLocation(Location restaurantLocation) {
-        this.restaurantLocation = restaurantLocation;
+        if(restaurantLocation != null)
+            this.restaurantLocation = restaurantLocation;
 
     }
 
@@ -108,7 +115,8 @@ public class Restaurant implements Parcelable {
     }
 
     public void setName(String name) {
-        this.name = name;
+        if(name != null)
+            this.name = name;
     }
 
     public static ArrayList<Restaurant> getArrayFromJson(JSONObject result) {
@@ -118,32 +126,19 @@ public class Restaurant implements Parcelable {
             for (int i = 0; i < jarray.length(); i++) {
                 Restaurant res = new Restaurant();
                 JSONObject jres = jarray.getJSONObject(i);
-                if (jres.getString("name") != null) {
-                    res.setName(jres.getString("name"));
-                } else {
-                    res.setName("");
-                }
 
-                if (jres.getString("icon") != null) {
+                if(jres.has("name"))
+                    res.setName(jres.getString("name"));
+                if(jres.has("icon"))
                     res.setIconurl(jres.getString("icon"));
-                } else {
-                    res.setIconurl("");
-                }
-                if (jres.has("price_level") && jres.getString("price_level") != null) {
+                if(jres.has("price_level"))
                     res.setPriceLevel(jres.getString("price_level"));
-                } else {
-                    res.setPriceLevel("");
-                }
-                if (jres.has("place_id") && jres.getString("place_id") != null) {
+                if(jres.has("place_id"))
                     res.setRestaurantId(jres.getString("place_id"));
-                } else {
-                    res.setRestaurantId("");
-                }
-                if (jres.has("rating") && jres.getString("rating") != null) {
+                if(jres.has("rating"))
                     res.setRating(jres.getString("rating"));
-                } else {
-                    res.setRating("");
-                }
+                if(jres.has("vicinity"))
+                    res.setResAddress(jres.getString("vicinity"));
 
                 if (jres.has("photos") && jres.getJSONArray("photos") != null) {
                     JSONArray jphotos = jres.getJSONArray("photos");

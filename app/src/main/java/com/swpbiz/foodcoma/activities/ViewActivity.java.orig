@@ -325,7 +325,19 @@ public class ViewActivity extends ActionBarActivity implements
         public void run() {
 
             map.clear();
+<<<<<<< Updated upstream
+            latLngBoundsBuilder = new LatLngBounds.Builder();
 
+            LatLng resLoc = new LatLng(invitation.getRestaurant().getRestaurantLocation().getLatitude(), invitation.getRestaurant().getRestaurantLocation().getLongitude());
+            latLngBoundsBuilder.include(resLoc);
+            int placeMarkerColor = getResources().getColor(R.color.primary_dark);
+            float[] placeMarkerHue = new float[3];
+            Color.colorToHSV(placeMarkerColor, placeMarkerHue);
+            map.addMarker(new MarkerOptions()
+                    .position(resLoc)
+                    .title(invitation.getRestaurant().getName())
+                    .icon(BitmapDescriptorFactory.defaultMarker(placeMarkerHue[0]))).showInfoWindow();
+=======
 //            var RestaurantMarker = new google.maps.MarkerImage(
 //                    "../res/sit_marron.png", //url
 //                    new google.maps.Size(width, height), //size
@@ -366,15 +378,11 @@ public class ViewActivity extends ActionBarActivity implements
             BitmapDescriptor RestaurantMarker =
                     BitmapDescriptorFactory.fromBitmap(bmp);
 
-            latLngBoundsBuilder = new LatLngBounds.Builder();
 
             LatLng resLoc = new LatLng(invitation.getRestaurant().getRestaurantLocation().getLatitude(), invitation.getRestaurant().getRestaurantLocation().getLongitude());
-            latLngBoundsBuilder.include(resLoc);
-
-
             Marker marker = map.addMarker(new MarkerOptions().position(resLoc).title(invitation.getRestaurant().getName()).icon(RestaurantMarker).flat(true));
             marker.showInfoWindow();
-
+>>>>>>> Stashed changes
 
             Set set = invitation.getUsers().entrySet();
 
@@ -397,7 +405,13 @@ public class ViewActivity extends ActionBarActivity implements
                             userphonenumber = parseUsers.get(i).getString("phonenumber");
                             AllphoneNumbers.add(userphonenumber);
                             ParseGeoPoint uloc = parseUsers.get(i).getParseGeoPoint("userlocation");
-
+<<<<<<< Updated upstream
+                            LatLng userloc = new LatLng(uloc.getLatitude(), uloc.getLongitude());
+                            map.addMarker(new MarkerOptions()
+                                    .position(userloc)
+                                    .title(userphonenumber));
+                            latLngBoundsBuilder.include(userloc);
+=======
                             LatLng userloc = new LatLng(uloc.getLatitude(),uloc.getLongitude());
                             Marker marker = map.addMarker(new MarkerOptions().position(userloc).title(userphonenumber).icon(carMarker).flat(true));
                             latLngBoundsBuilder.include(userloc);
@@ -411,6 +425,7 @@ public class ViewActivity extends ActionBarActivity implements
                                 phoneNumbersReached.add(userphonenumber);
                                 Log.d("DEBUG-VIEW-ACTIVITY", userphonenumber + " reached");
                             }
+>>>>>>> Stashed changes
                         }
 
                         map.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBoundsBuilder.build(), 80));
@@ -487,6 +502,22 @@ public class ViewActivity extends ActionBarActivity implements
     public void onConnected(Bundle bundle) {
         Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
         if (location != null) {
+//            Toast.makeText(this, "GPS Location was found!!", Toast.LENGTH_SHORT).show();
+//            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+//            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
+<<<<<<< Updated upstream
+//            if (latLngBoundsBuilder != null)
+//                map.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBoundsBuilder.build(), 50));
+//
+//            LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
+//            addMarker(loc, phonenumber);
+=======
+            if (latLngBoundsBuilder!= null)
+                map.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBoundsBuilder.build(), 50));
+
+            LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
+          //  addMarker(loc, phonenumber);
+>>>>>>> Stashed changes
             startLocationUpdates();
         } else {
             Toast.makeText(this, "Error - current location is null, enable GPS!", Toast.LENGTH_SHORT).show();
