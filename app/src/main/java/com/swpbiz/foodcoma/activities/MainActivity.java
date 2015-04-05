@@ -188,7 +188,7 @@ public class MainActivity extends ActionBarActivity implements
                         invitation.getOwner().setPhoneNumber(ownerPhoneNumber);
 
                         if (ownerPhoneNumber.equals(phoneNumber)) {
-                            invitation.getOwner().setName("<< myself >>");
+                            invitation.getOwner().setName("me");
                         } else {
                             String[] projection = new String[]{
                                     ContactsContract.PhoneLookup.DISPLAY_NAME,
