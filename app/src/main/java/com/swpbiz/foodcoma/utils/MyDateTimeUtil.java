@@ -13,7 +13,7 @@ import java.util.Date;
 public class MyDateTimeUtil {
 
     public static final String MONTH_NAME[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-    static DateFormat hourMinuteFormat = new SimpleDateFormat("HH:mmaa");
+    static DateFormat hourMinuteFormat = new SimpleDateFormat("hh:mmaa");
     static DateFormat monthDateFormat = new SimpleDateFormat("MMM d");
 
     public static String getTimeFromEpoch(long time) {

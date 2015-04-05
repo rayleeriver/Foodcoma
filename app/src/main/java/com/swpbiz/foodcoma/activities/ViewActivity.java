@@ -135,7 +135,7 @@ public class ViewActivity extends ActionBarActivity implements
 
             setupViews();
 
-            tvDate.setText(MyDateTimeUtil.getDateFromEpoch(invitation.getTimeOfEvent()));
+            tvDate.setText(MyDateTimeUtil.getDateFromEpoch(invitation.getTimeOfEvent()).toUpperCase());
             tvTime.setText(MyDateTimeUtil.getTimeFromEpoch(invitation.getTimeOfEvent()));
             tvEventName.setText(invitation.getRestaurant().getName());
 
