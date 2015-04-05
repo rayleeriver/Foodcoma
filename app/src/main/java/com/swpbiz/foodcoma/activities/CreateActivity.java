@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -17,7 +19,12 @@ import android.widget.TextView;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
+
 import com.parse.ParseException;
+
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
+
 import com.parse.ParseGeoPoint;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
@@ -34,6 +41,7 @@ import com.swpbiz.foodcoma.models.Restaurant;
 import com.swpbiz.foodcoma.models.User;
 import com.swpbiz.foodcoma.utils.MyDateTimeUtil;
 
+import org.apache.http.Header;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -58,6 +66,8 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
     Restaurant restaurant;
     final int REQUEST_PLACE_PICKER = 1;
     static final int SET_RESTAURANT = 2;
+    private final String API_KEY = "AIzaSyCqT9dz3gMHQO1P27j0md99PrdpuX30shI";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +75,16 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
         setContentView(R.layout.activity_create);
 
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        String type = intent.getType();
+
+        if (Intent.ACTION_SEND.equals(action) && type != null) {
+            if ("text/plain".equals(type)) {
+                handleSendText(intent); // Handle text being sent
+            }
+        }
 
         // init values
         calendar = Calendar.getInstance();
@@ -79,6 +99,41 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
             createDateTimeDialogs();
         }
 
+    }
+
+    void handleSendText(Intent intent) {
+        String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
+        if (sharedText != null) {
+            // Update UI to reflect text being shared
+            Log.d("GOOGLE-SHARE",sharedText);
+            sharedText = sharedText.replaceAll("\n.*","");
+            Log.d("GOOGLE-SHARE",sharedText);
+
+            String url = "https://maps.googleapis.com/maps/api/place/textsearch/json?query="+ sharedText+"&key=" + API_KEY;
+            Log.d("GOOGLE-SHARE",url);
+            fetchRestaurants(url);
+        }
+    }
+
+    public void fetchRestaurants(String url) {
+        AsyncHttpClient client = new AsyncHttpClient();
+
+        client.get(url, null, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.i("DEBUG", response.toString());
+                if (response != null) {
+                    ArrayList<Restaurant> arrayRestaurants = Restaurant.getArrayFromJson(response);
+                    restaurant = arrayRestaurants.get(0);
+                    tvPlaceName.setText(restaurant.getName());
+                }
+            }
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.d("DEBUG", "failed API call");
+                super.onFailure(statusCode, headers, responseString, throwable);
+            }
+        });
     }
 
     @Override
