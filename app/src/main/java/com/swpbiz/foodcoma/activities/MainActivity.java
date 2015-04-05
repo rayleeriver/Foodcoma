@@ -160,7 +160,7 @@ public class MainActivity extends ActionBarActivity implements
         mainQuery.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> objects, ParseException e) {
                 if (e == null) {
-                    myInvitations.clear();
+                    lvInvitationsAdapter.clear();
                     Log.d(TAG, "get my invitations count: " + objects.size());
 
                     for (ParseObject object : objects) {

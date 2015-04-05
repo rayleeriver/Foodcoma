@@ -43,6 +43,7 @@ public class FoodcomaApplication extends Application {
         ParseACL defaultACL = new ParseACL();
         // Optionally enable public read access.
         defaultACL.setPublicReadAccess(true);
+        defaultACL.setPublicWriteAccess(true);
         ParseACL.setDefaultACL(defaultACL, true);
 
         mylatitude = new Double(0);
@@ -80,5 +81,12 @@ public class FoodcomaApplication extends Application {
         return contacts;
     }
 
-
+    public User findContactByPhoneNumber(String phoneNumber) {
+        for (User contact : contacts) {
+            if (contact.getPhoneNumber().equals(phoneNumber)) {
+                return contact;
+            }
+        }
+        return null;
+    }
 }

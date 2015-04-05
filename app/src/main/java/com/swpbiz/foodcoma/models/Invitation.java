@@ -1,22 +1,13 @@
 package com.swpbiz.foodcoma.models;
 
-import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import com.activeandroid.Model;
-import com.activeandroid.annotation.Column;
-import com.activeandroid.annotation.Table;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
 import java.util.ArrayList;
-
-import java.io.Serializable;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -80,6 +71,7 @@ public class Invitation implements Parcelable {
                 userList.add(item.getValue());
             }
         }
+        userList.add(owner);
         return userList;
     }
 
@@ -271,4 +263,19 @@ public class Invitation implements Parcelable {
         return getAcceptedUsers().contains(phoneNumber);
     }
 
+    public List<User> getUserListExcluding(String phoneNumber) {
+        List<User> userList = new ArrayList<User>();
+        if(users != null){
+            for(Map.Entry<String,User> item : users.entrySet()){
+                if (!item.getKey().equals(phoneNumber)) {
+                    userList.add(item.getValue());
+                }
+            }
+        }
+        if (!owner.getPhoneNumber().equals(phoneNumber)) {
+            userList.add(owner);
+        }
+        return userList;
+
+    }
 }

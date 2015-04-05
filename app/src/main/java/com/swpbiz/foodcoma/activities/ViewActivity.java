@@ -67,6 +67,8 @@ public class ViewActivity extends ActionBarActivity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
+    private static final String TAG = ViewActivity.class.getSimpleName();
+
     private static final int REQUEST_PLACE_PICKER = 12123;
     private SupportMapFragment mapFragment;
     private GoogleMap map;
@@ -158,7 +160,8 @@ public class ViewActivity extends ActionBarActivity implements
 
         Log.d("DEBUG-FRIENDS", invitation.getUsersList().size() + "");
 
-        FriendListAdapter adapter = new FriendListAdapter(this, invitation.getUsersList());
+        FriendListAdapter adapter = new FriendListAdapter(this, invitation, getApplication());
+        adapter.addAll(invitation.getUserListExcluding(phonenumber));
         lvContacts.setAdapter(adapter);
 
         if (invitation.isAccepted(phonenumber)) {
@@ -195,7 +198,8 @@ public class ViewActivity extends ActionBarActivity implements
                         @Override
                         public void done(ParseObject parseObject, com.parse.ParseException e) {
                             if (parseObject != null) {
-                                parseObject.addAllUnique("acceptedUsers", activePhoneNumberList);
+                                Log.d(TAG, "activePhoneNumberList: " + activePhoneNumberList.size());
+                                parseObject.addAll("acceptedUsers", activePhoneNumberList);
                                 parseObject.saveInBackground();
                             }
                         }
