@@ -134,6 +134,11 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
                         data.put("title", "Foodcoma");
                         data.put("alert", "New Invitation");
                         data.put("data", invitation.getJsonObject());
+
+                        Intent i = new Intent(CreateActivity.this, ViewActivity.class);
+                        i.putExtra("invitation", invitation);
+                        startActivity(i);
+
                     } catch (JSONException ex) {
                         ex.printStackTrace();
                     }
@@ -144,14 +149,8 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
                     push2.setQuery(pushQuery); // Set our Installation query
                     push2.setData(data);
                     push2.sendInBackground();
-
-
                 }
             });
-           Intent i = new Intent(CreateActivity.this, ViewActivity.class);
-
-            i.putExtra("invitation", invitation);
-            startActivity(i);
             return true;
         } else if(id == android.R.id.home) {
             finish();
