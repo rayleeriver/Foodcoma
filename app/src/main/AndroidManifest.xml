@@ -120,6 +120,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.CreateActivity" />
         </activity>
+
+        <service
+            android:name=".services.ContactsLoaderIntentService"
+            android:exported="false" />
     </application>
 
 </manifest>

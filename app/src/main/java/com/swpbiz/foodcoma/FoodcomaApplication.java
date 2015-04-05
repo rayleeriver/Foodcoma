@@ -1,15 +1,16 @@
 package com.swpbiz.foodcoma;
 
 import android.app.Application;
-import android.content.ContentResolver;
-import android.database.Cursor;
-import android.provider.ContactsContract;
+import android.content.Intent;
 
 import com.parse.Parse;
 import com.parse.ParseACL;
 import com.parse.ParseCrashReporting;
+import com.swpbiz.foodcoma.models.User;
+import com.swpbiz.foodcoma.services.ContactsLoaderIntentService;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by abgandhi on 3/17/15.
@@ -20,6 +21,9 @@ public class FoodcomaApplication extends Application {
     private String MY_PHONE_NUMBER;
     public Double mylongitude;
     public Double mylatitude;
+
+    List<User> contacts = new ArrayList<>();
+
 
     @Override
     public void onCreate() {
@@ -44,29 +48,8 @@ public class FoodcomaApplication extends Application {
         mylatitude = new Double(0);
         mylongitude = new Double(0);
 
-        ContentResolver cr = getBaseContext().getContentResolver(); //Activity/Application android.content.Context
-        Cursor cursor = cr.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
-        if(cursor.moveToFirst())
-        {
-            ArrayList<String> alContacts = new ArrayList<String>();
-            do
-            {
-                String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
-
-                if(Integer.parseInt(cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0)
-                {
-                    Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = ?",new String[]{ id }, null);
-                    while (pCur.moveToNext())
-                    {
-                        String contactNumber = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                            alContacts.add(contactNumber);
-                        break;
-                    }
-                    pCur.close();
-                }
-
-            } while (cursor.moveToNext()) ;
-        }
+        Intent intent = new Intent(getApplicationContext(), ContactsLoaderIntentService.class);
+        startService(intent);
     }
 
     public String getPhoneNumber() {
@@ -92,5 +75,10 @@ public class FoodcomaApplication extends Application {
     public void setPhoneNumber(String MY_PHONE_NUMBER) {
         this.MY_PHONE_NUMBER = MY_PHONE_NUMBER;
     }
+
+    public List<User> getContacts() {
+        return contacts;
+    }
+
 
 }

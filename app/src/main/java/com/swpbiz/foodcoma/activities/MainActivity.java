@@ -1,17 +1,20 @@
 package com.swpbiz.foodcoma.activities;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.ContactsContract;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -47,6 +50,8 @@ import com.swpbiz.foodcoma.models.InvitationsComparator;
 import com.swpbiz.foodcoma.models.Restaurant;
 import com.swpbiz.foodcoma.models.User;
 import com.swpbiz.foodcoma.services.AndroidLocationServices;
+import com.swpbiz.foodcoma.services.ContactsLoaderIntentService;
+import com.swpbiz.foodcoma.services.ContactsLoaderIntentServiceBroadcastReceiver;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -71,11 +76,14 @@ public class MainActivity extends ActionBarActivity implements
     private SwipeRefreshLayout swipeRefreshLayout;
 
     Intent androidLocationServiceIntent;
+    BroadcastReceiver contactsLoaderIntentServiceReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        contactsLoaderIntentServiceReceiver = new ContactsLoaderIntentServiceBroadcastReceiver(getApplication());
 
         setupInvitationsList();
 
@@ -333,6 +341,9 @@ public class MainActivity extends ActionBarActivity implements
     protected void onResume() {
         super.onResume();
         populateMyInvitations(invitations);
+
+        IntentFilter filter = new IntentFilter(ContactsLoaderIntentService.ACTION);
+        LocalBroadcastManager.getInstance(this).registerReceiver(contactsLoaderIntentServiceReceiver, filter);
     }
 
     @Override
@@ -429,4 +440,5 @@ public class MainActivity extends ActionBarActivity implements
                     Toast.LENGTH_SHORT).show();
         }
     }
+
 }

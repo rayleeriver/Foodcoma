@@ -3,15 +3,10 @@ package com.swpbiz.foodcoma.activities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
-import android.provider.ContactsContract;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.content.SharedPreferences;
-import android.support.v7.app.ActionBarActivity;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,20 +18,16 @@ import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.parse.ParseGeoPoint;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
+import com.parse.ParseQuery;
 import com.sleepbot.datetimepicker.time.RadialPickerLayout;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
 import com.swpbiz.foodcoma.FoodcomaApplication;
 import com.swpbiz.foodcoma.R;
-import com.swpbiz.foodcoma.adapters.MyCursorAdapter;
+import com.swpbiz.foodcoma.adapters.ContactsArrayAdapter;
 import com.swpbiz.foodcoma.models.Invitation;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-
-import com.parse.ParseInstallation;
-import com.parse.ParsePush;
-import com.parse.ParseQuery;
 import com.swpbiz.foodcoma.models.Restaurant;
 import com.swpbiz.foodcoma.models.User;
 import com.swpbiz.foodcoma.utils.MyDateTimeUtil;
@@ -44,9 +35,9 @@ import com.swpbiz.foodcoma.utils.MyDateTimeUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 
 
 public class CreateActivity extends ActionBarActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
@@ -60,60 +51,16 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
     private String timeValue;
     private Calendar calendar;
     private String phonenumber;
-    MyCursorAdapter adapter;
+
+    ContactsArrayAdapter contactsArrayAdapter;
     Restaurant restaurant;
     final int REQUEST_PLACE_PICKER = 1;
     static final int SET_RESTAURANT = 2;
-    public static final int CONTACT_LOADER_ID = 78; // From docs: A unique identifier for this loader.
-
-    private LoaderManager.LoaderCallbacks<Cursor> contactsLoader =
-            new LoaderManager.LoaderCallbacks<Cursor>() {
-                @Override
-                public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-                    // Define the columns to retrieve
-                    String[] projectionFields =  new String[] { ContactsContract.Contacts._ID,
-                            ContactsContract.Contacts.DISPLAY_NAME,
-                            ContactsContract.Contacts.PHOTO_URI,
-                            ContactsContract.Contacts.HAS_PHONE_NUMBER};
-                    // Construct the loader
-                    CursorLoader cursorLoader = new CursorLoader(CreateActivity.this,
-                            ContactsContract.Contacts.CONTENT_URI, // URI
-                            projectionFields,  // projection fields
-                            ContactsContract.Contacts.HAS_PHONE_NUMBER + " != '0'", // the selection criteria
-                            null, // the selection args
-                            ContactsContract.Contacts.DISPLAY_NAME + " ASC" // the sort order
-                    );
-                    // Return the loader for use
-                    return cursorLoader;
-                }
-
-                // When the system finishes retrieving the Cursor through the CursorLoader,
-                // a call to the onLoadFinished() method takes place.
-                @Override
-                public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-                    // The swapCursor() method assigns the new Cursor to the adapter
-                    adapter.swapCursor(cursor);
-                }
-
-                // This method is triggered when the loader is being reset
-                // and the loader data is no longer available. Called if the data
-                // in the provider changes and the Cursor becomes stale.
-                @Override
-                public void onLoaderReset(Loader<Cursor> loader) {
-                    // Clear the Cursor we were using with another call to the swapCursor()
-                    adapter.swapCursor(null);
-                }
-            };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create);
-        setupCursorAdapter();
-
-        // Initialize the loader with a special ID and the defined callbacks from above
-        getSupportLoaderManager().initLoader(CONTACT_LOADER_ID,
-                new Bundle(), contactsLoader);
 
         // init values
         calendar = Calendar.getInstance();
@@ -124,13 +71,11 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
 
         setDateTimePickerListener();
 
-        if(savedInstanceState != null){
+        if (savedInstanceState != null) {
             createDateTimeDialogs();
         }
 
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -155,7 +100,7 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
 
             ParseQuery pushQuery = ParseInstallation.getQuery();
             ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-            phonenumber = (String)installation.get("phonenumber");
+            phonenumber = (String) installation.get("phonenumber");
 
             ParseObject parseinvitation = new ParseObject("Invitation");
             parseinvitation.put("owner", invitation.getOwner().getPhoneNumber());
@@ -170,17 +115,17 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
             parseinvitation.put("placeLatLng", placeLatLng);
 
             ArrayList<String> userPhonenumberList = new ArrayList<String>(invitation.getUsers().keySet());
-            parseinvitation.put("users",userPhonenumberList);
+            parseinvitation.put("users", userPhonenumberList);
 
             parseinvitation.put("acceptedUsers", new ArrayList<String>(invitation.getAcceptedUsers()));
 
             parseinvitation.saveInBackground();
             invitation.setInvitationId(parseinvitation.getString("invitationid"));
 
-            JSONObject data =  new JSONObject();
+            JSONObject data = new JSONObject();
             try {
-                data.put("title","Foodcoma");
-                data.put("alert","New Invitation");
+                data.put("title", "Foodcoma");
+                data.put("alert", "New Invitation");
                 data.put("data", invitation.getJsonObject());
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -209,15 +154,11 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
 
         tvCreateDate.setText(MyDateTimeUtil.convertToShortDateString(calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)));
         tvCreateTime.setText(timeValue);
-    }
-
-    // Create simple cursor adapter to connect the cursor dataset we load with a ListView
-    private void setupCursorAdapter() {
-        adapter = new MyCursorAdapter(this, null);
 
         ListView lvContacts = (ListView) findViewById(R.id.lvContacts);
-        lvContacts.setAdapter(adapter);
-
+        contactsArrayAdapter = new ContactsArrayAdapter(this);
+        contactsArrayAdapter.addAll(((FoodcomaApplication) getApplication()).getContacts());
+        lvContacts.setAdapter(contactsArrayAdapter);
     }
 
     private Invitation createInvitation() {
@@ -252,13 +193,13 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
 
     // List of people who will be invited <phoneNumber, User>
     private HashMap<String, User> getFriendsSelected() {
-        return (HashMap) adapter.getNamesSelected();
+        return (HashMap) contactsArrayAdapter.getNamesSelected();
     }
 
     private void setDateTimePickerListener() {
 
         final DatePickerDialog datePickerDialog = DatePickerDialog.newInstance(this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), false);
-        final TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(this, calendar.get(Calendar.HOUR_OF_DAY) ,calendar.get(Calendar.MINUTE), false, false);
+        final TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(this, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false, false);
 
         tvCreateDate.setOnClickListener(new View.OnClickListener() {
 
@@ -315,22 +256,22 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
 
     public void findRestaurants(View view) {
         Intent i = new Intent(CreateActivity.this, RestaurantActivity.class);
-      //  startActivity(i);
+        //  startActivity(i);
         startActivityForResult(i, SET_RESTAURANT);
     }
 
 
-     public void gotoGoogleMaps(View view) {
-         FoodcomaApplication mapp = (FoodcomaApplication)getApplicationContext();
+    public void gotoGoogleMaps(View view) {
+        FoodcomaApplication mapp = (FoodcomaApplication) getApplicationContext();
 
-         // Share Via google maps
-         Uri uri = Uri.parse("geo:"+mapp.getMylatitude()+","+mapp.getMylongitude()+"?q=restaurant");
-         //Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-         intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
-         startActivity(intent);
+        // Share Via google maps
+        Uri uri = Uri.parse("geo:" + mapp.getMylatitude() + "," + mapp.getMylongitude() + "?q=restaurant");
+        //Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+        startActivity(intent);
 
-         // Construct an intent for the place picker
+        // Construct an intent for the place picker
 //         try {
 //             PlacePicker.IntentBuilder intentBuilder =
 //                     new PlacePicker.IntentBuilder();
@@ -344,7 +285,7 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
 //         } catch (GooglePlayServicesNotAvailableException e) {
 //             ...
 //         }
-     }
+    }
 
     @Override
     protected void onActivityResult(int requestCode,

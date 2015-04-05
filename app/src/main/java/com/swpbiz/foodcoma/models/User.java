@@ -3,14 +3,9 @@ package com.swpbiz.foodcoma.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.activeandroid.Model;
-import com.activeandroid.annotation.Column;
-import com.activeandroid.annotation.Table;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.HashMap;
 
 // @Table(name = "user")
@@ -24,7 +19,7 @@ public class User implements  Parcelable {
 //    @Column(name = "name")
     private String name;
 //    @Column(name = "avatar")
-    private String avatar;
+    private String contactPhotoUri;
 //    @Column(name = "location")
     private String location;
 
@@ -32,7 +27,7 @@ public class User implements  Parcelable {
         userId = "";
         phoneNumber = "";
         name = "";
-        avatar = "";
+        contactPhotoUri = "";
         location = "";
     }
 
@@ -40,7 +35,7 @@ public class User implements  Parcelable {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.userId = "";
-        this.avatar ="";
+        this.contactPhotoUri ="";
         this.location = "";
     }
 
@@ -48,7 +43,7 @@ public class User implements  Parcelable {
         userId = source.readString();
         phoneNumber = source.readString();
         name = source.readString();
-        avatar = source.readString();
+        contactPhotoUri = source.readString();
         location = source.readString();
     }
 
@@ -76,12 +71,12 @@ public class User implements  Parcelable {
         this.name = name;
     }
 
-    public String getAvatar() {
-        return avatar;
+    public String getContactPhotoUri() {
+        return contactPhotoUri;
     }
 
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
+    public void setContactPhotoUri(String contactPhotoUri) {
+        this.contactPhotoUri = contactPhotoUri;
     }
 
     public String getLocation() {
@@ -106,9 +101,9 @@ public class User implements  Parcelable {
         JSONObject data = new JSONObject();
         try {
             data.put("userId", userId);
-            data.put("phonenumber",phoneNumber);
+            data.put("phonenumber", phoneNumber);
             data.put("name", name);
-            data.put("avatar", avatar);
+            data.put("contactPhotoUri", contactPhotoUri);
             data.put("location", location);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -123,7 +118,7 @@ public class User implements  Parcelable {
             user.setName(data.getString("name"));
          user.setUserId(data.getString("userId"));
             user.setPhoneNumber(data.getString("phonenumber"));
-            user.setAvatar(data.getString("avatar"));
+            user.setContactPhotoUri(data.getString("contactPhotoUri"));
             user.setLocation(data.getString("location"));
         } catch (JSONException e) {
             e.printStackTrace();
@@ -141,7 +136,7 @@ public class User implements  Parcelable {
         dest.writeString(userId);
         dest.writeString(phoneNumber);
         dest.writeString(name);
-        dest.writeString(avatar);
+        dest.writeString(contactPhotoUri);
         dest.writeString(location);
     }
 
@@ -157,4 +152,12 @@ public class User implements  Parcelable {
             return new User[0];
         }
     };
+
+    public static String getTrimmedPhoneNumber(String phoneNumber) {
+        phoneNumber = phoneNumber.replaceAll("[^0-9]", ""); // get Digits from string
+        if (phoneNumber.length() > 10) {
+            phoneNumber = phoneNumber.substring(phoneNumber.length() - 10);
+        }
+        return phoneNumber;
+    }
 }

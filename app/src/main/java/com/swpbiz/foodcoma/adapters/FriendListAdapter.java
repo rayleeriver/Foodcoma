@@ -9,6 +9,7 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.swpbiz.foodcoma.R;
 import com.swpbiz.foodcoma.models.User;
 
@@ -39,14 +40,30 @@ public class FriendListAdapter extends ArrayAdapter<User> {
         TextView tvName = (TextView) convertView.findViewById(R.id.tvName);
         TextView tvPhoneNumber = (TextView) convertView.findViewById(R.id.tvPhoneNumber);
         ImageView ivImage = (ImageView) convertView.findViewById(R.id.ivImage);
+
+        String contactPhotoUri = user.getContactPhotoUri();
+        if (contactPhotoUri != null && contactPhotoUri.length() > 0) {
+            Picasso.with(getContext())
+                    .load(contactPhotoUri)
+                    .into(ivImage);
+        } else {
+            Picasso.with(getContext())
+                    .load(R.drawable.ic_contact)
+                    .into(ivImage);
+        }
         CheckBox cbSelected = (CheckBox) convertView.findViewById(R.id.cbSelected);
 
         // Populate Data
         tvName.setText(user.getName());
         tvPhoneNumber.setText(user.getPhoneNumber());
-        cbSelected.setVisibility(View.GONE);
 
-
+        cbSelected.setVisibility(View.VISIBLE);
+//        if (invitation.getAcceptedUsers().contains(user.getPhoneNumber())) {
+//            cbSelected.setChecked(true);
+//        } else {
+//            cbSelected.setChecked(false);
+//        }
+//        cbSelected.setEnabled(false);
 
         return convertView;
     }
