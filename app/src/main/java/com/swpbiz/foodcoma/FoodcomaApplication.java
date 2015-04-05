@@ -3,18 +3,11 @@ package com.swpbiz.foodcoma;
 import android.app.Application;
 import android.content.ContentResolver;
 import android.database.Cursor;
-import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 
 import com.parse.Parse;
 import com.parse.ParseACL;
 import com.parse.ParseCrashReporting;
-import com.parse.ParseInstallation;
-import com.parse.ParseUser;
-import com.swpbiz.foodcoma.activities.CreateActivity;
 
 import java.util.ArrayList;
 
@@ -51,8 +44,6 @@ public class FoodcomaApplication extends Application {
         mylatitude = new Double(0);
         mylongitude = new Double(0);
 
-
-
         ContentResolver cr = getBaseContext().getContentResolver(); //Activity/Application android.content.Context
         Cursor cursor = cr.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
         if(cursor.moveToFirst())
@@ -68,7 +59,7 @@ public class FoodcomaApplication extends Application {
                     while (pCur.moveToNext())
                     {
                         String contactNumber = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                        alContacts.add(contactNumber);
+                            alContacts.add(contactNumber);
                         break;
                     }
                     pCur.close();

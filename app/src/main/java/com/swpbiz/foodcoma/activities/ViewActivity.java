@@ -76,7 +76,7 @@ public class ViewActivity extends ActionBarActivity implements
     private long UPDATE_INTERVAL = 60000;
     private long FASTEST_INTERVAL = 5000;
     private float RADIUS = 50; // 50 Meters
-    private final String API_KEY="AIzaSyCqT9dz3gMHQO1P27j0md99PrdpuX30shI";
+    private final String API_KEY = "AIzaSyCqT9dz3gMHQO1P27j0md99PrdpuX30shI";
     private TextView tvTime;
     private TextView tvDate;
     private TextView tvEventName;
@@ -181,31 +181,28 @@ public class ViewActivity extends ActionBarActivity implements
                     query.getInBackground(invitation.getInvitationId(), new GetCallback<ParseObject>() {
                         @Override
                         public void done(ParseObject parseObject, com.parse.ParseException e) {
-                            if (parseObject != null)
-                                try {
-                                    parseObject.removeAll("acceptedUsers", activePhoneNumberList);
-                                    parseObject.save();
-                                } catch (com.parse.ParseException e1) {
-                                    e1.printStackTrace();
-                                }
+                            if (parseObject != null) {
+                                parseObject.removeAll("acceptedUsers", activePhoneNumberList);
+                                parseObject.saveInBackground();
+                            }
                         }
                     });
                     rlAccept.setBackgroundColor(Color.parseColor("#cccccc"));
+                    sendAcceptInvitationPushNotification(false);
+
                 } else {
                     invitation.addAcceptedUser(phonenumber);
                     query.getInBackground(invitation.getInvitationId(), new GetCallback<ParseObject>() {
                         @Override
                         public void done(ParseObject parseObject, com.parse.ParseException e) {
-                            if (parseObject != null)
-                                try {
-                                    parseObject.addAllUnique("acceptedUsers", activePhoneNumberList);
-                                    parseObject.save();
-                                } catch (com.parse.ParseException e1) {
-                                    e1.printStackTrace();
-                                }
+                            if (parseObject != null) {
+                                parseObject.addAllUnique("acceptedUsers", activePhoneNumberList);
+                                parseObject.saveInBackground();
+                            }
                         }
                     });
                     rlAccept.setBackgroundColor(getResources().getColor(R.color.primary_dark));
+                    sendAcceptInvitationPushNotification(true);
                 }
 
             }
@@ -236,6 +233,35 @@ public class ViewActivity extends ActionBarActivity implements
             rlReject.setVisibility(View.GONE);
         }
 
+    }
+
+    private void sendAcceptInvitationPushNotification(Boolean acceptedInvitation) {
+        ParseQuery pushQuery = ParseInstallation.getQuery();
+        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+        String phonenumber = (String) installation.get("phonenumber");
+
+        List<String> recipients = invitation.getAllPhoneNumbers();
+        recipients.remove(phonenumber);
+        pushQuery.whereContainedIn("phonenumber", recipients);
+        ParsePush push2 = new ParsePush();
+
+        JSONObject data = new JSONObject();
+        try {
+            data.put("title", "Foodcoma");
+
+            if (acceptedInvitation)
+                data.put("alert", phonenumber + " has accepted invitation");
+            else
+                data.put("alert", phonenumber + " has canceled invitation");
+
+            data.put("data", invitation.getJsonObject());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        push2.setQuery(pushQuery); // Set our Installation query
+        push2.setData(data);
+        push2.sendInBackground();
     }
 
     protected void loadMap(GoogleMap googleMap) {
@@ -285,7 +311,6 @@ public class ViewActivity extends ActionBarActivity implements
     }
 
 
-
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
@@ -302,8 +327,8 @@ public class ViewActivity extends ActionBarActivity implements
             map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(final Marker marker) {
-                    Log.d("DEBUG","marker click");
-                    String distanceUrl = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins="+marker.getPosition().latitude +","+ marker.getPosition().longitude+"&destinations=" + invitation.getRestaurant().getRestaurantLocation().getLatitude() + "," + invitation.getRestaurant().getRestaurantLocation().getLongitude();
+                    Log.d("DEBUG", "marker click");
+                    String distanceUrl = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=" + marker.getPosition().latitude + "," + marker.getPosition().longitude + "&destinations=" + invitation.getRestaurant().getRestaurantLocation().getLatitude() + "," + invitation.getRestaurant().getRestaurantLocation().getLongitude();
                     AsyncHttpClient client = new AsyncHttpClient();
 
                     client.get(distanceUrl, null, new JsonHttpResponseHandler() {
@@ -326,7 +351,7 @@ public class ViewActivity extends ActionBarActivity implements
 
 
             Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.restaurant_icon);
-            bmp = Bitmap.createScaledBitmap(bmp,50, 50,false);
+            bmp = Bitmap.createScaledBitmap(bmp, 50, 50, false);
 //            BitmapDescriptor RestaurantMarker =
 //                    BitmapDescriptorFactory.fromResource(R.mipmap.restaurant_icon);
             BitmapDescriptor RestaurantMarker =
@@ -364,7 +389,7 @@ public class ViewActivity extends ActionBarActivity implements
                             AllphoneNumbers.add(userphonenumber);
                             ParseGeoPoint uloc = parseUsers.get(i).getParseGeoPoint("userlocation");
 
-                            LatLng userloc = new LatLng(uloc.getLatitude(),uloc.getLongitude());
+                            LatLng userloc = new LatLng(uloc.getLatitude(), uloc.getLongitude());
                             Marker marker = map.addMarker(new MarkerOptions().position(userloc).title(userphonenumber).icon(carMarker).flat(true));
                             latLngBoundsBuilder.include(userloc);
                             marker.showInfoWindow();
