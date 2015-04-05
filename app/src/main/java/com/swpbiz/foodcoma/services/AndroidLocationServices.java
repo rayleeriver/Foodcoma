@@ -22,8 +22,6 @@ import org.json.JSONObject;
 
 public class AndroidLocationServices extends Service {
 
-    PowerManager.WakeLock wakeLock;
-
     private LocationManager locationManager;
 
     public AndroidLocationServices() {
@@ -32,13 +30,6 @@ public class AndroidLocationServices extends Service {
     @Override
     public IBinder onBind(Intent arg0) {
         return null;
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        PowerManager pm = (PowerManager) getSystemService(this.POWER_SERVICE);
-        wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "DoNotSleep");
     }
 
     @Override
@@ -102,7 +93,6 @@ public class AndroidLocationServices extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        wakeLock.release();
     }
 
     public static boolean isConnectingToInternet(Context _context) {

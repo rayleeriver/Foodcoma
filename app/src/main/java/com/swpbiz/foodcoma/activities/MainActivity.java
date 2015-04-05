@@ -70,6 +70,8 @@ public class MainActivity extends ActionBarActivity implements
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private SwipeRefreshLayout swipeRefreshLayout;
 
+    Intent androidLocationServiceIntent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,8 +103,8 @@ public class MainActivity extends ActionBarActivity implements
 
         connectClient();
 
-        Intent intent = new Intent(this, AndroidLocationServices.class);
-        startService(intent);
+        androidLocationServiceIntent= new Intent(this, AndroidLocationServices.class);
+        startService(androidLocationServiceIntent);
     }
 
     private void setupInvitationsList() {
@@ -339,6 +341,13 @@ public class MainActivity extends ActionBarActivity implements
             googleApiClient.disconnect();
         }
         super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        stopService(androidLocationServiceIntent);
     }
 
     public boolean isGooglePlayServicesAvailable() {
