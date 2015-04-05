@@ -55,10 +55,12 @@ public class InvitationsArrayAdapter extends ArrayAdapter<Invitation> {
         if (invitation.isAccepted(myPhoneNumber)) {
             tvTime.setBackgroundColor(getContext().getResources().getColor(R.color.primary));
             tvDate.setBackgroundColor(getContext().getResources().getColor(R.color.primary_light));
+            tvEventName.setPadding(0, 0, 90, 0);
             ivAccepted.setVisibility(View.VISIBLE);
         } else {
             tvTime.setBackgroundColor(Color.parseColor("#cccccc"));
             tvDate.setBackgroundColor(Color.parseColor("#dedede"));
+            tvEventName.setPadding(0, 0, 0, 0);
             ivAccepted.setVisibility(View.GONE);
         }
 
