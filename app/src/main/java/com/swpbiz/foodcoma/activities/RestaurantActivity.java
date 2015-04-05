@@ -1,25 +1,31 @@
 package com.swpbiz.foodcoma.activities;
 
 import android.content.Intent;
+import android.os.PersistableBundle;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.swpbiz.foodcoma.EndlessScrollListener;
 import com.swpbiz.foodcoma.FoodcomaApplication;
 import com.swpbiz.foodcoma.R;
 import com.swpbiz.foodcoma.adapters.RestaurantAdaptor;
 import com.swpbiz.foodcoma.models.Restaurant;
 
 import org.apache.http.Header;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -27,16 +33,26 @@ import java.util.ArrayList;
 public class RestaurantActivity extends ActionBarActivity {
 
     private final String API_KEY = "AIzaSyCqT9dz3gMHQO1P27j0md99PrdpuX30shI";
-    ArrayList<Restaurant> arrayRestaurants;
-    RestaurantAdaptor aRestaurant;
-    ListView lvRestaurants;
-    FoodcomaApplication app;
+    private ArrayList<Restaurant> arrayRestaurants;
+    private RestaurantAdaptor aRestaurant;
+    private ListView lvRestaurants;
+    private FoodcomaApplication app;
+    private EndlessScrollListener endlessScrollListener;
+    private String nextToken;
+    private AsyncHttpClient client;
+    private Toast loading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurant);
         app = (FoodcomaApplication) getApplicationContext();
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
+        client = new AsyncHttpClient();
+
         arrayRestaurants = new ArrayList<Restaurant>();
         aRestaurant = new RestaurantAdaptor(this, arrayRestaurants);
         lvRestaurants = (ListView) findViewById(R.id.Lvrestaurants);
@@ -55,21 +71,46 @@ public class RestaurantActivity extends ActionBarActivity {
 
         String nearbyurl = getSearchUrl("restaurant");
         Log.d("DEBUG",nearbyurl);
+
+        setupEndlessScroll();
+
         fetchRestaurants(nearbyurl);
     }
 
+    private void setupEndlessScroll() {
+        endlessScrollListener = new EndlessScrollListener() {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+                if(nextToken != null) {
+                    Log.d("DEBUG", "Fetch Next: " + getNextSearchUrl());
+                    fetchRestaurants(getNextSearchUrl());
+                }
+            }
+        };
+        lvRestaurants.setOnScrollListener(endlessScrollListener);
+    }
+
     public void fetchRestaurants(String url) {
-        AsyncHttpClient client = new AsyncHttpClient();
+
+        showLoadingToast();
 
         client.get(url, null, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.i("DEBUG", response.toString());
-                if (response != null) {
+                try {
                     arrayRestaurants = Restaurant.getArrayFromJson(response);
-                    aRestaurant.clear();
+                    if(response.has("next_page_token"))
+                        nextToken = response.getString("next_page_token");
+                    else
+                        nextToken = null;
                     aRestaurant.addAll(arrayRestaurants);
                     aRestaurant.notifyDataSetChanged();
+
+                    hideLoadingToast();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             }
             @Override
@@ -84,6 +125,9 @@ public class RestaurantActivity extends ActionBarActivity {
         return "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + app.getMylatitude() + "," + app.getMylongitude() + "&key=" + API_KEY + "&types=food&radius=5000&keyword=" + keyword;
     }
 
+    private String getNextSearchUrl() {
+        return "https://maps.googleapis.com/maps/api/place/nearbysearch/json?pagetoken=" + nextToken + "&key=" + API_KEY;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -91,12 +135,16 @@ public class RestaurantActivity extends ActionBarActivity {
         MenuItem searchItem = menu.findItem(R.id.action_search);
 
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setQueryHint(Html.fromHtml("<font color = #ffffff>sushi, coffee, bakery</font>"));
+        searchView.setIconifiedByDefault(false);
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 if(query != null){
                     String url = getSearchUrl(query);
                     Log.d("DEBUG-restaurant", url);
+                    aRestaurant.clear();
                     fetchRestaurants(url);
                 }
                 searchView.clearFocus();
@@ -125,5 +173,23 @@ public class RestaurantActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    private void showLoadingToast() {
+        if(loading == null) {
+            loading = Toast.makeText(this, "Loading...", Toast.LENGTH_LONG);
+        }
+        loading.show();
+    }
+
+    private void hideLoadingToast() {
+        if(loading != null){
+            loading.cancel();
+        }
     }
 }
