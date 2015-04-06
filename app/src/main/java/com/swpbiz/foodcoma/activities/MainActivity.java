@@ -56,6 +56,7 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -152,11 +153,16 @@ public class MainActivity extends ActionBarActivity implements
 
     private void populateMyInvitations(final List<Invitation> myInvitations) {
 
+        // from past 1 hour to future
+        Date fromDate = new Date(new Date().getTime() - 3600*1000);
+
         ParseQuery<ParseObject> myInvitationsQuery = ParseQuery.getQuery("Invitation");
         myInvitationsQuery.whereEqualTo("owner", phoneNumber);
+        myInvitationsQuery.whereGreaterThan("timeofevent", fromDate.getTime());
 
         ParseQuery<ParseObject> receivedInvitationsQuery = ParseQuery.getQuery("Invitation");
         receivedInvitationsQuery.whereEqualTo("users", phoneNumber);
+        receivedInvitationsQuery.whereGreaterThan("timeofevent", fromDate.getTime());
 
         List<ParseQuery<ParseObject>> queries = new ArrayList<>();
         queries.add(myInvitationsQuery);
@@ -386,21 +392,10 @@ public class MainActivity extends ActionBarActivity implements
                 user.put("userlocation", new ParseGeoPoint(mapp.getMylatitude(), mapp.getMylongitude()));
                 user.saveInBackground();
             }
-            Toast.makeText(this, "GPS Location was found!!" + location.getLatitude() + "," + location.getLongitude(), Toast.LENGTH_SHORT).show();
-//            startLocationUpdates();
         } else {
             Toast.makeText(this, "Error - current location is null, enable GPS!", Toast.LENGTH_SHORT).show();
         }
     }
-
-    //    protected void startLocationUpdates() {
-//        locationRequest = new LocationRequest();
-//        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-//        locationRequest.setInterval(UPDATE_INTERVAL);
-//        locationRequest.setFastestInterval(FASTEST_INTERVAL);
-//        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient,
-//                locationRequest, this);
-//    }
 
     @Override
     public void onLocationChanged(Location location) {
