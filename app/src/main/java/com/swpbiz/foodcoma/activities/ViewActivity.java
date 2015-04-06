@@ -156,7 +156,6 @@ public class ViewActivity extends ActionBarActivity implements
         tvEventName = (TextView) findViewById(R.id.tvEventName);
         tvCreator = (TextView) findViewById(R.id.tvCreator);
         rlAccept = (RelativeLayout) findViewById(R.id.rlAccept);
-        rlReject = (RelativeLayout) findViewById(R.id.rlReject);
         lvContacts = (ListView) findViewById(R.id.lvContacts);
 
         Log.d("DEBUG-FRIENDS", invitation.getUsersList().size() + "");
@@ -211,32 +210,6 @@ public class ViewActivity extends ActionBarActivity implements
 
             }
         });
-
-        if (invitation.getOwner().getPhoneNumber().equals(phonenumber)) {
-            rlReject.setVisibility(View.VISIBLE);
-            rlReject.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ParseQuery<ParseObject> query = ParseQuery.getQuery("Invitation");
-                    query.getInBackground(invitation.getInvitationId(), new GetCallback<ParseObject>() {
-                        @Override
-                        public void done(ParseObject parseObject, com.parse.ParseException e) {
-                            if (parseObject != null)
-                                try {
-                                    parseObject.delete();
-                                    Intent intent = new Intent(ViewActivity.this, MainActivity.class);
-                                    startActivity(intent);
-                                } catch (com.parse.ParseException e1) {
-                                    e1.printStackTrace();
-                                }
-                        }
-                    });
-                }
-            });
-        } else {
-            rlReject.setVisibility(View.GONE);
-        }
-
     }
 
     private void sendAcceptInvitationPushNotification(Boolean acceptedInvitation) {
@@ -298,6 +271,15 @@ public class ViewActivity extends ActionBarActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_view, menu);
+
+        MenuItem deleteInvitationMenuItem = menu.findItem(R.id.menuitem_delete_invitation);
+
+        if (invitation.getOwner().getPhoneNumber().equals(phonenumber)) {
+            deleteInvitationMenuItem.setVisible(true);
+        } else {
+            deleteInvitationMenuItem.setVisible(false);
+        }
+
         return true;
     }
 
@@ -313,6 +295,22 @@ public class ViewActivity extends ActionBarActivity implements
             finish();
             overridePendingTransition(R.anim.left_in, R.anim.right_out);
             return true;
+        } else if (id == R.id.menuitem_delete_invitation) {
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("Invitation");
+            query.getInBackground(invitation.getInvitationId(), new GetCallback<ParseObject>() {
+                @Override
+                public void done(ParseObject parseObject, com.parse.ParseException e) {
+                    if (parseObject != null)
+                        try {
+                            parseObject.delete();
+                            Intent intent = new Intent(ViewActivity.this, MainActivity.class);
+                            startActivity(intent);
+                        } catch (com.parse.ParseException e1) {
+                            e1.printStackTrace();
+                        }
+                }
+            });
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -324,14 +322,6 @@ public class ViewActivity extends ActionBarActivity implements
         public void run() {
 
             map.clear();
-
-//            var RestaurantMarker = new google.maps.MarkerImage(
-//                    "../res/sit_marron.png", //url
-//                    new google.maps.Size(width, height), //size
-//                    new google.maps.Point(0,0), //origin
-//                    new google.maps.Point(anchor_left, anchor_top) //anchor
-//            );
-
             map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(final Marker marker) {
@@ -360,8 +350,6 @@ public class ViewActivity extends ActionBarActivity implements
 
             Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.restaurant_icon);
             bmp = Bitmap.createScaledBitmap(bmp, 50, 50, false);
-//            BitmapDescriptor RestaurantMarker =
-//                    BitmapDescriptorFactory.fromResource(R.mipmap.restaurant_icon);
             BitmapDescriptor RestaurantMarker =
                     BitmapDescriptorFactory.fromBitmap(bmp);
 
