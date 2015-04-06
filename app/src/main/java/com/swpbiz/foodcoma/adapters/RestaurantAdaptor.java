@@ -1,7 +1,6 @@
 package com.swpbiz.foodcoma.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +29,7 @@ public class RestaurantAdaptor extends ArrayAdapter<Restaurant> {
     public View getView(int position, View convertView, ViewGroup parent) {
         Restaurant res = getItem(position);
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.restaurant_item, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_restaurant, parent, false);
         }
 
         TextView tvresname = (TextView) convertView.findViewById(R.id.tvrestaurantname);
@@ -57,10 +56,6 @@ public class RestaurantAdaptor extends ArrayAdapter<Restaurant> {
         ivicon.setImageResource(0);
         Picasso.with(getContext()).load(res.getIconurl()).into(ivicon);
 
-        // ivresphoto.setImageResource(0);
-        // String photourl = "https://maps.googleapis.com/maps/api/place/photo?photoreference="+res.getPhotoReference()+"&key="+API_KEY;
-        // Log.d("DEBUG-img", photourl);
-        // Picasso.with(getContext()).load(photourl).into(ivresphoto);
         return  convertView;
     }
 

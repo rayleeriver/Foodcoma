@@ -2,6 +2,7 @@ package com.swpbiz.foodcoma.activities;
 
 import android.content.Intent;
 import android.os.PersistableBundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -22,6 +23,7 @@ import com.swpbiz.foodcoma.EndlessScrollListener;
 import com.swpbiz.foodcoma.FoodcomaApplication;
 import com.swpbiz.foodcoma.R;
 import com.swpbiz.foodcoma.adapters.RestaurantAdaptor;
+import com.swpbiz.foodcoma.fragments.RestaurantDetailFragment;
 import com.swpbiz.foodcoma.models.Restaurant;
 
 import org.apache.http.Header;
@@ -30,7 +32,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class RestaurantActivity extends ActionBarActivity {
+public class RestaurantActivity extends ActionBarActivity implements RestaurantDetailFragment.RestaurantDetailFragmentListener {
 
     private final String API_KEY = "AIzaSyCqT9dz3gMHQO1P27j0md99PrdpuX30shI";
     private ArrayList<Restaurant> allRestaurants;
@@ -61,11 +63,7 @@ public class RestaurantActivity extends ActionBarActivity {
         lvRestaurants.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Restaurant res = allRestaurants.get(position);
-                Intent returnIntent = new Intent();
-                returnIntent.putExtra("restaurant", res);
-                setResult(RESULT_OK, returnIntent);
-                finish();
+                showRestaurantDialog(position);
             }
         });
 
@@ -76,6 +74,13 @@ public class RestaurantActivity extends ActionBarActivity {
 
         fetchRestaurants(nearbyurl);
 
+    }
+
+    private void showRestaurantDialog(int position) {
+        Restaurant res = allRestaurants.get(position);
+        FragmentManager fm = getSupportFragmentManager();
+        RestaurantDetailFragment restaurantDetailFragment = RestaurantDetailFragment.newInstance(res.getRestaurantId(), position);
+        restaurantDetailFragment.show(fm, "fragment_restaurant_detail");
     }
 
     private void setupEndlessScroll() {
@@ -191,4 +196,12 @@ public class RestaurantActivity extends ActionBarActivity {
         }
     }
 
+    @Override
+    public void onSelectRestaurant(int position) {
+        Restaurant res = allRestaurants.get(position);
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("restaurant", res);
+        setResult(RESULT_OK, returnIntent);
+        finish();
+    }
 }

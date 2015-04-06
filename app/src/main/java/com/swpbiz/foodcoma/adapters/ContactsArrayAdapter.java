@@ -49,7 +49,7 @@ public class ContactsArrayAdapter extends ArrayAdapter<User> {
         if (contact.getContactPhotoUri() != null) {
             Picasso.with(getContext()).load(contact.getContactPhotoUri()).into(ivImage);
         } else {
-            ivImage.setImageResource(R.drawable.ic_contact);
+            ivImage.setImageResource(R.mipmap.ic_contact_blue);
         }
 
         final int pos = position;

@@ -11,11 +11,12 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:id="@+id/ivImage"
-        android:src="@android:drawable/ic_menu_help"
+        android:src="@mipmap/ic_contact_blue"
         android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginRight="10dp" />
+        android:layout_marginRight="10dp"
+        android:scaleType="fitXY" />
 
     <CheckBox
         android:id="@+id/cbSelected"

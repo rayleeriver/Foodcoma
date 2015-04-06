@@ -63,7 +63,7 @@ public class FriendListAdapter extends ArrayAdapter<User> {
                     .into(ivImage);
         } else {
             Picasso.with(getContext())
-                    .load(R.drawable.ic_contact)
+                    .load(R.mipmap.ic_contact_blue)
                     .into(ivImage);
         }
         CheckBox cbSelected = (CheckBox) convertView.findViewById(R.id.cbSelected);
