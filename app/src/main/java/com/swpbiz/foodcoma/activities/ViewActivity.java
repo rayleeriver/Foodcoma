@@ -337,14 +337,17 @@ public class ViewActivity extends ActionBarActivity implements
                                 Log.d("DEBUG-VIEW-ACTIVITY", elements.getJSONObject(0).getJSONObject("distance").getString("text"));
                                 if (elements.getJSONObject(0).getJSONObject("distance").has("text")) {
                                     String phoneNumber;
-                                    if (marker.getSnippet().contains("Distance")) {
-                                        int index = marker.getSnippet().indexOf(" ");
+                                    if (marker.getSnippet() != null && marker.getSnippet().contains("Distance")) {
                                         phoneNumber = marker.getSnippet().substring(0, marker.getSnippet().indexOf(" "));
                                     } else {
                                         phoneNumber = marker.getSnippet();
+                                        if (phoneNumber == null) {
+                                            phoneNumber ="";
+                                        }
                                     }
                                     String snippet  = phoneNumber +" Distance: " + elements.getJSONObject(0).getJSONObject("distance").getString("text");
                                     marker.setSnippet(snippet);
+                                    marker.showInfoWindow();
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
