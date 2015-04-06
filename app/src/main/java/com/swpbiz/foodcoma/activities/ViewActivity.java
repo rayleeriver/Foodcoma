@@ -335,7 +335,17 @@ public class ViewActivity extends ActionBarActivity implements
                             try {
                                 JSONArray elements = response.getJSONArray("rows").getJSONObject(0).getJSONArray("elements");
                                 Log.d("DEBUG-VIEW-ACTIVITY", elements.getJSONObject(0).getJSONObject("distance").getString("text"));
-                                marker.setSnippet(elements.getJSONObject(0).getJSONObject("distance").getString("text"));
+                                if (elements.getJSONObject(0).getJSONObject("distance").has("text")) {
+                                    String phoneNumber;
+                                    if (marker.getSnippet().contains("Distance")) {
+                                        int index = marker.getSnippet().indexOf(" ");
+                                        phoneNumber = marker.getSnippet().substring(0, marker.getSnippet().indexOf(" "));
+                                    } else {
+                                        phoneNumber = marker.getSnippet();
+                                    }
+                                    String snippet  = phoneNumber +" Distance: " + elements.getJSONObject(0).getJSONObject("distance").getString("text");
+                                    marker.setSnippet(snippet);
+                                }
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -357,6 +367,7 @@ public class ViewActivity extends ActionBarActivity implements
 
             LatLng resLoc = new LatLng(invitation.getRestaurant().getRestaurantLocation().getLatitude(), invitation.getRestaurant().getRestaurantLocation().getLongitude());
             latLngBoundsBuilder.include(resLoc);
+
 
 
             Marker marker = map.addMarker(new MarkerOptions().position(resLoc).title(invitation.getRestaurant().getName()).icon(RestaurantMarker).flat(true));
@@ -382,8 +393,10 @@ public class ViewActivity extends ActionBarActivity implements
                             AllphoneNumbers.add(userphonenumber);
                             ParseGeoPoint uloc = parseUsers.get(i).getParseGeoPoint("userlocation");
 
+                            String title = invitation.getUsers().get(userphonenumber).getName();
+
                             LatLng userloc = new LatLng(uloc.getLatitude(), uloc.getLongitude());
-                            Marker marker = map.addMarker(new MarkerOptions().position(userloc).title(userphonenumber).icon(carMarker).flat(true));
+                            Marker marker = map.addMarker(new MarkerOptions().position(userloc).title(title).icon(carMarker).snippet(userphonenumber).flat(true));
                             latLngBoundsBuilder.include(userloc);
                             Location ul = new Location("");
                             ul.setLatitude(uloc.getLatitude());

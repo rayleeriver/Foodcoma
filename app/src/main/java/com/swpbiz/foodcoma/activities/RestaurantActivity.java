@@ -134,7 +134,7 @@ public class RestaurantActivity extends ActionBarActivity implements RestaurantD
         MenuItem searchItem = menu.findItem(R.id.action_search);
 
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        searchView.setQueryHint(Html.fromHtml("<font color='#ffffff'>sushi, coffee, bakery</font>"));
+        searchView.setQueryHint(Html.fromHtml("<font color='#ffa5a5a5'>sushi, coffee, bakery</font>"));
         searchView.setIconifiedByDefault(false);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
