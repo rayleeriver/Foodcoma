@@ -154,7 +154,7 @@ public class MainActivity extends ActionBarActivity implements
     private void populateMyInvitations(final List<Invitation> myInvitations) {
 
         // from past 1 hour to future
-        Date fromDate = new Date(new Date().getTime() - 3600*1000);
+        Date fromDate = new Date(new Date().getTime() - 2*3600*1000);
 
         ParseQuery<ParseObject> myInvitationsQuery = ParseQuery.getQuery("Invitation");
         myInvitationsQuery.whereEqualTo("owner", phoneNumber);
