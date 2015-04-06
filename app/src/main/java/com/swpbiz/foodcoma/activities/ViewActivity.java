@@ -103,6 +103,7 @@ public class ViewActivity extends ActionBarActivity implements
         setContentView(R.layout.activity_view);
 
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle("Details");
 
         SharedPreferences sharedPref = getSharedPreferences("foodcoma", Context.MODE_PRIVATE);
         myPhoneNumber = sharedPref.getString(getString(R.string.my_phone_number), null);
