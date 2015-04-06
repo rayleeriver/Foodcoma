@@ -1,11 +1,13 @@
 package com.swpbiz.foodcoma.models;
 
+import android.app.Application;
 import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
+import com.swpbiz.foodcoma.FoodcomaApplication;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -319,5 +321,12 @@ public class Invitation implements Parcelable {
         invitation.getOwner().setPhoneNumber(object.getString("owner"));
 
         return invitation;
+    }
+
+    public Invitation inflateWithContacts(Application application) {
+        for (Map.Entry<String, User> entry: users.entrySet()) {
+            users.put(entry.getKey(), ((FoodcomaApplication) application).findContactByPhoneNumber(entry.getKey()));
+        }
+        return this;
     }
 }

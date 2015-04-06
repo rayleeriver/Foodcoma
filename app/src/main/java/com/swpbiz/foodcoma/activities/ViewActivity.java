@@ -89,7 +89,7 @@ public class ViewActivity extends ActionBarActivity implements
     private ListView lvContacts;
     private User user;
 
-    private String phonenumber;
+    private String myPhoneNumber;
     private android.os.Handler handler;
     private ArrayList<Marker> markers;
     private LatLngBounds.Builder latLngBoundsBuilder;
@@ -105,7 +105,7 @@ public class ViewActivity extends ActionBarActivity implements
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         SharedPreferences sharedPref = getSharedPreferences("foodcoma", Context.MODE_PRIVATE);
-        phonenumber = sharedPref.getString(getString(R.string.my_phone_number), null);
+        myPhoneNumber = sharedPref.getString(getString(R.string.my_phone_number), null);
 
         markers = new ArrayList<Marker>();
         handler = new android.os.Handler();
@@ -161,10 +161,10 @@ public class ViewActivity extends ActionBarActivity implements
         Log.d("DEBUG-FRIENDS", invitation.getUsersList().size() + "");
 
         FriendListAdapter adapter = new FriendListAdapter(this, invitation, getApplication());
-        adapter.addAll(invitation.getUserListExcluding(phonenumber));
+        adapter.addAll(invitation.getUserListExcluding(myPhoneNumber));
         lvContacts.setAdapter(adapter);
 
-        if (invitation.isAccepted(phonenumber)) {
+        if (invitation.isAccepted(myPhoneNumber)) {
             rlAccept.setBackgroundColor(getResources().getColor(R.color.primary_dark));
         } else {
             rlAccept.setBackgroundColor(Color.parseColor("#cccccc"));
@@ -176,10 +176,10 @@ public class ViewActivity extends ActionBarActivity implements
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("Invitation");
 
                 final List<String> activePhoneNumberList = new ArrayList<>();
-                activePhoneNumberList.add(phonenumber);
+                activePhoneNumberList.add(myPhoneNumber);
 
-                if (invitation.isAccepted(phonenumber)) {
-                    invitation.removeAcceptedUser(phonenumber);
+                if (invitation.isAccepted(myPhoneNumber)) {
+                    invitation.removeAcceptedUser(myPhoneNumber);
                     query.getInBackground(invitation.getInvitationId(), new GetCallback<ParseObject>() {
                         @Override
                         public void done(ParseObject parseObject, com.parse.ParseException e) {
@@ -193,7 +193,7 @@ public class ViewActivity extends ActionBarActivity implements
                     sendAcceptInvitationPushNotification(false);
 
                 } else {
-                    invitation.addAcceptedUser(phonenumber);
+                    invitation.addAcceptedUser(myPhoneNumber);
                     query.getInBackground(invitation.getInvitationId(), new GetCallback<ParseObject>() {
                         @Override
                         public void done(ParseObject parseObject, com.parse.ParseException e) {
@@ -274,7 +274,7 @@ public class ViewActivity extends ActionBarActivity implements
 
         MenuItem deleteInvitationMenuItem = menu.findItem(R.id.menuitem_delete_invitation);
 
-        if (invitation.getOwner().getPhoneNumber().equals(phonenumber)) {
+        if (invitation.getOwner().getPhoneNumber().equals(myPhoneNumber)) {
             deleteInvitationMenuItem.setVisible(true);
         } else {
             deleteInvitationMenuItem.setVisible(false);
@@ -396,7 +396,12 @@ public class ViewActivity extends ActionBarActivity implements
                             AllphoneNumbers.add(userphonenumber);
                             ParseGeoPoint uloc = parseUsers.get(i).getParseGeoPoint("userlocation");
 
-                            String title = invitation.getUsers().get(userphonenumber).getName();
+                            String title;
+                            if (myPhoneNumber.equals(userphonenumber)) {
+                                title = "me";
+                            } else {
+                                title = invitation.getUsers().get(userphonenumber).getName();
+                            }
 
                             LatLng userloc = new LatLng(uloc.getLatitude(), uloc.getLongitude());
                             Marker marker = map.addMarker(new MarkerOptions().position(userloc).title(title).icon(carMarker).snippet(userphonenumber).flat(true));
@@ -539,7 +544,7 @@ public class ViewActivity extends ActionBarActivity implements
 //        LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
 //        markers.clear();
 //        for (int i = 0; i < markers.size(); i++) {
-//            addMarker(loc, phonenumber);
+//            addMarker(loc, myPhoneNumber);
 //        }
 //
 //        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
