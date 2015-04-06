@@ -184,8 +184,10 @@ public class MainActivity extends ActionBarActivity implements
                             String[] projection = new String[]{
                                     ContactsContract.PhoneLookup.DISPLAY_NAME,
                                     ContactsContract.PhoneLookup._ID};
+
                             Uri contactUri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(invitation.getOwner().getPhoneNumber()));
                             Cursor cursor = getContentResolver().query(contactUri, projection, null, null, null);
+
                             if (cursor.moveToFirst()) {
                                 String name = cursor.getString(cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME));
                                 invitation.getOwner().setName(name);
