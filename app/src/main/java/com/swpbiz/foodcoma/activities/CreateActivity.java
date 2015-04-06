@@ -187,7 +187,7 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
                     JSONObject data = new JSONObject();
                     try {
                         data.put("title", "Foodcoma");
-                        data.put("alert", "New Invitation");
+                        data.put("alert", "New Invitation for " + invitation.getRestaurant().getName());
                         data.put("data", invitation.getJsonObject());
 
                         Intent i = new Intent(CreateActivity.this, ViewActivity.class);
