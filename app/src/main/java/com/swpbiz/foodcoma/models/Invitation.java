@@ -14,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -283,8 +284,27 @@ public class Invitation implements Parcelable {
         if (!owner.getPhoneNumber().equals(phoneNumber)) {
             userList.add(owner);
         }
-        return userList;
 
+        Collections.sort(userList, new UsersComparator());
+        return userList;
+    }
+
+    public List<User> getUserListExcludingSortByAccepted(String phoneNumber) {
+        if (acceptedUsers == null || acceptedUsers.size() ==0) {
+            return getUserListExcluding(phoneNumber);
+        }
+
+        List<User> acceptedList = new ArrayList<>();
+        List<User> pendingList = new ArrayList<>();
+        for (User user: getUserListExcluding(phoneNumber)) {
+            if (acceptedUsers.contains(user.getPhoneNumber())) {
+                acceptedList.add(user);
+            } else {
+                pendingList.add(user);
+            }
+        }
+        acceptedList.addAll(pendingList);
+        return acceptedList;
     }
 
     public static Invitation fromParseObject(ParseObject object) throws JSONException {

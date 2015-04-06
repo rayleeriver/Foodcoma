@@ -126,16 +126,7 @@ public class ViewActivity extends ActionBarActivity implements
 
         Intent i = getIntent();
         if (i != null) {
-//            String data = i.getStringExtra("data");
-//
-//            if (data != null) {
-//                // From Push Notifications
-//                invitation = Invitation.getInvitationFromJsonObject(data);
-//            } else {
-                invitation = getIntent().getParcelableExtra("invitation");
-//            }
-
-
+            invitation = getIntent().getParcelableExtra("invitation");
             setupViews();
 
             tvDate.setText(MyDateTimeUtil.getDateFromEpoch(invitation.getTimeOfEvent()).toUpperCase());
@@ -162,7 +153,7 @@ public class ViewActivity extends ActionBarActivity implements
         Log.d("DEBUG-FRIENDS", invitation.getUsersList().size() + "");
 
         FriendListAdapter adapter = new FriendListAdapter(this, invitation, getApplication());
-        adapter.addAll(invitation.getUserListExcluding(myPhoneNumber));
+        adapter.addAll(invitation.getUserListExcludingSortByAccepted(myPhoneNumber));
         lvContacts.setAdapter(adapter);
 
         if (invitation.isAccepted(myPhoneNumber)) {
@@ -292,7 +283,7 @@ public class ViewActivity extends ActionBarActivity implements
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if(id == android.R.id.home) {
+        if (id == android.R.id.home) {
             finish();
             overridePendingTransition(R.anim.left_in, R.anim.right_out);
             return true;
@@ -343,10 +334,10 @@ public class ViewActivity extends ActionBarActivity implements
                                     } else {
                                         phoneNumber = marker.getSnippet();
                                         if (phoneNumber == null) {
-                                            phoneNumber ="";
+                                            phoneNumber = "";
                                         }
                                     }
-                                    String snippet  = phoneNumber +" Distance: " + elements.getJSONObject(0).getJSONObject("distance").getString("text");
+                                    String snippet = phoneNumber + " Distance: " + elements.getJSONObject(0).getJSONObject("distance").getString("text");
                                     marker.setSnippet(snippet);
                                     marker.showInfoWindow();
                                 }
@@ -371,7 +362,6 @@ public class ViewActivity extends ActionBarActivity implements
 
             LatLng resLoc = new LatLng(invitation.getRestaurant().getRestaurantLocation().getLatitude(), invitation.getRestaurant().getRestaurantLocation().getLongitude());
             latLngBoundsBuilder.include(resLoc);
-
 
 
             Marker marker = map.addMarker(new MarkerOptions().position(resLoc).title(invitation.getRestaurant().getName()).icon(RestaurantMarker).flat(true));
