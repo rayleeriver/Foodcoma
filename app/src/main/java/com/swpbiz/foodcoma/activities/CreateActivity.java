@@ -13,16 +13,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
-
-import com.parse.ParseException;
-
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
-
+import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
@@ -126,6 +124,7 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
                     tvPlaceName.setText(restaurant.getName());
                 }
             }
+
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 Log.d("DEBUG", "failed API call");
@@ -150,8 +149,11 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_send) {
+            if (restaurant == null) {
+                Toast.makeText(this, "Please select a location...", Toast.LENGTH_SHORT).show();
+                return false;
+            }
             final Invitation invitation = createInvitation();
-//            Log.d("DEBUG", "location " + invitation.getMapUrl());
             Log.d("DEBUG", "datetime " + invitation.getTimeOfEvent());
 
 
@@ -245,11 +247,11 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
         invitation.setUsers(getFriendsSelected());
 
         invitation.getAcceptedUsers().add(phonenumber);
-
-        if (restaurant == null) {
-            restaurant = new Restaurant();
-            restaurant.setName(placeName);
-        }
+//
+//        if (restaurant == null) {
+//            restaurant = new Restaurant();
+//            restaurant.setName(placeName);
+//        }
         invitation.setRestaurant(restaurant);
 
 //        invitation.save();

@@ -385,7 +385,6 @@ public class ViewActivity extends ActionBarActivity implements
                             LatLng userloc = new LatLng(uloc.getLatitude(), uloc.getLongitude());
                             Marker marker = map.addMarker(new MarkerOptions().position(userloc).title(userphonenumber).icon(carMarker).flat(true));
                             latLngBoundsBuilder.include(userloc);
-                            marker.showInfoWindow();
                             Location ul = new Location("");
                             ul.setLatitude(uloc.getLatitude());
                             ul.setLongitude(uloc.getLongitude());
