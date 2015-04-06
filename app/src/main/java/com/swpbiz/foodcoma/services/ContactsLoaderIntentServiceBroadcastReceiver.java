@@ -35,7 +35,7 @@ public class ContactsLoaderIntentServiceBroadcastReceiver extends BroadcastRecei
         Collections.sort(((FoodcomaApplication) application).getContacts(), new Comparator<User>() {
             @Override
             public int compare(User lhs, User rhs) {
-                return lhs.getName().compareTo(rhs.getName());
+                return lhs.getName().toLowerCase().compareTo(rhs.getName().toLowerCase());
             }
         });
     }
