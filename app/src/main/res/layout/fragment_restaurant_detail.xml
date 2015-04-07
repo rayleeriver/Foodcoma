@@ -254,7 +254,7 @@
                 android:orientation="vertical"
                 android:background="#55000000"
                 android:layout_below="@+id/rlReviewsHeading"
-                android:paddingBottom="60dp"></LinearLayout>
+                android:paddingBottom="90dp"></LinearLayout>
 
 
         </RelativeLayout>

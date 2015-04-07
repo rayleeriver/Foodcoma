@@ -289,6 +289,7 @@ public class ViewActivity extends ActionBarActivity implements
             overridePendingTransition(R.anim.left_in, R.anim.right_out);
             return true;
         } else if (id == R.id.menuitem_delete_invitation) {
+            final Activity activity = this;
             ParseQuery<ParseObject> query = ParseQuery.getQuery("Invitation");
             query.getInBackground(invitation.getInvitationId(), new GetCallback<ParseObject>() {
                 @Override
@@ -296,8 +297,10 @@ public class ViewActivity extends ActionBarActivity implements
                     if (parseObject != null)
                         try {
                             parseObject.delete();
+                            Toast.makeText(activity, "Deleted " + invitation.getRestaurant().getName() + " invitation.", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(ViewActivity.this, MainActivity.class);
                             startActivity(intent);
+                            overridePendingTransition(R.anim.left_in, R.anim.right_out);
                         } catch (com.parse.ParseException e1) {
                             e1.printStackTrace();
                         }
