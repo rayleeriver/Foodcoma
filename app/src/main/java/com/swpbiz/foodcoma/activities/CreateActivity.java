@@ -141,7 +141,7 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(final MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -149,6 +149,7 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_send) {
+            item.setEnabled(false);
             if (restaurant == null) {
                 Toast.makeText(this, "Please select a location...", Toast.LENGTH_SHORT).show();
                 return false;
@@ -190,6 +191,8 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
                         data.put("alert", "New Invitation for " + invitation.getRestaurant().getName());
                         data.put("data", invitation.getJsonObject());
 
+                        item.setEnabled(true);
+
                         Intent i = new Intent(CreateActivity.this, ViewActivity.class);
                         i.putExtra("invitation", invitation);
                         startActivity(i);
@@ -206,6 +209,8 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
                     push2.sendInBackground();
                 }
             });
+            item.setEnabled(true);
+
             return true;
         } else if(id == android.R.id.home) {
             finish();
