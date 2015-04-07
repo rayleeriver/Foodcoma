@@ -144,7 +144,7 @@ public class MainActivity extends ActionBarActivity implements
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent i = new Intent(MainActivity.this, ViewActivity.class);
-                i.putExtra("invitation", (Parcelable) invitations.get(position));
+                i.putExtra("invitation", (Parcelable) invitations.get(position).inflateWithContacts(getApplication()));
                 startActivity(i);
                 overridePendingTransition(R.anim.right_in, R.anim.left_out);
             }

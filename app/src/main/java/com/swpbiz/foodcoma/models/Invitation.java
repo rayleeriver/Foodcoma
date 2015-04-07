@@ -1,17 +1,20 @@
 package com.swpbiz.foodcoma.models;
 
+import android.app.Application;
 import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
+import com.swpbiz.foodcoma.FoodcomaApplication;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -281,8 +284,27 @@ public class Invitation implements Parcelable {
         if (!owner.getPhoneNumber().equals(phoneNumber)) {
             userList.add(owner);
         }
-        return userList;
 
+        Collections.sort(userList, new UsersComparator());
+        return userList;
+    }
+
+    public List<User> getUserListExcludingSortByAccepted(String phoneNumber) {
+        if (acceptedUsers == null || acceptedUsers.size() ==0) {
+            return getUserListExcluding(phoneNumber);
+        }
+
+        List<User> acceptedList = new ArrayList<>();
+        List<User> pendingList = new ArrayList<>();
+        for (User user: getUserListExcluding(phoneNumber)) {
+            if (acceptedUsers.contains(user.getPhoneNumber())) {
+                acceptedList.add(user);
+            } else {
+                pendingList.add(user);
+            }
+        }
+        acceptedList.addAll(pendingList);
+        return acceptedList;
     }
 
     public static Invitation fromParseObject(ParseObject object) throws JSONException {
@@ -319,5 +341,12 @@ public class Invitation implements Parcelable {
         invitation.getOwner().setPhoneNumber(object.getString("owner"));
 
         return invitation;
+    }
+
+    public Invitation inflateWithContacts(Application application) {
+        for (Map.Entry<String, User> entry: users.entrySet()) {
+            users.put(entry.getKey(), ((FoodcomaApplication) application).findContactByPhoneNumber(entry.getKey()));
+        }
+        return this;
     }
 }
