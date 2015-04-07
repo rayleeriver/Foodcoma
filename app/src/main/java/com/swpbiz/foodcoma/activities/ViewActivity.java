@@ -237,7 +237,7 @@ public class ViewActivity extends ActionBarActivity implements
         map = googleMap;
         if (map != null) {
             // Map is ready
-            Toast.makeText(this, "Map Fragment was loaded properly!", Toast.LENGTH_SHORT).show();
+            Log.d("DEBUG", "Map Fragment was loaded properly!");
             map.setMyLocationEnabled(false);
             // Now that map has loaded, let's get our location!
             googleApiClient = new GoogleApiClient.Builder(this)
@@ -284,7 +284,8 @@ public class ViewActivity extends ActionBarActivity implements
 
         //noinspection SimplifiableIfStatement
         if (id == android.R.id.home) {
-            finish();
+            Intent i = new Intent(ViewActivity.this, MainActivity.class);
+            startActivity(i);
             overridePendingTransition(R.anim.left_in, R.anim.right_out);
             return true;
         } else if (id == R.id.menuitem_delete_invitation) {

@@ -94,8 +94,8 @@ public class MainActivity extends ActionBarActivity implements
         setupInvitationsList();
 
         phoneNumber = getPhoneNumber();
-        Toast.makeText(this, "Your phone number: " + phoneNumber, Toast.LENGTH_SHORT).show();
-
+        //Toast.makeText(this, "Your phone number: " + phoneNumber, Toast.LENGTH_SHORT).show();
+        Log.d("DEBUG", "Your phone number: " + phoneNumber);
 
         // Check whether the user has set the number before, if not, call the SetNumberActivity
         if (phoneNumber == null) {
