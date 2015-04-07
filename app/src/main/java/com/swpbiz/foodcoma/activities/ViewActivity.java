@@ -245,7 +245,7 @@ public class ViewActivity extends ActionBarActivity implements
         map = googleMap;
         if (map != null) {
             // Map is ready
-            Toast.makeText(this, "Map Fragment was loaded properly!", Toast.LENGTH_SHORT).show();
+            Log.d("DEBUG", "Map Fragment was loaded properly!");
             map.setMyLocationEnabled(false);
             // Now that map has loaded, let's get our location!
             googleApiClient = new GoogleApiClient.Builder(this)
