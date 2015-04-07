@@ -308,6 +308,28 @@ public class ViewActivity extends ActionBarActivity implements
                             Intent intent = new Intent(ViewActivity.this, MainActivity.class);
                             startActivity(intent);
                             overridePendingTransition(R.anim.left_in, R.anim.right_out);
+
+                            // TODO send delete
+                            ParseQuery pushQuery = ParseInstallation.getQuery();
+                            ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+                            String phonenumber = (String) installation.get("phonenumber");
+                            List<String> recipients = invitation.getAllPhoneNumbers();
+                            recipients.remove(phonenumber);
+                            pushQuery.whereContainedIn("phonenumber", recipients);
+                            ParsePush push2 = new ParsePush();
+
+                            JSONObject data = new JSONObject();
+                            try {
+                                data.put("title", "Foodcoma");
+                                data.put("alert", "Organizer canceled event to " + invitation.getRestaurant().getName());
+                                data.put("data", invitation.getJsonObject());
+                            } catch (JSONException ex) {
+                                ex.printStackTrace();
+                            }
+
+                            push2.setQuery(pushQuery); // Set our Installation query
+                            push2.setData(data);
+                            push2.sendInBackground();
                         } catch (com.parse.ParseException e1) {
                             e1.printStackTrace();
                         }
