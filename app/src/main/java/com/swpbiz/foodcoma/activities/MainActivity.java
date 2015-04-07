@@ -38,7 +38,6 @@ import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
-import com.parse.SignUpCallback;
 import com.swpbiz.foodcoma.FoodcomaApplication;
 import com.swpbiz.foodcoma.R;
 import com.swpbiz.foodcoma.adapters.InvitationsArrayAdapter;
@@ -273,19 +272,15 @@ public class MainActivity extends ActionBarActivity implements
         FoodcomaApplication mapp = (FoodcomaApplication) getApplicationContext();
         user.put("userlocation", new ParseGeoPoint(mapp.getMylatitude(), mapp.getMylongitude()));
 
-        user.signUpInBackground(new SignUpCallback() {
-            public void done(ParseException e) {
-                if (e == null) {
-                    Log.d("DEBUG", "Sign up successful");
-                    subscribeWithParse();
-                } else {
-                    Log.d("DEBUG", "Sign up failed");
-                }
-            }
-        });
+        try {
+            user.signUp();
+            subscribeWithParse();
 
-        // Save the current Installation to Parse.
-        installation.saveInBackground();
+            // Save the current Installation to Parse.
+            installation.save();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -294,14 +289,13 @@ public class MainActivity extends ActionBarActivity implements
             public void done(ParseUser user, ParseException e) {
                 if (user != null) {
                     Log.d("DEBUG", "Sign In successful");
+                    ParseUser.getCurrentUser().saveInBackground();
                 } else {
                     Log.d("DEBUG", "Sign In failed");
                 }
             }
         });
 
-
-        ParseUser.getCurrentUser().saveInBackground();
 
         ParsePush.subscribeInBackground("", new SaveCallback() {
             @Override
