@@ -1,13 +1,17 @@
 package com.swpbiz.foodcoma;
 
 import android.app.Application;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.parse.Parse;
 import com.parse.ParseACL;
 import com.parse.ParseCrashReporting;
 import com.swpbiz.foodcoma.models.User;
 import com.swpbiz.foodcoma.services.ContactsLoaderIntentService;
+import com.swpbiz.foodcoma.services.ContactsLoaderIntentServiceBroadcastReceiver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +28,6 @@ public class FoodcomaApplication extends Application {
 
     List<User> contacts = new ArrayList<>();
 
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -38,8 +41,8 @@ public class FoodcomaApplication extends Application {
         // Add your initialization code here
         Parse.initialize(this, APP_ID, CLIENT_KEY);
 
-    //    ParseUser.enableAutomaticUser();
-   //     ParseUser.getCurrentUser().saveInBackground();
+        //    ParseUser.enableAutomaticUser();
+        //     ParseUser.getCurrentUser().saveInBackground();
         ParseACL defaultACL = new ParseACL();
         // Optionally enable public read access.
         defaultACL.setPublicReadAccess(true);
@@ -51,6 +54,11 @@ public class FoodcomaApplication extends Application {
 
         Intent intent = new Intent(getApplicationContext(), ContactsLoaderIntentService.class);
         startService(intent);
+
+        BroadcastReceiver contactsLoaderIntentServiceReceiver = new ContactsLoaderIntentServiceBroadcastReceiver(this);
+        IntentFilter filter = new IntentFilter(ContactsLoaderIntentService.ACTION);
+        LocalBroadcastManager.getInstance(this).registerReceiver(contactsLoaderIntentServiceReceiver, filter);
+
     }
 
     public String getPhoneNumber() {
@@ -82,6 +90,13 @@ public class FoodcomaApplication extends Application {
     }
 
     public User findContactByPhoneNumber(String phoneNumber) {
+        if (contacts.size() == 0) {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         for (User contact : contacts) {
             if (contact.getPhoneNumber().equals(phoneNumber)) {
                 return contact;
@@ -89,4 +104,5 @@ public class FoodcomaApplication extends Application {
         }
         return null;
     }
+
 }
