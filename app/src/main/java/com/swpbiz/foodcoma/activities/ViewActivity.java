@@ -384,6 +384,7 @@ public class ViewActivity extends ActionBarActivity implements
                         latLngBoundsBuilder.include(new LatLng(((FoodcomaApplication) getApplication()).getMylatitude(), ((FoodcomaApplication) getApplication()).getMylongitude()));
                         for (int i = 0; i < parseUsers.size(); i++) {
                             userphonenumber = parseUsers.get(i).getString("phonenumber");
+                            Log.d(TAG, "userphonenumber=" + userphonenumber);
                             AllphoneNumbers.add(userphonenumber);
                             ParseGeoPoint uloc = parseUsers.get(i).getParseGeoPoint("userlocation");
 
@@ -391,7 +392,7 @@ public class ViewActivity extends ActionBarActivity implements
                             if (myPhoneNumber.equals(userphonenumber)) {
                                 title = "me";
                             } else {
-                                title = invitation.getUsers().get(userphonenumber).getName();
+                                title = ((FoodcomaApplication) getApplication()).findContactByPhoneNumber(userphonenumber).getName();
                             }
 
                             LatLng userloc = new LatLng(uloc.getLatitude(), uloc.getLongitude());

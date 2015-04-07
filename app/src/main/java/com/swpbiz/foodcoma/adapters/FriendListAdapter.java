@@ -47,13 +47,13 @@ public class FriendListAdapter extends ArrayAdapter<User> {
         ImageView ivImage = (ImageView) convertView.findViewById(R.id.ivImage);
 
         User contactByPhoneNumber = ((FoodcomaApplication) application).findContactByPhoneNumber(user.getPhoneNumber());
+        String contactPhotoUri = null;
         if (contactByPhoneNumber != null) {
             tvName.setText(contactByPhoneNumber.getName());
+            contactPhotoUri = contactByPhoneNumber.getContactPhotoUri();
         } else {
             tvName.setText(user.getPhoneNumber());
         }
-
-        String contactPhotoUri = contactByPhoneNumber.getContactPhotoUri();
 
         if (contactPhotoUri != null && contactPhotoUri.length() > 0) {
             Picasso.with(getContext())

@@ -1,6 +1,7 @@
 package com.swpbiz.foodcoma;
 
 import android.app.Activity;
+import android.app.Application;
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
@@ -79,7 +80,7 @@ public class FoodcomaNotificationReceiver extends ParsePushBroadcastReceiver {
                     if (parseObject != null) {
                         Intent i = new Intent(context, ViewActivity.class);
                         try {
-                            i.putExtra("invitation", Invitation.fromParseObject(parseObject));
+                            i.putExtra("invitation", Invitation.fromParseObject(parseObject).inflateWithContacts((Application) context.getApplicationContext()));
                         } catch (JSONException e1) {
                             e1.printStackTrace();
                         }

@@ -345,7 +345,10 @@ public class Invitation implements Parcelable {
 
     public Invitation inflateWithContacts(Application application) {
         for (Map.Entry<String, User> entry: users.entrySet()) {
-            users.put(entry.getKey(), ((FoodcomaApplication) application).findContactByPhoneNumber(entry.getKey()));
+            User userInflatedWithContact = ((FoodcomaApplication) application).findContactByPhoneNumber(entry.getKey());
+            if (userInflatedWithContact != null) {
+                users.put(entry.getKey(), userInflatedWithContact);
+            }
         }
         return this;
     }
