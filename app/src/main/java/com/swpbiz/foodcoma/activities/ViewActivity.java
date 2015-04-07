@@ -216,12 +216,19 @@ public class ViewActivity extends ActionBarActivity implements
 
         JSONObject data = new JSONObject();
         try {
-            data.put("title", "Foodcoma - " + invitation.getRestaurant().getName());
+            data.put("title", "Foodcoma");
 
+            String contactName = phonenumber;
+            if (phonenumber != null) {
+                User user = ((FoodcomaApplication) getApplication()).findContactByPhoneNumber(phonenumber);
+                if (user != null && user.getName() != null) {
+                    contactName = user.getName();
+                }
+            }
             if (acceptedInvitation)
-                data.put("alert", phonenumber + " has accepted invitation");
+                data.put("alert", contactName + " is going to " + invitation.getRestaurant().getName());
             else
-                data.put("alert", phonenumber + " has canceled invitation");
+                data.put("alert", contactName + " is not going to " + invitation.getRestaurant().getName());
 
             data.put("data", invitation.getJsonObject());
         } catch (JSONException e) {
