@@ -152,6 +152,7 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
             item.setEnabled(false);
             if (restaurant == null) {
                 Toast.makeText(this, "Please select a location...", Toast.LENGTH_SHORT).show();
+                item.setEnabled(true);
                 return false;
             }
             final Invitation invitation = createInvitation();
