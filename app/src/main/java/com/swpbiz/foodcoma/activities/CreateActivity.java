@@ -213,6 +213,7 @@ public class CreateActivity extends ActionBarActivity implements DatePickerDialo
 
             return true;
         } else if(id == android.R.id.home) {
+            item.setEnabled(true);
             finish();
             overridePendingTransition(R.anim.left_in, R.anim.right_out);
             return true;
