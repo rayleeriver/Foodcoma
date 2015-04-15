@@ -35,6 +35,7 @@ public class FoodcomaApplication extends Application {
         // Initialize Crash Reporting.
         ParseCrashReporting.enable(this);
 
+
         // Enable Local Datastore.
         Parse.enableLocalDatastore(this);
 
